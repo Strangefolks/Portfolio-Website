@@ -399,6 +399,7 @@ function updateLandingBurstAnchor(link) {
   link.style.setProperty('--burst-anchor-y', `${Math.round(cy)}px`);
   link.style.setProperty('--burst-rest-size', `${Math.round(rect.width)}px`);
   link.style.setProperty('--burst-hover-scale', String(scale));
+  link.style.setProperty('--burst-expanded-size', `${Math.ceil(size * scale)}px`);
 }
 
 function initLandingBurstAnchor(link) {

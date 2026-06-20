@@ -7079,7 +7079,6 @@ body.landing-page .app {
   justify-self: center;
   align-self: center;
   z-index: 5;
-  isolation: isolate;
 }
 
 .landing-orbit {
@@ -7144,7 +7143,6 @@ body.landing-page .app {
   text-decoration: none;
   color: inherit;
   outline: none;
-  isolation: isolate;
 }
 
 .landing-starburst-stage {
@@ -7163,6 +7161,7 @@ body.landing-page .app {
   line-height: 0;
   transform-origin: center center;
   transition: transform 0.5s var(--ease-soft);
+  z-index: 1;
 }
 
 body.landing-page .landing-starburst-stack {
@@ -7176,6 +7175,7 @@ body.landing-page .landing-starburst-stack {
   flex-shrink: 0;
   color: var(--brand-blue);
   overflow: visible;
+  shape-rendering: geometricPrecision;
 }
 
 .landing-starburst-path {
@@ -7187,7 +7187,7 @@ body.landing-page .landing-starburst-stack {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  z-index: 2;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7312,7 +7312,6 @@ body.landing-page.is-landing-expanded .landing-starburst-link {
 
 body.landing-page.is-landing-expanded .landing-starburst-stage {
   position: relative;
-  z-index: 31;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -7323,13 +7322,19 @@ body.landing-page.is-landing-expanded .landing-starburst-stage {
 
 body.landing-page.is-landing-expanded .landing-starburst-stack {
   transform: scale(var(--burst-hover-scale, 35.2));
-  z-index: 31;
+  z-index: 1;
+}
+
+body.landing-page.is-landing-expanded .landing-center-ui {
+  z-index: 10;
+  pointer-events: none;
 }
 
 body.landing-page.is-landing-expanded .landing-launch-btn {
   display: inline-flex;
   position: relative;
-  z-index: 32;
+  z-index: 11;
+  pointer-events: auto;
 }
 
 body.landing-page.is-landing-expanded:not(.is-landing-launch-ready) .landing-launch-btn {
@@ -7851,15 +7856,6 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
 
   body.landing-page .landing-hero {
     z-index: 10 !important;
-    isolation: isolate !important;
-  }
-
-  body.landing-page .landing-starburst-link {
-    z-index: 2 !important;
-  }
-
-  body.landing-page.is-landing-expanded .landing-hero {
-    z-index: 20 !important;
   }
 
   body.landing-page.is-landing-expanded .landing-meta {
@@ -7868,18 +7864,26 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     visibility: hidden !important;
   }
 
-  body.landing-page.is-landing-expanded .landing-starburst-link {
-    z-index: 30 !important;
+  body.landing-page.is-landing-expanded .landing-starburst-stack {
+    transform: none !important;
+    z-index: 1 !important;
   }
 
-  body.landing-page.is-landing-expanded .landing-starburst-stage,
-  body.landing-page.is-landing-expanded .landing-starburst-stack {
-    z-index: 31 !important;
+  body.landing-page.is-landing-expanded .landing-starburst {
+    width: var(--burst-expanded-size, 100vmin) !important;
+    height: auto !important;
+    max-width: none !important;
+    transition: width calc(0.5s / 3) var(--ease-soft) !important;
+  }
+
+  body.landing-page.is-landing-expanded .landing-center-ui {
+    z-index: 10 !important;
   }
 
   body.landing-page.is-landing-expanded .landing-launch-btn {
-    z-index: 32 !important;
+    z-index: 11 !important;
     position: relative !important;
+    pointer-events: auto !important;
   }
 
   .sidebar-collapse-btn,
