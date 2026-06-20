@@ -5994,24 +5994,27 @@ body.is-about-layout-measuring .about-layer {
 
 .about-panel-right h1.about-story-title {
   margin: 0;
-  font-family: var(--font-mono);
-  font-weight: 300;
-  font-size: clamp(52px, 7.8cqw, 92px);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
+  font-family: var(--font-project-detail-title);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
   display: block;
-  width: 100%;
-  max-width: 100%;
+  width: max-content;
+  max-width: none;
   white-space: nowrap;
   overflow: visible;
-  text-transform: none;
-  word-break: normal;
-  overflow-wrap: normal;
-  transition: none;
   -webkit-box-orient: unset;
   -webkit-line-clamp: unset;
   line-clamp: unset;
+  word-break: normal;
+  overflow-wrap: normal;
+  line-height: 0.82;
+  padding-top: 0.04em;
+  padding-bottom: 0.04em;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  transition: none;
+  color: var(--text-primary);
 }
 
 .about-panel-right .project-desc.about-story-subhead {
@@ -7256,8 +7259,15 @@ body.landing-page .landing-starburst-stack {
   border-color: rgba(255, 255, 255, 0.85);
 }
 
+.landing-launch-btn:active {
+  background: #ffffff;
+  color: var(--brand-blue);
+  border-color: rgba(255, 255, 255, 0.85);
+}
+
 .landing-launch-btn:hover .landing-terminal-cursor--inline,
-.landing-launch-btn:focus-visible .landing-terminal-cursor--inline {
+.landing-launch-btn:focus-visible .landing-terminal-cursor--inline,
+.landing-launch-btn:active .landing-terminal-cursor--inline {
   background: var(--brand-blue);
 }
 
@@ -7323,11 +7333,16 @@ body.landing-page.is-landing-expanded .landing-starburst-stage {
 body.landing-page.is-landing-expanded .landing-starburst-stack {
   transform: scale(var(--burst-hover-scale, 35.2));
   z-index: 1;
+  pointer-events: none;
+}
+
+body.landing-page.is-landing-expanded .landing-starburst {
+  pointer-events: none;
 }
 
 body.landing-page.is-landing-expanded .landing-center-ui {
   z-index: 10;
-  pointer-events: none;
+  pointer-events: auto;
 }
 
 body.landing-page.is-landing-expanded .landing-launch-btn {
@@ -7816,16 +7831,15 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     -webkit-line-clamp: unset !important;
     line-clamp: unset !important;
     overflow: visible !important;
-    font-family: var(--font-mono) !important;
-    font-weight: 300 !important;
-    font-size: clamp(44px, 11.5vw, 92px) !important;
-    line-height: 0.95 !important;
-    letter-spacing: -0.03em !important;
+    font-family: var(--font-project-detail-title) !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.03em !important;
+    line-height: 0.82 !important;
     color: var(--text-primary) !important;
-    text-transform: none !important;
     white-space: nowrap !important;
-    width: 100% !important;
-    max-width: 100% !important;
+    width: max-content !important;
+    max-width: none !important;
   }
 
   .about-panel-right .project-desc.about-story-subhead {
@@ -7867,6 +7881,7 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
   body.landing-page.is-landing-expanded .landing-starburst-stack {
     transform: none !important;
     z-index: 1 !important;
+    pointer-events: none !important;
   }
 
   body.landing-page.is-landing-expanded .landing-starburst {
@@ -7874,10 +7889,12 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     height: auto !important;
     max-width: none !important;
     transition: width calc(0.5s / 3) var(--ease-soft) !important;
+    pointer-events: none !important;
   }
 
   body.landing-page.is-landing-expanded .landing-center-ui {
     z-index: 10 !important;
+    pointer-events: auto !important;
   }
 
   body.landing-page.is-landing-expanded .landing-launch-btn {
@@ -7968,5 +7985,25 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     background: transparent;
     border-color: var(--border);
     color: var(--text-primary);
+  }
+
+  .landing-launch-btn:hover {
+    background: transparent;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .landing-launch-btn:hover .landing-terminal-cursor--inline {
+    background: #ffffff;
+  }
+
+  .landing-launch-btn:active {
+    background: #ffffff !important;
+    color: var(--brand-blue) !important;
+    border-color: rgba(255, 255, 255, 0.85) !important;
+  }
+
+  .landing-launch-btn:active .landing-terminal-cursor--inline {
+    background: var(--brand-blue) !important;
   }
 }

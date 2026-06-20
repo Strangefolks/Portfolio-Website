@@ -1,6 +1,7 @@
 const ABOUT_SLIDE_DURATION_MS = 560;
 const ABOUT_SLIDE_STAGGER_MS = 110;
 const ABOUT_LOGO_VISUAL_TOP_RATIO = 5.92725 / 44;
+const ABOUT_STORY_TITLE_FIT_MIN = 12;
 
 let aboutOverlayBusy = false;
 let aboutOverlayScrollTop = 0;
@@ -11,6 +12,7 @@ let aboutStoryTitleFitObservedWidth = -1;
 let aboutStoryLayoutObserver;
 let aboutStoryTitleFitScope = document;
 let aboutStoryTitleFitResizeBound = false;
+let aboutStoryTitleFitGeneration = 0;
 
 async function loadAboutPanel(targetId, url, scope = document) {
   const target =
@@ -130,14 +132,57 @@ function getAboutStoryTitleFitWidth(scope = aboutStoryTitleFitScope) {
   return titleBlock?.clientWidth ?? 0;
 }
 
-function fitAboutStoryTitle(scope = aboutStoryTitleFitScope) {
+function measureAboutStoryTitleWidth(title, fontSizePx) {
+  title.style.maxWidth = 'none';
+  title.style.fontSize = `${fontSizePx}px`;
+  return title.getBoundingClientRect().width;
+}
+
+function fitAboutStoryTitle(scope = aboutStoryTitleFitScope, { force = false } = {}) {
   const title = getAboutStoryTitleEl(scope);
   if (!title) return;
 
-  title.style.removeProperty('font-size');
-  title.style.removeProperty('max-width');
-  aboutStoryTitleLastFitWidth = Math.round(getAboutStoryTitleFitWidth(scope));
-  aboutStoryTitleLastFitText = title.textContent.trim();
+  const generation = ++aboutStoryTitleFitGeneration;
+  const availableWidth = Math.round(getAboutStoryTitleFitWidth(scope));
+  const text = title.textContent.trim();
+  if (availableWidth <= 0 || !text) return;
+  if (!force && availableWidth === aboutStoryTitleLastFitWidth && text === aboutStoryTitleLastFitText) {
+    return;
+  }
+
+  let min = ABOUT_STORY_TITLE_FIT_MIN;
+  let max = Math.max(ABOUT_STORY_TITLE_FIT_MIN, availableWidth);
+  let best = min;
+
+  while (min <= max) {
+    if (generation !== aboutStoryTitleFitGeneration) return;
+
+    const mid = Math.floor((min + max) / 2);
+    const width = measureAboutStoryTitleWidth(title, mid);
+    if (Math.ceil(width) <= availableWidth) {
+      best = mid;
+      min = mid + 1;
+    } else {
+      max = mid - 1;
+    }
+  }
+
+  if (generation !== aboutStoryTitleFitGeneration) return;
+
+  let fittedSize = best;
+  while (
+    fittedSize > ABOUT_STORY_TITLE_FIT_MIN
+    && Math.ceil(measureAboutStoryTitleWidth(title, fittedSize)) > availableWidth
+  ) {
+    fittedSize -= 1;
+  }
+
+  if (generation !== aboutStoryTitleFitGeneration) return;
+
+  title.style.fontSize = `${fittedSize}px`;
+  title.style.maxWidth = 'none';
+  aboutStoryTitleLastFitWidth = availableWidth;
+  aboutStoryTitleLastFitText = text;
 }
 
 function getAboutStoryTitleCapTop(title) {
