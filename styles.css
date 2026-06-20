@@ -4789,8 +4789,8 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     transform: translateY(0);
   }
 
-  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .header-shell,
-  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .top-banner-shell {
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing):not(.landing-page) .header-shell,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing):not(.landing-page) .top-banner-shell {
     transform: translateY(-100%);
   }
 
@@ -7657,6 +7657,15 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     box-sizing: border-box;
   }
 
+  body.landing-page .header-shell {
+    transform: none !important;
+    margin-bottom: 0 !important;
+  }
+
+  body.landing-page .header {
+    padding-top: calc(10px + env(safe-area-inset-top, 0px));
+  }
+
   body.landing-page .app {
     min-height: 100% !important;
     height: 100% !important;
@@ -7732,6 +7741,10 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     padding-top: env(safe-area-inset-top, 0px) !important;
     padding-bottom: env(safe-area-inset-bottom, 0px) !important;
     box-sizing: border-box !important;
+  }
+
+  body.landing-page .page-wrapper {
+    padding-top: 0 !important;
   }
 
   body.is-top-banner-hidden .top-banner-shell {
