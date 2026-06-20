@@ -449,12 +449,19 @@ function initLandingTransition() {
   const link = document.querySelector('.landing-starburst-link');
   if (!link) return;
 
+  const isTouchLanding = !window.matchMedia('(hover: hover)').matches;
+  const launchBtn = link.querySelector('.landing-launch-btn');
+
   link.addEventListener('click', (event) => {
     event.preventDefault();
     const href = link.getAttribute('href') || 'home.html';
 
-    if (!window.matchMedia('(hover: hover)').matches && !document.body.classList.contains('is-landing-expanded')) {
+    if (isTouchLanding && !document.body.classList.contains('is-landing-expanded')) {
       setLandingExpanded(link, true);
+      return;
+    }
+
+    if (isTouchLanding && launchBtn && !launchBtn.contains(event.target)) {
       return;
     }
 

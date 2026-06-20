@@ -2,6 +2,14 @@ function initCustomCursor() {
   const dot = document.getElementById('cursor-dot');
   if (!dot) return () => {};
 
+  const prefersTouchUi =
+    window.matchMedia('(hover: none), (pointer: coarse)').matches
+    || window.matchMedia('(max-width: 560px)').matches;
+  if (prefersTouchUi) {
+    dot.style.display = 'none';
+    return () => {};
+  }
+
   const INTERACTIVE_SELECTOR =
     'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .avatar, .profile-avatar-trigger, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .profile-close, .landing-starburst-link';
 
