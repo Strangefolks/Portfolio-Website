@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>tedp.io</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      (function () {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="landing-page is-bottom-banner-hidden is-top-banner-hidden">
+    <div class="site-grain" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
+      <span class="cursor-dot-label text-label">Copy</span>
+    </div>
+    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to light mode</span>
+    <div class="page-wrapper">
+      <div class="top-banner-shell" id="top-banner-shell">
+        <div class="top-banner-marquee" id="top-banner-marquee">
+          <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="app">
+        <div class="header-shell" id="header-shell">
+          <header class="header">
+            <span class="landing-logo" aria-hidden="true">
+              <span class="logo-stack" aria-hidden="true">
+                <span class="logo-icon-wrap">
+                  <span class="logo-icon-bg" aria-hidden="true"></span>
+                  <img
+                    class="logo-part logo-part--icon-mark"
+                    src="assets/logo icon static.svg"
+                    alt=""
+                    width="44"
+                    height="44"
+                    decoding="async"
+                  />
+                </span>
+                <img
+                  class="logo-part logo-part--wordmark"
+                  src="assets/logo text.svg"
+                  alt=""
+                  width="96"
+                  height="25"
+                  decoding="async"
+                />
+              </span>
+            </span>
+            <div class="header-right">
+              <a
+                href="mailto:hello@tedpio.design"
+                class="email-link"
+                id="email-link"
+                data-email="hello@tedpio.design"
+              >
+                <span class="email-link-icon" aria-hidden="true">
+                  <svg class="email-icon email-icon--mail" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="M2 7l10 7 10-7"/>
+                  </svg>
+                  <svg class="email-icon email-icon--copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="9" y="9" width="13" height="13" rx="2"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                  </svg>
+                  <svg class="email-icon email-icon--check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class="email-link-text text-ui-sm" aria-live="polite">hello@tedpio.design</span>
+              </a>
+              <div class="avatar">
+                <img src="assets/avatar.png" alt="Profile" width="39" height="39" decoding="async" />
+              </div>
+            </div>
+          </header>
+        </div>
+
+        <main class="landing" aria-label="Enter portfolio">
+          <div class="landing-meta landing-meta--top">
+            <div class="meta-item landing-meta-item landing-meta-item--left">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Site</span>
+              </div>
+              <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
+            </div>
+            <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Location</span>
+              </div>
+              <span class="landing-meta-location-icon" aria-hidden="true">
+                <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
+                  <path fill="currentColor" d="M6 0C2.69 0 0 2.69 0 6c0 4.2 6 8 6 8s6-3.8 6-8c0-3.31-2.69-6-6-6zm0 8.25a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/>
+                </svg>
+              </span>
+              <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
+            </div>
+          </div>
+
+          <div class="landing-hero">
+            <div class="landing-orbit" aria-hidden="true">
+              <svg class="landing-orbit-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <circle class="landing-orbit-ring landing-orbit-ring--outer" cx="250" cy="250" r="206" />
+                <circle class="landing-orbit-ring landing-orbit-ring--inner" cx="250" cy="250" r="186" />
+                <defs>
+                  <path
+                    id="landing-orbit-text-path"
+                    d="M 250,250 m 0,-196 a 196,196 0 1,1 0,392 a 196,196 0 1,1 0,-392"
+                  />
+                </defs>
+                <g class="landing-orbit-text-rotator">
+                  <text class="landing-orbit-text" dominant-baseline="central">
+                    <textPath href="#landing-orbit-text-path" startOffset="0%">
+                      · I'M A DESIGNER. I BRING IDEAS TO LIFE &amp; INFLUENCE CREATIVE ENDEAVORS IN A THOUGHTFUL &amp; PRAGMATIC WAY. I'M GOOD AT NAVIGATING FLEDGLING CONCEPTS WITHOUT A LOT OF STRUCTURE. I CAN HELP THINGS FEEL STRUCTURED &amp; ENJOYABLE
+                    </textPath>
+                  </text>
+                </g>
+              </svg>
+            </div>
+
+            <a href="home.html" class="landing-starburst-link" id="landing-starburst-link" aria-label="Launch portfolio">
+              <span class="landing-starburst-stage">
+                <span class="landing-starburst-stack">
+                  <svg
+                    class="landing-starburst"
+                    viewBox="0 0 182 182"
+                    width="182"
+                    height="182"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      class="landing-starburst-path"
+                      fill="#005EFF"
+                      d="M98.8075 2.67415C100.027 -1.40784 106.029 -0.60662 106.135 3.6522L107.427 55.6964C107.496 58.4888 110.489 60.2239 112.947 58.8966L158.754 34.1573C162.502 32.1329 166.18 36.9441 163.243 40.0303L127.356 77.7447C125.431 79.7682 126.32 83.1114 128.996 83.9107L178.88 98.8075C182.962 100.027 182.161 106.029 177.902 106.135L125.858 107.427C123.065 107.496 121.33 110.489 122.657 112.947L147.397 158.754C149.421 162.502 144.61 166.18 141.524 163.243L103.809 127.356C101.786 125.431 98.4425 126.32 97.6433 128.996L82.7465 178.88C81.5274 182.962 75.5246 182.161 75.4189 177.902L74.1269 125.858C74.0576 123.065 71.0647 121.33 68.607 122.657L22.8004 147.397C19.052 149.421 15.374 144.61 18.3106 141.524L54.1979 103.809C56.1234 101.786 55.234 98.4425 52.5576 97.6433L2.67415 82.7465C-1.40784 81.5274 -0.60662 75.5246 3.6522 75.4189L55.6964 74.1269C58.4888 74.0576 60.2239 71.0647 58.8966 68.607L34.1573 22.8004C32.1329 19.052 36.9441 15.374 40.0303 18.3106L77.7447 54.1979C79.7682 56.1234 83.1114 55.234 83.9107 52.5576L98.8075 2.67415Z"
+                    />
+                  </svg>
+                </span>
+                <span class="landing-center-ui">
+                  <span class="landing-terminal-cursor landing-terminal-cursor--idle" aria-hidden="true"></span>
+                  <span class="landing-launch-btn">
+                    <span class="landing-launch-btn-label">Launch Portfolio</span><span class="landing-terminal-cursor landing-terminal-cursor--inline" aria-hidden="true"></span>
+                  </span>
+                </span>
+              </span>
+            </a>
+          </div>
+
+          <div class="landing-meta landing-meta--bottom">
+            <div class="meta-item landing-meta-item landing-meta-item--left">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Current company</span>
+              </div>
+              <span class="text-caption meta-value">Medtronic</span>
+            </div>
+            <div class="meta-item landing-meta-item landing-meta-item--right">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Current role</span>
+              </div>
+              <span class="text-caption meta-value">Principal UX / UI Designer</span>
+            </div>
+          </div>
+        </main>
+
+        <div class="footer-shell" id="footer-shell">
+          <footer class="footer">
+            <div class="footer-left">
+              <div class="footer-copyright-group">
+                <button type="button" class="footer-copyright-btn" aria-label="Copyright">
+                  <img src="assets/copyright.svg" alt="" class="footer-copyright-btn-icon" width="15" height="15" decoding="async" aria-hidden="true" />
+                </button>
+                <span class="text-caption text-display footer-year">2026</span>
+              </div>
+              <div class="theme-toggle-wrap">
+                <button
+                  type="button"
+                  class="theme-toggle"
+                  id="theme-toggle"
+                  aria-describedby="theme-toggle-tooltip"
+                  aria-label="Switch to light mode"
+                >
+                  <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
+                    <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
+                  </span>
+                  <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
+                    <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
+                  </span>
+                </button>
+              </div>
+            </div>
+            <div class="footer-right">
+              <a href="#" class="text-caption footer-link footer-link--download">
+                <span class="download-icon-stack" aria-hidden="true">
+                  <svg class="download-icon" width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+                    <g class="download-icon__tray">
+                      <path d="M1.5 12.5V15h11V12.5" />
+                    </g>
+                    <g class="download-icon__arrow">
+                      <path d="M7 1.5v8" />
+                      <path d="M4 6.5l3 3 3-3" />
+                    </g>
+                  </svg>
+                </span>
+                Resume PDF
+              </a>
+              <a href="#" class="text-caption footer-link footer-link--download">
+                <span class="download-icon-stack" aria-hidden="true">
+                  <svg class="download-icon" width="14" height="16" viewBox="0 0 14 16" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+                    <g class="download-icon__tray">
+                      <path d="M1.5 12.5V15h11V12.5" />
+                    </g>
+                    <g class="download-icon__arrow">
+                      <path d="M7 1.5v8" />
+                      <path d="M4 6.5l3 3 3-3" />
+                    </g>
+                  </svg>
+                </span>
+                Capabilities Deck
+              </a>
+              <a href="https://www.linkedin.com/in/ted-pioli-7216509b" class="text-caption footer-link linkedin" target="_blank" rel="noopener" aria-label="LinkedIn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                  <circle cx="4" cy="4" r="2"/>
+                </svg>
+              </a>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
+
+    <script src="cursor.js"></script>
+    <script src="landing.js"></script>
+    <script src="about.js"></script>
+  </body>
+</html>

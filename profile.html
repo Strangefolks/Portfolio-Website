@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About — tedp.io</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script>
+      (function () {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+      })();
+    </script>
+    <script src="entry-guard.js"></script>
+  </head>
+  <body class="profile-page is-profile-enter-pending">
+    <div class="site-grain" aria-hidden="true"></div>
+    <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
+      <span class="cursor-dot-label text-label">Copy</span>
+    </div>
+    <div class="page-wrapper">
+      <div class="top-banner-shell" id="top-banner-shell">
+        <div class="top-banner-marquee" id="top-banner-marquee">
+          <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+        </div>
+      </div>
+      <div class="app app--profile">
+        <button
+          type="button"
+          class="top-banner-reveal-edge"
+          id="top-banner-reveal-edge"
+          hidden
+          aria-label="Show announcement banner"
+        ></button>
+        <div class="profile-layout profile-layout--from-right">
+          <div class="profile-layer profile-layer--black">
+            <div class="profile-lockup profile-lockup--right">
+              <div class="meta-item">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">About</span>
+                </div>
+                <span class="text-ui-sm meta-value">Principal UX/UI Designer</span>
+              </div>
+            </div>
+
+            <main class="profile-panel-right" id="profile-panel-right-scroll">
+              <div class="profile-content">
+                <h1
+                  class="text-title project-title profile-name"
+                  data-title-source="Ted Pioli"
+                  aria-label="Ted Pioli"
+                >
+                  <span class="project-title-line">
+                    <span class="project-title-line__text" aria-hidden="true">tED</span>
+                  </span>
+                  <span class="project-title-line">
+                    <span class="project-title-line__text" aria-hidden="true">PIOLi</span>
+                  </span>
+                </h1>
+
+                <div class="profile-rule" aria-hidden="true"></div>
+
+                <div class="profile-details-grid metadata-row metadata-row--full">
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label">Current Title</span>
+                    </div>
+                    <span class="text-ui-sm meta-value">Principal UX/UI Designer</span>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label">Current Company</span>
+                    </div>
+                    <span class="text-ui-sm meta-value">Medtronic | Altera™</span>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label">Industry</span>
+                    </div>
+                    <span class="text-ui-sm meta-value">Med-tech | Cardiovascular | Robotics</span>
+                  </div>
+                </div>
+
+                <div class="profile-rule" aria-hidden="true"></div>
+
+                <div class="profile-skills-grid metadata-row metadata-row--full">
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label" id="profile-skills-heading">Skills / Services</span>
+                    </div>
+                    <div class="meta-value profile-skill-values">
+                      <ul class="profile-skill-list">
+                        <li>UX / UI Design</li>
+                        <li>Branding</li>
+                        <li>Visual Design</li>
+                        <li>Packaging Systems</li>
+                        <li>Embedded UIs</li>
+                        <li>Photography</li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label" id="profile-focus-heading">Focus</span>
+                    </div>
+                    <div class="meta-value profile-skill-values">
+                      <ul class="profile-skill-list profile-skill-list--focus">
+                        <li>Emerging Technology</li>
+                        <li>Med-tech</li>
+                        <li>Complex Tooling</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-rule" aria-hidden="true"></div>
+
+                <section class="profile-patent" aria-labelledby="profile-patent-heading">
+                  <div class="profile-patent-icon" aria-hidden="true">
+                    <div class="profile-patent-mark">
+                      <span class="profile-patent-mark-frame" aria-hidden="true"></span>
+                      <img
+                        class="profile-patent-mark-icon"
+                        src="assets/patent%20icon.svg"
+                        alt=""
+                        width="34"
+                        height="34"
+                        decoding="async"
+                      />
+                    </div>
+                  </div>
+                  <div class="profile-patent-copy">
+                    <p class="text-label profile-patent-label" id="profile-patent-heading">Patent</p>
+                    <p class="profile-patent-id">WO2024097162A1</p>
+                    <p class="text-ui-sm profile-patent-desc">
+                      Systems Including A Graphical User Interface For A Surgical Robotic System
+                    </p>
+                  </div>
+                </section>
+
+                <div class="profile-rule" aria-hidden="true"></div>
+
+                <section class="profile-story" aria-label="Biography">
+                  <section class="profile-story-chapter" id="profile-chapter-summary">
+                    <h2 class="profile-story-chapter-title">Summary</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        I am a principal UX/UI designer working where clinical reality, hardware constraints, and interface craft meet. The through-line is legibility under pressure — making complex systems feel oriented rather than overwhelming, whether the surface is a surgical console, a cardiovascular platform, or a brand system that has to hold together across touchpoints.
+                      </p>
+                      <p>
+                        This portfolio is a working archive of that range. Some cases are public, others stay behind a gate. What follows is less a résumé than a set of chapters: where the work is pointed now, how I got here, and the places that shaped the practice.
+                      </p>
+                    </div>
+                    <figure class="profile-story-photo">
+                      <img
+                        src="assets/drawing%20portrait.png"
+                        alt="Ted Pioli sketching at a desk in a home studio"
+                        width="1200"
+                        height="800"
+                        decoding="async"
+                      />
+                    </figure>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-focus">
+                    <h2 class="profile-story-chapter-title">My Current Focus</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        At Medtronic, most of my energy goes toward Altera™ and related cardiovascular programs — translating clinical constraints, engineering realities, and regulatory caution into interfaces teams can actually ship. The work is less about decoration than orientation: where am I in the procedure, what changed, and what needs attention next.
+                      </p>
+                      <p>
+                        Emerging technology is the other half of the lens. I am most interested when a product is still finding its shape — when the design problem includes education, trust, and the slow work of making a new tool feel inevitable rather than intimidating.
+                      </p>
+                    </div>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-story">
+                    <h2 class="profile-story-chapter-title">My Story</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        The practice sits at the intersection of product design, visual systems, and the kind of complex tooling that only shows its value after months inside a real workflow. Most days that means surgical robotics, cardiovascular platforms, and embedded UIs that have to perform when the room is loud and the stakes are high.
+                      </p>
+                      <p>
+                        Studio craft and in-house product work feed each other. Sketching, photography, and packaging still inform how I think about hierarchy and materiality, even when the deliverable is a screen inside an operating environment. I like projects where brand, hardware, and software have to agree.
+                      </p>
+                    </div>
+                    <figure class="profile-story-photo profile-story-photo--texture">
+                      <img
+                        src="assets/about-texture.png"
+                        alt="Textured studio surface with tools and paper"
+                        width="1600"
+                        height="1200"
+                        decoding="async"
+                      />
+                    </figure>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-childhood">
+                    <h2 class="profile-story-chapter-title">Childhood</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        I grew up paying attention to how things were made — taking apart radios, redrawing logos from memory, and noticing when a package or sign felt confident versus careless. It was not a straight line to design school, but the habit of looking closely at objects and interfaces started early.
+                      </p>
+                      <p>
+                        Family road trips, basement workshops, and long stretches of drawing at the kitchen table taught me that making is a form of thinking. That still shows up in how I work: sketch first, refine in context, and treat the hand as a legitimate research tool.
+                      </p>
+                    </div>
+                    <figure class="profile-story-photo profile-story-photo--texture profile-story-photo--crop-top">
+                      <img
+                        src="assets/about-texture.png"
+                        alt="Close view of sketchbook pages and pencils"
+                        width="1600"
+                        height="1200"
+                        decoding="async"
+                      />
+                    </figure>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-design-school">
+                    <h2 class="profile-story-chapter-title">Design School</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        Formal training sharpened the instinct into a discipline: typography, systems thinking, critique culture, and the uncomfortable but useful practice of defending ideas in public. School is where packaging, identity, and interaction stopped feeling like separate hobbies and became one language.
+                      </p>
+                      <p>
+                        The best assignments were the ones with real constraints — limited palettes, awkward formats, clients who changed their minds. That rhythm prepared me for product work more than any single class title did.
+                      </p>
+                    </div>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-boston">
+                    <h2 class="profile-story-chapter-title">Boston</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        Boston layered agency life, studio nights, and the density of a city that takes craft seriously. It is where client work, side projects, and long conversations about what good design owes its audience all collided — med-tech adjacent work included, long before the current role.
+                      </p>
+                      <p>
+                        The city taught pace: fast feedback, direct critique, and the expectation that visual work should survive contact with engineering and business reality, not just a portfolio slide.
+                      </p>
+                    </div>
+                    <figure class="profile-story-photo profile-story-photo--texture profile-story-photo--crop-center">
+                      <img
+                        src="assets/about-texture.png"
+                        alt="Urban texture and architectural detail in Boston"
+                        width="1600"
+                        height="1200"
+                        decoding="async"
+                      />
+                    </figure>
+                  </section>
+
+                  <section class="profile-story-chapter" id="profile-chapter-maynard">
+                    <h2 class="profile-story-chapter-title">Maynard</h2>
+                    <div class="profile-story-body">
+                      <p>
+                        Maynard is the quieter counterweight — studio space, slower mornings, and room to photograph, sketch, and prototype without the constant pull of a commute. It is where personal work and portfolio thinking get the time they rarely receive during a sprint.
+                      </p>
+                      <p>
+                        If something here resonates, reach out. I am always open to thoughtful collaborations and hard problems worth solving carefully — especially when the answer has to work in the room, not just on the wall.
+                      </p>
+                    </div>
+                  </section>
+                </section>
+              </div>
+            </main>
+          </div>
+
+          <div class="profile-layer profile-layer--blue">
+            <div class="profile-lockup profile-lockup--left">
+              <div class="meta-item">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">photographer</span>
+                </div>
+                <span class="text-ui-sm meta-value">Jory Block</span>
+              </div>
+            </div>
+
+            <aside class="profile-panel-left" aria-label="Portrait">
+              <div class="profile-portrait-stack">
+                <div class="profile-burst-bg" aria-hidden="true">
+                  <img
+                    class="profile-burst-art"
+                    src="assets/about%20page%20large%20burst.svg?v=1781924748"
+                    alt=""
+                    width="707"
+                    height="1170"
+                    decoding="async"
+                  />
+                </div>
+                <div class="profile-portrait-card">
+                  <img
+                    class="profile-portrait-photo"
+                    src="assets/headshot%20about%20page.png"
+                    alt=""
+                    width="800"
+                    height="1000"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <a
+            href="home.html"
+            class="header-shade-close profile-close"
+            aria-label="Close and return to portfolio"
+          >
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <script src="cursor.js"></script>
+    <script src="marquee.js"></script>
+    <script src="scrollbar.js"></script>
+    <script src="profile.js"></script>
+  </body>
+</html>
