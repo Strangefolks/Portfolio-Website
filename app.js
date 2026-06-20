@@ -3011,6 +3011,27 @@ projectLockPasswordEl?.addEventListener('keydown', (e) => {
 
 initTheme();
 const refreshCursor = initCustomCursor();
+
+function initMobileBrowserUiInset() {
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+
+  const sync = () => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const obscured = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+    const inset = Math.max(56, Math.round(obscured));
+    document.documentElement.style.setProperty('--mobile-browser-ui-inset', `${inset}px`);
+  };
+
+  sync();
+  window.visualViewport?.addEventListener('resize', sync);
+  window.visualViewport?.addEventListener('scroll', sync);
+  window.addEventListener('resize', sync);
+  window.addEventListener('orientationchange', sync);
+}
+
+initMobileBrowserUiInset();
 initEmailLink(refreshCursor);
 renderProjectList();
 selectProject('affera');

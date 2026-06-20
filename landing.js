@@ -426,8 +426,21 @@ function setLandingExpanded(link, expanded) {
   if (expanded) {
     updateLandingBurstAnchor(link);
     prefetchPortfolio();
+  } else {
+    setLandingLaunchReady(false);
   }
   document.body.classList.toggle('is-landing-expanded', expanded);
+}
+
+function isTouchLandingUi() {
+  return (
+    !window.matchMedia('(hover: hover) and (pointer: fine)').matches
+    || window.matchMedia('(max-width: 560px)').matches
+  );
+}
+
+function setLandingLaunchReady(enabled) {
+  document.body.classList.toggle('is-landing-launch-ready', enabled);
 }
 
 function initLandingHero() {
@@ -435,6 +448,8 @@ function initLandingHero() {
   if (!link) return;
 
   initLandingBurstAnchor(link);
+
+  if (isTouchLandingUi()) return;
 
   link.addEventListener('mouseenter', () => setLandingExpanded(link, true));
   link.addEventListener('mouseleave', () => setLandingExpanded(link, false));
@@ -449,21 +464,59 @@ function initLandingTransition() {
   const link = document.querySelector('.landing-starburst-link');
   if (!link) return;
 
-  const isTouchLanding = !window.matchMedia('(hover: hover)').matches;
+  const isTouchLanding = isTouchLandingUi();
   const launchBtn = link.querySelector('.landing-launch-btn');
+  const href = link.getAttribute('href') || 'home.html';
+  let touchExpandLockUntil = 0;
+
+  const proceedToPortfolio = () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      navigateToPortfolio(href);
+      return;
+    }
+
+    void playLandingExit(href, link);
+  };
+
+  if (isTouchLanding) {
+    link.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+      },
+      true
+    );
+
+    link.addEventListener('touchend', (event) => {
+      if (launchBtn && (launchBtn === event.target || launchBtn.contains(event.target))) return;
+
+      event.preventDefault();
+      if (document.body.classList.contains('is-landing-expanded')) return;
+
+      setLandingExpanded(link, true);
+      setLandingLaunchReady(false);
+      touchExpandLockUntil = Date.now() + 420;
+      window.setTimeout(() => setLandingLaunchReady(true), 420);
+    });
+
+    launchBtn?.addEventListener('touchend', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      if (Date.now() < touchExpandLockUntil) return;
+      if (!document.body.classList.contains('is-landing-expanded')) return;
+      proceedToPortfolio();
+    });
+
+    launchBtn?.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+
+    return;
+  }
 
   link.addEventListener('click', (event) => {
     event.preventDefault();
-    const href = link.getAttribute('href') || 'home.html';
-
-    if (isTouchLanding && !document.body.classList.contains('is-landing-expanded')) {
-      setLandingExpanded(link, true);
-      return;
-    }
-
-    if (isTouchLanding && launchBtn && !launchBtn.contains(event.target)) {
-      return;
-    }
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       navigateToPortfolio(href);
@@ -493,6 +546,27 @@ function initLandingOrbitTextFit() {
 }
 
 initLandingStarburstMorph();
+
+function initMobileBrowserUiInset() {
+  if (!window.matchMedia('(max-width: 560px)').matches) return;
+
+  const sync = () => {
+    const viewport = window.visualViewport;
+    if (!viewport) return;
+
+    const obscured = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
+    const inset = Math.max(56, Math.round(obscured));
+    document.documentElement.style.setProperty('--mobile-browser-ui-inset', `${inset}px`);
+  };
+
+  sync();
+  window.visualViewport?.addEventListener('resize', sync);
+  window.visualViewport?.addEventListener('scroll', sync);
+  window.addEventListener('resize', sync);
+  window.addEventListener('orientationchange', sync);
+}
+
+initMobileBrowserUiInset();
 initLandingHero();
 initLandingTransition();
 initLandingMetaAlign();
