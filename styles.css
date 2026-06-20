@@ -7560,3 +7560,164 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     opacity: 1 !important;
   }
 }
+
+/* Mobile overrides — must stay last; global about/profile/landing rules above win on cascade order otherwise */
+@media (max-width: 560px) {
+  .about-stage,
+  .profile-stage {
+    inset: 0 !important;
+  }
+
+  .about-stage .app--about,
+  .profile-stage .app--profile,
+  .app--about,
+  .app--profile {
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+
+  .about-layout,
+  .profile-layout {
+    height: 100% !important;
+    max-height: 100% !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 0 !important;
+  }
+
+  .about-layer,
+  .profile-layer {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  .about-layer--blue,
+  .profile-layer--blue {
+    min-height: 100svh !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .about-layer--black,
+  .profile-layer--black {
+    top: auto !important;
+    min-height: auto !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .about-layer--black > .custom-scrollbar-wrap,
+  .profile-layer--black > .custom-scrollbar-wrap {
+    flex: none !important;
+    min-height: 0 !important;
+  }
+
+  .about-panel-right,
+  .profile-panel-right,
+  .about-panel-right.custom-scrollbar-viewport,
+  .profile-panel-right.custom-scrollbar-viewport {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .about-close.header-shade-close,
+  .profile-close.header-shade-close {
+    position: fixed !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    z-index: 140 !important;
+  }
+
+  body.about-page .page-wrapper,
+  body.profile-page .page-wrapper {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding: 0 !important;
+  }
+
+  body.landing-page .page-wrapper {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    box-sizing: border-box;
+  }
+
+  body.landing-page .app {
+    min-height: 100% !important;
+    height: 100% !important;
+  }
+
+  body.landing-page .landing {
+    min-height: 0 !important;
+    height: 100% !important;
+  }
+
+  body.landing-page .landing-meta--bottom {
+    padding: 0 var(--header-padding-inline) calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .sidebar-collapse-btn .sidebar-collapse-icon {
+    display: none !important;
+  }
+
+  body.sidebar-collapsed:not(.sidebar-mobile-panel-expanded):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-opening-active):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn .sidebar-collapse-icon--desktop {
+    display: block !important;
+    width: 14px;
+    height: 14px;
+  }
+
+  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn .sidebar-collapse-icon--close,
+  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn .sidebar-collapse-icon--close,
+  body.sidebar-mobile-panel-closing .sidebar-collapse-btn .sidebar-collapse-icon--close,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn .sidebar-collapse-icon--close {
+    display: block !important;
+    width: 11px;
+    height: 11px;
+  }
+
+  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
+  body.sidebar-mobile-panel-opening .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
+  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
+  body.sidebar-mobile-panel-closing .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
+  body:not(.sidebar-collapsed) .sidebar-collapse-btn .sidebar-collapse-icon--desktop {
+    display: none !important;
+  }
+
+  .mobile-project-nav {
+    position: fixed !important;
+    bottom: calc(var(--footer-height) + env(safe-area-inset-bottom, 0px) + 12px) !important;
+    z-index: 103 !important;
+  }
+
+  body.sidebar-collapsed.is-mobile-chrome-hidden:not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing):not(.sidebar-mobile-panel-expanded) .mobile-project-nav {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-mobile-panel-content {
+    max-height: calc(100dvh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
+  }
+
+  body.sidebar-mobile-panel-opening .project-list-viewport,
+  body.sidebar-mobile-panel-expanded .project-list-viewport,
+  body.sidebar-mobile-panel-closing .project-list-viewport,
+  body:not(.sidebar-collapsed) .project-list-viewport {
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px) !important;
+  }
+
+  .main {
+    padding-bottom: calc(var(--window-padding) + env(safe-area-inset-bottom, 0px) + 56px) !important;
+  }
+}
