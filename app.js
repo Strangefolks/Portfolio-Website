@@ -3020,7 +3020,7 @@ function initMobileBrowserUiInset() {
     if (!viewport) return;
 
     const obscured = Math.max(0, window.innerHeight - viewport.height - viewport.offsetTop);
-    const inset = Math.max(56, Math.round(obscured));
+    const inset = Math.round(obscured);
     document.documentElement.style.setProperty('--mobile-browser-ui-inset', `${inset}px`);
   };
 
