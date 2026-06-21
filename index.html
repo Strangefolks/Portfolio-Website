@@ -3,55 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>tedp.io — Portfolio</title>
+    <title>tedp.io</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620w" />
-    <link rel="preload" href="app.js?v=20250620ac" as="script" />
-    <style>
-      html.is-portfolio-burst-entry .portfolio-entry-reveal {
-        background: transparent;
-      }
-      html.is-portfolio-burst-entry .portfolio-entry-curtain,
-      html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
-        display: none !important;
-      }
-      html.is-portfolio-burst-entry .page-wrapper,
-      html.is-portfolio-burst-entry .app,
-      html.is-portfolio-burst-entry .top-banner-shell,
-      html.is-portfolio-burst-entry .header-shell,
-      html.is-portfolio-burst-entry .footer-shell,
-      html.is-portfolio-burst-entry .sidebar,
-      html.is-portfolio-burst-entry .sidebar-resizer,
-      html.is-portfolio-burst-entry .main,
-      html.is-portfolio-burst-entry .main > .text-overline,
-      html.is-portfolio-burst-entry .project-intro,
-      html.is-portfolio-burst-entry .project-body,
-      html.is-portfolio-burst-entry .project-list,
-      html.is-portfolio-burst-entry .project-list-viewport,
-      html.is-portfolio-burst-entry .body,
-      html.is-portfolio-burst-entry .filters,
-      html.is-portfolio-burst-entry .project-item,
-      html.is-portfolio-burst-entry .detail-header,
-      html.is-portfolio-burst-entry .metadata-area,
-      html.is-portfolio-burst-entry .project-gallery,
-      html.is-portfolio-burst-entry .gallery-item,
-      html.is-portfolio-burst-entry .hero-panel {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-        visibility: visible !important;
-      }
-      @media (min-width: 901px) {
-        html.is-portfolio-burst-entry .sidebar {
-          transform: translateX(0) !important;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css?v=20250620x" />
+    <link rel="preload" href="app.js?v=20250620ad" as="script" />
     <script>
       (function () {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -59,55 +19,20 @@
       })();
     </script>
     <script src="entry-guard.js"></script>
-    <script>
-      (function () {
-        try {
-          if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
-          var root = document.documentElement;
-          var burstReveal = sessionStorage.getItem('portfolio-entry-burst-reveal') === '1';
-          if (burstReveal) {
-            root.classList.add('is-portfolio-burst-entry');
-            var scale = sessionStorage.getItem('portfolio-entry-burst-scale');
-            var burstX = sessionStorage.getItem('portfolio-entry-burst-x');
-            var burstY = sessionStorage.getItem('portfolio-entry-burst-y');
-            if (scale) root.style.setProperty('--entry-burst-scale', scale);
-            if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
-            if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
-          } else {
-            root.classList.add('is-portfolio-entry');
-          }
-        } catch (e) {}
-      })();
-    </script>
   </head>
-  <body class="is-bottom-banner-hidden">
+  <body class="is-bottom-banner-hidden" id="site-body">
     <script>
       (function () {
-        try {
-          if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
-          if (window.matchMedia('(max-width: 560px)').matches) {
-            document.body.classList.add('sidebar-collapsed');
-          }
-        } catch (e) {}
+        var body = document.getElementById('site-body');
+        if (!body) return;
+        var skipLanding = location.hash === '#portfolio';
+        if (!skipLanding) {
+          body.classList.add('landing-page', 'is-top-banner-hidden');
+        } else {
+          document.title = 'tedp.io — Portfolio';
+        }
       })();
     </script>
-    <div class="portfolio-entry-curtain" aria-hidden="true"></div>
-    <div class="portfolio-entry-reveal" aria-hidden="true">
-      <svg
-        class="portfolio-entry-reveal-burst"
-        viewBox="0 0 182 182"
-        width="182"
-        height="182"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path
-          class="portfolio-entry-reveal-burst-path"
-          fill="#005EFF"
-          d="M98.8075 2.67415C100.027 -1.40784 106.029 -0.60662 106.135 3.6522L107.427 55.6964C107.496 58.4888 110.489 60.2239 112.947 58.8966L158.754 34.1573C162.502 32.1329 166.18 36.9441 163.243 40.0303L127.356 77.7447C125.431 79.7682 126.32 83.1114 128.996 83.9107L178.88 98.8075C182.962 100.027 182.161 106.029 177.902 106.135L125.858 107.427C123.065 107.496 121.33 110.489 122.657 112.947L147.397 158.754C149.421 162.502 144.61 166.18 141.524 163.243L103.809 127.356C101.786 125.431 98.4425 126.32 97.6433 128.996L82.7465 178.88C81.5274 182.962 75.5246 182.161 75.4189 177.902L74.1269 125.858C74.0576 123.065 71.0647 121.33 68.607 122.657L22.8004 147.397C19.052 149.421 15.374 144.61 18.3106 141.524L54.1979 103.809C56.1234 101.786 55.234 98.4425 52.5576 97.6433L2.67415 82.7465C-1.40784 81.5274 -0.60662 75.5246 3.6522 75.4189L55.6964 74.1269C58.4888 74.0576 60.2239 71.0647 58.8966 68.607L34.1573 22.8004C32.1329 19.052 36.9441 15.374 40.0303 18.3106L77.7447 54.1979C79.7682 56.1234 83.1114 55.234 83.9107 52.5576L98.8075 2.67415Z"
-        />
-      </svg>
-    </div>
     <div class="site-grain" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
@@ -130,29 +55,52 @@
         <!-- Header -->
         <div class="header-shell" id="header-shell">
           <header class="header">
-          <a href="about.html" class="logo" aria-label="About the logo">
-            <span class="logo-stack" aria-hidden="true">
-              <span class="logo-icon-wrap">
-                <span class="logo-icon-bg" aria-hidden="true"></span>
+            <span class="landing-logo" aria-hidden="true">
+              <span class="logo-stack" aria-hidden="true">
+                <span class="logo-icon-wrap">
+                  <span class="logo-icon-bg" aria-hidden="true"></span>
+                  <img
+                    class="logo-part logo-part--icon-mark"
+                    src="assets/logo icon static.svg"
+                    alt=""
+                    width="44"
+                    height="44"
+                    decoding="async"
+                  />
+                </span>
                 <img
-                  class="logo-part logo-part--icon-mark"
-                  src="assets/logo icon static.svg"
+                  class="logo-part logo-part--wordmark"
+                  src="assets/logo text.svg"
                   alt=""
-                  width="44"
-                  height="44"
+                  width="96"
+                  height="25"
                   decoding="async"
                 />
               </span>
-              <img
-                class="logo-part logo-part--wordmark"
-                src="assets/logo text.svg"
-                alt=""
-                width="96"
-                height="25"
-                decoding="async"
-              />
             </span>
-          </a>
+            <a href="about.html" class="logo" aria-label="About the logo">
+              <span class="logo-stack" aria-hidden="true">
+                <span class="logo-icon-wrap">
+                  <span class="logo-icon-bg" aria-hidden="true"></span>
+                  <img
+                    class="logo-part logo-part--icon-mark"
+                    src="assets/logo icon static.svg"
+                    alt=""
+                    width="44"
+                    height="44"
+                    decoding="async"
+                  />
+                </span>
+                <img
+                  class="logo-part logo-part--wordmark"
+                  src="assets/logo text.svg"
+                  alt=""
+                  width="96"
+                  height="25"
+                  decoding="async"
+                />
+              </span>
+            </a>
           <div class="header-right">
             <a
               href="mailto:hello@tedpio.design"
@@ -175,12 +123,106 @@
               </span>
               <span class="email-link-text text-ui-sm" aria-live="polite">hello@tedpio.design</span>
             </a>
+            <div class="avatar landing-avatar">
+              <img src="assets/avatar.png" alt="Profile" width="39" height="39" decoding="async" />
+            </div>
             <button type="button" class="avatar profile-avatar-trigger" id="profile-avatar-trigger" aria-label="About Ted Pioli">
               <img src="assets/avatar.png" alt="" width="39" height="39" decoding="async" />
             </button>
           </div>
         </header>
         </div>
+
+        <main class="landing" aria-label="Enter portfolio">
+          <div class="landing-meta landing-meta--top">
+            <div class="meta-item landing-meta-item landing-meta-item--left">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Site</span>
+              </div>
+              <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
+            </div>
+            <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Location</span>
+              </div>
+              <span class="landing-meta-location-icon" aria-hidden="true">
+                <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
+                  <path fill="currentColor" d="M6 0C2.69 0 0 2.69 0 6c0 4.2 6 8 6 8s6-3.8 6-8c0-3.31-2.69-6-6-6zm0 8.25a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/>
+                </svg>
+              </span>
+              <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
+            </div>
+          </div>
+
+          <div class="landing-hero">
+            <div class="landing-orbit" aria-hidden="true">
+              <svg class="landing-orbit-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+                <circle class="landing-orbit-ring landing-orbit-ring--outer" cx="250" cy="250" r="206" />
+                <circle class="landing-orbit-ring landing-orbit-ring--inner" cx="250" cy="250" r="186" />
+                <defs>
+                  <path
+                    id="landing-orbit-text-path"
+                    d="M 250,250 m 0,-196 a 196,196 0 1,1 0,392 a 196,196 0 1,1 0,-392"
+                  />
+                </defs>
+                <g class="landing-orbit-text-rotator">
+                  <text class="landing-orbit-text" dominant-baseline="central">
+                    <textPath href="#landing-orbit-text-path" startOffset="0%" dominant-baseline="central">
+                      · I'M A DESIGNER. I BRING IDEAS TO LIFE &amp; INFLUENCE CREATIVE ENDEAVORS IN A THOUGHTFUL &amp; PRAGMATIC WAY. I'M GOOD AT NAVIGATING FLEDGLING CONCEPTS WITHOUT A LOT OF STRUCTURE. I CAN HELP THINGS FEEL STRUCTURED &amp; ENJOYABLE
+                    </textPath>
+                  </text>
+                </g>
+              </svg>
+            </div>
+
+            <a href="#portfolio" class="landing-starburst-link" id="landing-starburst-link" aria-label="Launch portfolio">
+              <span class="landing-starburst-stage">
+                <span class="landing-starburst-stack">
+                  <span class="landing-starburst-fill" aria-hidden="true"></span>
+                  <svg
+                    class="landing-starburst"
+                    viewBox="0 0 182 182"
+                    width="182"
+                    height="182"
+                    aria-hidden="true"
+                    focusable="false"
+                  >
+                    <path
+                      class="landing-starburst-path"
+                      fill="#005EFF"
+                      d="M98.8075 2.67415C100.027 -1.40784 106.029 -0.60662 106.135 3.6522L107.427 55.6964C107.496 58.4888 110.489 60.2239 112.947 58.8966L158.754 34.1573C162.502 32.1329 166.18 36.9441 163.243 40.0303L127.356 77.7447C125.431 79.7682 126.32 83.1114 128.996 83.9107L178.88 98.8075C182.962 100.027 182.161 106.029 177.902 106.135L125.858 107.427C123.065 107.496 121.33 110.489 122.657 112.947L147.397 158.754C149.421 162.502 144.61 166.18 141.524 163.243L103.809 127.356C101.786 125.431 98.4425 126.32 97.6433 128.996L82.7465 178.88C81.5274 182.962 75.5246 182.161 75.4189 177.902L74.1269 125.858C74.0576 123.065 71.0647 121.33 68.607 122.657L22.8004 147.397C19.052 149.421 15.374 144.61 18.3106 141.524L54.1979 103.809C56.1234 101.786 55.234 98.4425 52.5576 97.6433L2.67415 82.7465C-1.40784 81.5274 -0.60662 75.5246 3.6522 75.4189L55.6964 74.1269C58.4888 74.0576 60.2239 71.0647 58.8966 68.607L34.1573 22.8004C32.1329 19.052 36.9441 15.374 40.0303 18.3106L77.7447 54.1979C79.7682 56.1234 83.1114 55.234 83.9107 52.5576L98.8075 2.67415Z"
+                    />
+                  </svg>
+                </span>
+                <span class="landing-center-ui">
+                  <span class="landing-terminal-cursor landing-terminal-cursor--idle" aria-hidden="true"></span>
+                  <span class="landing-launch-btn">
+                    <span class="landing-launch-btn-label">Launch Portfolio</span><span class="landing-terminal-cursor landing-terminal-cursor--inline" aria-hidden="true"></span>
+                  </span>
+                </span>
+              </span>
+            </a>
+          </div>
+
+          <div class="landing-meta landing-meta--bottom">
+            <div class="meta-item landing-meta-item landing-meta-item--left">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Current company</span>
+              </div>
+              <span class="text-caption meta-value">Medtronic</span>
+            </div>
+            <div class="meta-item landing-meta-item landing-meta-item--right">
+              <div class="meta-label-row">
+                <span class="meta-dot"></span>
+                <span class="text-label meta-label">Current role</span>
+              </div>
+              <span class="text-caption meta-value">Principal UX / UI Designer</span>
+            </div>
+          </div>
+        </main>
 
         <!-- Body -->
         <div class="body">
@@ -580,6 +622,7 @@
     <script src="about.js"></script>
     <script src="profile.js"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="app.js?v=20250620ac"></script>
+    <script src="landing.js?v=20250620ad"></script>
+    <script src="app.js?v=20250620ad"></script>
   </body>
 </html>

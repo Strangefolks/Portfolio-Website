@@ -2635,12 +2635,15 @@ async function waitForPortfolioContentReady() {
   }
 }
 
+window.__waitForPortfolioContentReady = waitForPortfolioContentReady;
+
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
 async function initPortfolioEntryAnimation() {
   const root = document.documentElement;
+  if (document.body.classList.contains('landing-page')) return;
   const burstReveal = root.classList.contains('is-portfolio-burst-entry');
   if (!root.classList.contains('is-portfolio-entry') && !burstReveal) return;
   let burstScale = null;

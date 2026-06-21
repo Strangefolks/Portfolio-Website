@@ -7029,11 +7029,36 @@ button.profile-avatar-trigger {
 }
 
 /* ── Landing page ── */
-body.landing-page .footer-shell {
+body.landing-page:not(.is-landing-revealing) .body {
+  display: none !important;
+}
+
+body.landing-page .landing {
+  display: grid;
+}
+
+body:not(.landing-page) .landing {
+  display: none !important;
+}
+
+body.landing-page .logo {
   display: none;
 }
 
-body.landing-page .avatar {
+body.landing-page .landing-avatar {
+  display: flex;
+}
+
+body.landing-page .profile-avatar-trigger {
+  display: none;
+}
+
+body:not(.landing-page) .landing-logo,
+body:not(.landing-page) .landing-avatar {
+  display: none !important;
+}
+
+body.landing-page .footer-shell {
   display: none;
 }
 
@@ -7560,6 +7585,38 @@ body.is-landing-launching .landing-orbit,
 body.is-landing-launching .landing-meta {
   opacity: 0;
   visibility: hidden;
+}
+
+/* Same-page reveal: portfolio underneath, landing burst shrinks in place */
+body.is-landing-revealing.landing-page .landing {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: transparent;
+  pointer-events: none;
+}
+
+body.is-landing-revealing.landing-page .body {
+  display: flex !important;
+}
+
+body.is-landing-revealing.landing-page .app,
+body.is-landing-revealing.landing-page .landing {
+  background: transparent;
+}
+
+body.is-landing-revealing.landing-page .landing-meta {
+  display: none;
+}
+
+body.is-landing-shrinking.landing-page.is-landing-expanded .landing-starburst-stack,
+body.is-landing-shrinking .landing-starburst-stack {
+  transform: scale(0) !important;
+  opacity: 0;
+  transition:
+    transform var(--landing-exit-duration) var(--ease-soft),
+    opacity calc(var(--landing-exit-duration) * 0.18) var(--ease-smooth)
+      calc(var(--landing-exit-duration) * 0.82);
 }
 
 body.is-landing-transitioning .cursor-dot {
