@@ -2483,7 +2483,7 @@ body.sidebar-collapsed .project-nav-hint {
 
 .project-intro {
   --detail-title-size: clamp(36px, 8.75cqw, calc(19px * 4));
-  --detail-number-size: calc(var(--detail-title-size) * 0.98);
+  --detail-number-size: calc(calc(19px * 4) * 0.98);
   --detail-grid-gap: 20px;
   --detail-stack-gap: 6px;
   --project-number-spacing-below: calc(var(--detail-stack-gap) * 3);
@@ -2759,10 +2759,6 @@ html:not([data-theme]) .sticky-header {
   color: color-mix(in srgb, var(--project-item-text-muted) 85%, transparent);
   letter-spacing: var(--text-tracking-tight);
   background: var(--project-number-bg);
-  transition:
-    width var(--duration-normal) var(--ease-smooth),
-    height var(--duration-normal) var(--ease-smooth),
-    font-size var(--duration-normal) var(--ease-smooth);
 }
 
 .title-block {
@@ -3270,7 +3266,6 @@ html:not([data-theme]) .sticky-header {
 @container project-intro (max-width: 900px) {
   .project-intro {
     --detail-title-size: clamp(20px, 7.5cqw, calc(16px * 4));
-    --detail-number-size: calc(var(--detail-title-size) * 0.85);
   }
 
   .project-intro .metadata-area--full {
@@ -3331,7 +3326,6 @@ html:not([data-theme]) .sticky-header {
 @container project-intro (max-width: 720px) {
   .project-intro {
     --detail-title-size: clamp(14px, 6cqw, calc(14px * 4));
-    --detail-number-size: calc(var(--detail-title-size) * 0.72);
     grid-template-columns: auto minmax(0, 1fr) auto;
     row-gap: var(--detail-stack-gap);
   }
@@ -3339,9 +3333,6 @@ html:not([data-theme]) .sticky-header {
   .project-intro .project-number {
     grid-column: 1;
     grid-row: 1;
-    width: calc(var(--detail-number-size) * 0.72);
-    height: calc(var(--detail-number-size) * 0.72);
-    --project-number-size: calc(var(--detail-number-size) * 0.72);
   }
 
   .project-intro .title-block {
@@ -4766,7 +4757,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   .sticky-header {
     --sticky-title-size: 16px;
-    --sticky-icon-size: 36px;
   }
 
   .metadata-area--full {
@@ -4843,7 +4833,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     --sticky-header-row-gap: 0;
     --sidebar-mobile-row-height: 64px;
     --mobile-sidebar-collapsed-top: calc(var(--footer-banner-max-height) + var(--header-height));
-    --mobile-project-number-size: 64px;
     --mobile-chrome-hide-duration: 0.35s;
     --mobile-browser-ui-inset: 0px;
     --mobile-chrome-hide-ease: var(--ease-soft);
@@ -5066,7 +5055,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   .sticky-header {
     --sticky-title-size: 13px;
-    --sticky-icon-size: var(--mobile-project-number-size);
     --sticky-header-line: var(--border);
   }
 
@@ -5074,18 +5062,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     align-items: center;
     gap: 10px;
     min-height: 0;
-  }
-
-  .sticky-header__icon {
-    width: var(--mobile-project-number-size);
-    height: var(--mobile-project-number-size);
-    min-width: var(--mobile-project-number-size);
-    min-height: var(--mobile-project-number-size);
-  }
-
-  .sticky-header__icon-svg {
-    width: 32px;
-    height: 32px;
   }
 
   .sticky-header__info {
@@ -5104,26 +5080,18 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   .project-intro {
     --detail-title-size: calc(14px * 4);
-    --detail-number-size: var(--mobile-project-number-size);
     --detail-stack-gap: 12px;
     row-gap: 12px;
     padding-bottom: calc(var(--detail-section-gap) + 8px);
   }
 
   .project-intro .project-number {
-    --project-number-size: var(--mobile-project-number-size);
-    width: var(--mobile-project-number-size);
-    height: var(--mobile-project-number-size);
-    min-width: var(--mobile-project-number-size);
-    min-height: var(--mobile-project-number-size);
-    font-size: calc(var(--mobile-project-number-size) * 0.48);
     font-variant-numeric: tabular-nums;
     letter-spacing: 0.06em;
     text-align: center;
     text-indent: 0.06em;
     padding-inline: 0;
     margin-bottom: var(--project-number-spacing-below);
-    transition: none;
   }
 
   .project-intro .title-block {
