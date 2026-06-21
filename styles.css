@@ -6008,28 +6008,31 @@ body.is-about-layout-measuring .about-layer {
   transition: none !important;
 }
 
-.about-panel-right h1.about-story-title {
+.about-panel-right h1.about-story-title,
+.about-panel-right h1.about-story-title.text-title,
+.about-panel-right h1.about-story-title.project-title {
   margin: 0;
-  font-family: var(--font-project-detail-title);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  font-family: var(--font-project-detail-title) !important;
+  font-weight: 800 !important;
+  font-size: unset;
+  text-transform: uppercase !important;
+  letter-spacing: 0.03em !important;
   display: block;
   width: max-content;
   max-width: none;
   white-space: nowrap;
   overflow: visible;
-  -webkit-box-orient: unset;
-  -webkit-line-clamp: unset;
-  line-clamp: unset;
+  -webkit-box-orient: unset !important;
+  -webkit-line-clamp: unset !important;
+  line-clamp: unset !important;
   word-break: normal;
   overflow-wrap: normal;
-  line-height: 0.82;
+  line-height: 0.82 !important;
   padding-top: 0.04em;
   padding-bottom: 0.04em;
   text-box-trim: trim-both;
   text-box-edge: cap alphabetic;
-  transition: none;
+  transition: none !important;
   color: var(--text-primary);
 }
 
@@ -7260,12 +7263,54 @@ body.landing-page .landing-starburst-stack {
     border-color var(--duration-fast) var(--ease-smooth);
 }
 
-.landing-launch-btn.is-exiting {
-  transform: scaleX(0);
-  opacity: 0;
-  padding-inline: 0;
-  border-width: 0;
+.landing-launch-btn.is-exiting,
+.landing-launch-btn.is-label-exiting {
+  gap: 0;
+  padding: 15px 18px 16px;
+  border-width: 1px;
   pointer-events: none;
+}
+
+.landing-launch-btn.is-label-exiting .landing-launch-btn-label {
+  display: inline-block;
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  margin: 0;
+  transition:
+    max-width 0.24s var(--ease-soft),
+    opacity 0.18s var(--ease-smooth);
+}
+
+.landing-launch-btn.is-cursor-exiting {
+  transform: scale(0);
+  opacity: 0;
+  padding: 0;
+  border-width: 0;
+  transition:
+    transform 0.34s var(--ease-soft),
+    opacity 0.28s var(--ease-smooth),
+    padding 0.24s var(--ease-soft),
+    border-width 0.24s var(--ease-soft);
+}
+
+body.is-landing-exiting-burst .landing-starburst-stack {
+  transform: scale(var(--landing-cover-scale, var(--burst-hover-scale, 35.2)));
+  transform-origin: center center;
+  transition: transform 0.56s var(--ease-soft);
+}
+
+body.is-landing-exiting-burst .landing-orbit,
+body.is-landing-exiting-burst .landing-meta {
+  opacity: 0;
+  visibility: hidden;
+  transition: none;
+}
+
+body.is-landing-launching .landing-launch-btn,
+body.is-landing-launching .landing-terminal-cursor--idle {
+  opacity: 0;
+  visibility: hidden;
 }
 
 .landing-launch-btn:hover,
@@ -7334,6 +7379,7 @@ body.landing-page.is-landing-expanded .landing-starburst-link {
   aspect-ratio: 1;
   max-width: none;
   border-radius: 0;
+  overflow: visible;
 }
 
 body.landing-page.is-landing-expanded .landing-starburst-stage {
@@ -7344,12 +7390,15 @@ body.landing-page.is-landing-expanded .landing-starburst-stage {
   width: 100%;
   height: 100%;
   margin: 0;
+  overflow: visible;
 }
 
 body.landing-page.is-landing-expanded .landing-starburst-stack {
   transform: scale(var(--burst-hover-scale, 35.2));
+  transform-origin: center center;
   z-index: 1;
   pointer-events: none;
+  overflow: visible;
 }
 
 body.landing-page.is-landing-expanded .landing-starburst {
@@ -7426,8 +7475,7 @@ body.is-landing-transitioning {
 }
 
 body.is-landing-launching .landing-orbit,
-body.is-landing-launching .landing-meta,
-body.is-landing-launching .landing-starburst-link {
+body.is-landing-launching .landing-meta {
   opacity: 0;
   visibility: hidden;
 }
@@ -7447,8 +7495,8 @@ body.is-landing-transitioning .cursor-dot {
   position: absolute;
   inset: 0;
   background: var(--brand-blue);
-  opacity: 0;
-  transition: opacity 0.34s var(--ease-smooth) 0.08s;
+  opacity: 1;
+  transition: none;
 }
 
 .landing-transition.is-expanding .landing-transition-fill {
@@ -7489,12 +7537,16 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal {
   pointer-events: none;
 }
 
+html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
+  display: none;
+}
+
 .portfolio-entry-reveal-fill {
   position: absolute;
   inset: 0;
   background: var(--brand-blue);
   opacity: 1;
-  transition: opacity 0.42s var(--ease-smooth) 0.12s;
+  transition: none;
 }
 
 .portfolio-entry-reveal-burst {
@@ -7506,9 +7558,7 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal {
   height: 182px;
   transform: translate(-50%, -50%) scale(var(--entry-burst-scale));
   transform-origin: center center;
-  transition:
-    transform 0.56s var(--ease-soft),
-    opacity 0.34s var(--ease-smooth) 0.08s;
+  transition: transform 0.56s var(--ease-soft);
 }
 
 .portfolio-entry-reveal-burst-path {
@@ -7517,11 +7567,10 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal {
 
 html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-burst {
   transform: translate(-50%, -50%) scale(0);
-  opacity: 0;
 }
 
 html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-fill {
-  opacity: 0;
+  display: none;
 }
 
 html.is-portfolio-burst-entry .main > .text-overline,
@@ -7900,17 +7949,20 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     visibility: hidden !important;
   }
 
-  body.landing-page.is-landing-expanded .landing-starburst-stack {
-    transform: none !important;
-    z-index: 1 !important;
-    pointer-events: none !important;
+  body.landing-page.is-landing-expanded .landing-starburst-link {
+    position: fixed !important;
+    overflow: visible !important;
   }
 
-  body.landing-page.is-landing-expanded .landing-starburst {
-    width: var(--burst-expanded-size, 100vmin) !important;
-    height: auto !important;
-    max-width: none !important;
-    transition: width calc(0.5s / 3) var(--ease-soft) !important;
+  body.landing-page.is-landing-expanded .landing-starburst-stage,
+  body.landing-page.is-landing-expanded .landing-starburst-stack {
+    overflow: visible !important;
+  }
+
+  body.landing-page.is-landing-expanded .landing-starburst-stack {
+    transform: scale(var(--burst-hover-scale, 35.2)) !important;
+    transform-origin: center center !important;
+    transition: transform calc(0.5s / 3) var(--ease-soft) !important;
     pointer-events: none !important;
   }
 
@@ -8025,5 +8077,13 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
 
   .landing-launch-btn:active .landing-terminal-cursor--inline {
     background: var(--brand-blue) !important;
+  }
+
+  .view-toggle-indicator {
+    background: #ffffff !important;
+  }
+
+  .view-toggle-btn[aria-pressed='true'] {
+    background: transparent !important;
   }
 }

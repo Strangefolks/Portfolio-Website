@@ -1313,6 +1313,10 @@ function getProjectListLabel(project) {
   return project.tag ?? project.category;
 }
 
+function isTouchProjectListUi() {
+  return window.matchMedia('(hover: none), (pointer: coarse)').matches;
+}
+
 function renderProjectListItem(project) {
   const icons = getProjectIcons(project);
   const isActive = project.id === selectedId;
@@ -1321,7 +1325,7 @@ function renderProjectListItem(project) {
     : `<span class="text-list project-item-category">${getProjectListLabel(project)}</span>`;
 
   return `
-    <div class="project-item${isActive ? ' active' : ''}${project.icon === 'sketchbook' ? ' project-item--sketchbook' : ''}" data-id="${project.id}" role="button" tabindex="0">
+    <div class="project-item${isActive ? ' active' : ''}${project.icon === 'sketchbook' ? ' project-item--sketchbook' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
       <span class="project-item-label">
         <span class="project-item-icons" aria-hidden="true">
           ${icons.outline}
@@ -1343,7 +1347,21 @@ function renderProjectListItem(project) {
 }
 
 function bindProjectListItems() {
+  const touchUi = isTouchProjectListUi();
+
   projectListEl.querySelectorAll('.project-item').forEach((item) => {
+    if (touchUi) {
+      item.addEventListener(
+        'touchend',
+        (e) => {
+          if (e.target.closest('.project-item-info')) return;
+          e.preventDefault();
+          selectProject(item.dataset.id);
+        },
+        { passive: false }
+      );
+    }
+
     item.addEventListener('click', (e) => {
       if (e.target.closest('.project-item-info')) return;
       selectProject(item.dataset.id);
@@ -2574,7 +2592,7 @@ const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
 const PORTFOLIO_ENTRY_MS = 920;
-const PORTFOLIO_BURST_ENTRY_MS = 920;
+const PORTFOLIO_BURST_ENTRY_MS = 580;
 
 function initPortfolioEntryAnimation() {
   const root = document.documentElement;

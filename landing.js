@@ -156,8 +156,9 @@ initEmailLink(refreshCursor);
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
-const LANDING_LAUNCH_BTN_SHRINK_MS = 300;
-const LANDING_BURST_EXPAND_MS = 520;
+const LANDING_LAUNCH_LABEL_EXIT_MS = 240;
+const LANDING_LAUNCH_CURSOR_EXIT_MS = 560;
+const LANDING_BURST_EXPAND_MS = LANDING_LAUNCH_CURSOR_EXIT_MS;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
 function wait(ms) {
@@ -197,44 +198,23 @@ async function playLandingExit(href, link) {
 
   setLandingExpanded(link, true);
   updateLandingBurstAnchor(link);
+  document.body.classList.add('is-landing-transitioning');
 
-  launchBtn?.classList.add('is-exiting');
+  launchBtn?.classList.add('is-label-exiting');
 
-  await wait(LANDING_LAUNCH_BTN_SHRINK_MS);
+  await wait(LANDING_LAUNCH_LABEL_EXIT_MS);
 
   const rect = starburst.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
   const size = Math.max(rect.width, rect.height, 1);
   const coverScale = (Math.hypot(window.innerWidth, window.innerHeight) / size) * 1.35;
 
-  const overlay = document.createElement('div');
-  overlay.className = 'landing-transition';
-  overlay.setAttribute('aria-hidden', 'true');
-
-  const fill = document.createElement('div');
-  fill.className = 'landing-transition-fill';
-
-  const burst = starburst.cloneNode(true);
-  burst.classList.add('landing-transition-burst');
-  burst.setAttribute('aria-hidden', 'true');
-  burst.style.width = `${size}px`;
-  burst.style.height = `${size}px`;
-  burst.style.left = `${cx}px`;
-  burst.style.top = `${cy}px`;
-
-  overlay.appendChild(fill);
-  overlay.appendChild(burst);
-  document.body.appendChild(overlay);
-  document.body.classList.add('is-landing-transitioning', 'is-landing-launching');
+  link.style.setProperty('--landing-cover-scale', String(coverScale));
+  document.body.classList.add('is-landing-launching', 'is-landing-exiting-burst');
+  launchBtn?.classList.add('is-cursor-exiting');
 
   await new Promise((resolve) => {
     requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        overlay.classList.add('is-active', 'is-expanding');
-        burst.style.transform = `translate(-50%, -50%) scale(${coverScale})`;
-        resolve();
-      });
+      requestAnimationFrame(resolve);
     });
   });
 
@@ -345,18 +325,35 @@ function initLandingStarburstMorph() {
 
   let rafId = 0;
   let isPaused = false;
+  let warpPhase = 0;
+  let rotationPhase = 0;
+  let lastTick = 0;
+  let motionSpeed = 1;
+  let warpSpeed = 1;
+  const MOTION_SPEED_EXPANDED = 4;
+  const WARP_SPEED_EXPANDED = 36;
+  const SPEED_RAMP_RATE = 6;
 
   const tick = (now) => {
     if (!isPaused) {
-      const baseTime = now / 1000;
+      const dt = lastTick ? Math.min(0.05, (now - lastTick) / 1000) : 0;
+      lastTick = now;
+
       const isExpanded = document.body.classList.contains('is-landing-expanded');
-      const hoverMotionSpeed = isExpanded ? 4 : 1;
-      const hoverWarpSpeed = isExpanded ? hoverMotionSpeed * 9 : 1;
+      const targetMotion = isExpanded ? MOTION_SPEED_EXPANDED : 1;
+      const targetWarp = isExpanded ? WARP_SPEED_EXPANDED : 1;
+      const blend = dt > 0 ? 1 - Math.exp(-SPEED_RAMP_RATE * dt) : 0;
+
+      motionSpeed += (targetMotion - motionSpeed) * blend;
+      warpSpeed += (targetWarp - warpSpeed) * blend;
+      warpPhase += dt * warpSpeed;
+      rotationPhase += dt * motionSpeed;
+
       const morphedPath = buildMorphedStarburstPath(
         segments,
-        baseTime * hoverWarpSpeed,
+        warpPhase,
         LANDING_STARBURST_CENTER,
-        baseTime * hoverMotionSpeed
+        rotationPhase
       );
       pathEl.setAttribute('d', morphedPath);
     }
@@ -384,14 +381,21 @@ function updateLandingBurstAnchor(link) {
 
   const rect = link.getBoundingClientRect();
   const landingRect = landing.getBoundingClientRect();
-  const cx = rect.left + rect.width / 2 - landingRect.left;
-  const cy = rect.top + rect.height / 2 - landingRect.top;
+  const useViewportAnchor = isTouchLandingUi();
   const size = Math.max(rect.width, rect.height, 1);
+  const cx = useViewportAnchor
+    ? rect.left + rect.width / 2
+    : rect.left + rect.width / 2 - landingRect.left;
+  const cy = useViewportAnchor
+    ? rect.top + rect.height / 2
+    : rect.top + rect.height / 2 - landingRect.top;
+  const coverWidth = useViewportAnchor ? window.innerWidth : landingRect.width;
+  const coverHeight = useViewportAnchor ? window.innerHeight : landingRect.height;
   const maxDist = Math.max(
     Math.hypot(cx, cy),
-    Math.hypot(landingRect.width - cx, cy),
-    Math.hypot(cx, landingRect.height - cy),
-    Math.hypot(landingRect.width - cx, landingRect.height - cy)
+    Math.hypot(coverWidth - cx, cy),
+    Math.hypot(cx, coverHeight - cy),
+    Math.hypot(coverWidth - cx, coverHeight - cy)
   );
   const scale = (maxDist * 3.479) / size;
 
@@ -427,8 +431,21 @@ function setLandingExpanded(link, expanded) {
   if (expanded) {
     updateLandingBurstAnchor(link);
     prefetchPortfolio();
+    if (isTouchLandingUi()) {
+      if (!document.body.classList.contains('is-landing-expanded')) {
+        requestAnimationFrame(() => {
+          updateLandingBurstAnchor(link);
+          document.body.classList.add('is-landing-expanded');
+        });
+      }
+      return;
+    }
   } else {
     setLandingLaunchReady(false);
+    if (isTouchLandingUi()) {
+      document.body.classList.remove('is-landing-expanded');
+      return;
+    }
   }
   document.body.classList.toggle('is-landing-expanded', expanded);
 }
@@ -529,11 +546,27 @@ function initLandingTransition() {
 }
 
 function initLandingOrbitTextFit() {
+  const svg = document.querySelector('.landing-orbit-svg');
   const path = document.getElementById('landing-orbit-text-path');
   const textPath = document.querySelector('.landing-orbit-text textPath');
+  const outerRing = svg?.querySelector('.landing-orbit-ring--outer');
+  const innerRing = svg?.querySelector('.landing-orbit-ring--inner');
   if (!path || !textPath) return;
 
   const apply = () => {
+    const centerX = 250;
+    const centerY = 250;
+    const outerR = parseFloat(outerRing?.getAttribute('r') || '206');
+    const innerR = parseFloat(innerRing?.getAttribute('r') || '186');
+    const isMobile = window.matchMedia('(max-width: 560px)').matches;
+    const opticalInset = isMobile ? 5.5 : 2;
+    const radius = Math.max(innerR + 2, (outerR + innerR) / 2 - opticalInset);
+
+    path.setAttribute(
+      'd',
+      `M ${centerX},${centerY} m 0,-${radius} a ${radius},${radius} 0 1,1 0,${radius * 2} a ${radius},${radius} 0 1,1 0,-${radius * 2}`
+    );
+
     const length = path.getTotalLength();
     if (length <= 0) return;
     textPath.setAttribute('textLength', String(length));
@@ -541,6 +574,7 @@ function initLandingOrbitTextFit() {
   };
 
   apply();
+  window.addEventListener('resize', apply);
   if (document.fonts?.ready) {
     document.fonts.ready.then(apply);
   }
