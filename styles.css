@@ -2575,7 +2575,7 @@ body.sidebar-collapsed .project-nav-hint {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--sticky-header-line);
+  border: var(--detail-border-width) solid var(--sticky-header-line);
   border-radius: var(--project-number-radius);
   background: var(--project-number-bg);
   color: #ffffff;
@@ -2737,7 +2737,7 @@ html:not([data-theme]) .sticky-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid var(--detail-line);
+  border: var(--detail-border-width) solid var(--detail-line);
   border-radius: var(--project-number-radius);
   font-size: calc(var(--project-number-size) * 0.48);
   font-weight: var(--text-weight-regular);
