@@ -448,6 +448,9 @@ function setLandingExpanded(link, expanded) {
     }
   }
   document.body.classList.toggle('is-landing-expanded', expanded);
+  if (expanded && !isTouchLandingUi()) {
+    setLandingLaunchReady(true);
+  }
 }
 
 function isTouchLandingUi() {

@@ -8059,16 +8059,6 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     color: var(--text-primary);
   }
 
-  .landing-launch-btn:hover {
-    background: transparent;
-    color: #ffffff;
-    border-color: rgba(255, 255, 255, 0.55);
-  }
-
-  .landing-launch-btn:hover .landing-terminal-cursor--inline {
-    background: #ffffff;
-  }
-
   .landing-launch-btn:active {
     background: #ffffff !important;
     color: var(--brand-blue) !important;
@@ -8085,5 +8075,17 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
 
   .view-toggle-btn[aria-pressed='true'] {
     background: transparent !important;
+  }
+}
+
+@media (hover: none) {
+  .landing-launch-btn:hover {
+    background: transparent;
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .landing-launch-btn:hover .landing-terminal-cursor--inline {
+    background: #ffffff;
   }
 }
