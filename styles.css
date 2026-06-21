@@ -1814,7 +1814,9 @@ body.is-resizing *::after {
   gap: 10px;
   min-height: 48px;
   margin: 3px 6px;
-  padding: 11px 12px 10px;
+  padding-inline: 12px;
+  padding-block: calc(11px - var(--project-item-highlight-gap) / 2)
+    calc(10px + var(--project-item-highlight-gap) / 2);
   background: transparent;
   transition: color var(--duration-fast) var(--ease-smooth);
   text-decoration: none;
@@ -1840,7 +1842,7 @@ body.is-resizing *::after {
 .project-item::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 0 0 var(--project-item-highlight-gap) 0;
   border-radius: 8px;
   background: transparent;
   transition: background-color var(--duration-fast) var(--ease-smooth);
@@ -1850,13 +1852,6 @@ body.is-resizing *::after {
 .project-item:hover:not(.active)::before,
 .project-item.active::before {
   background: var(--project-item-hover-bg);
-  inset: 0 0 var(--project-item-highlight-gap) 0;
-}
-
-.project-item:hover:not(.active),
-.project-item.active {
-  padding-block: calc(11px - var(--project-item-highlight-gap) / 2)
-    calc(10px + var(--project-item-highlight-gap) / 2);
 }
 
 .project-item.active::before {
@@ -1998,17 +1993,12 @@ html:not([data-theme]) .project-number {
 
 .project-item-text {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   flex: 1;
   min-width: 0;
   gap: 0.45em;
   overflow-x: hidden;
   overflow-y: visible;
-}
-
-.project-item:hover:not(.active) .project-item-text,
-.project-item.active .project-item-text {
-  align-items: center;
 }
 
 .project-item-name,
