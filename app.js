@@ -1812,6 +1812,7 @@ const SIDEBAR_SNAP_THRESHOLD = 10;
 const SIDEBAR_SNAP_ESCAPE = 10;
 const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 const SIDEBAR_COLLAPSE_MQ = window.matchMedia('(min-width: 901px)');
+const SIDEBAR_OVERLAY_MQ = window.matchMedia('(max-width: 900px)');
 const SIDEBAR_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
 const SIDEBAR_MOBILE_PANEL_MS = 1000;
 const PROJECT_LABEL_COLLISION_THRESHOLD = 2;
@@ -1989,7 +1990,7 @@ function getSidebarDefaultWidth() {
 function applySidebarDefaultWidthOnLoad() {
   const defaultWidth = refreshSidebarDefaultWidth();
 
-  if (!isSidebarCollapsed() && !isSidebarMobileDropdown()) {
+  if (!isSidebarCollapsed() && !isSidebarOverlayPanel()) {
     setSidebarWidth(defaultWidth);
   }
 
@@ -1998,6 +1999,14 @@ function applySidebarDefaultWidthOnLoad() {
 
 function isSidebarCollapsed() {
   return document.body.classList.contains('sidebar-collapsed');
+}
+
+function isSidebarOverlayPanel() {
+  return SIDEBAR_OVERLAY_MQ.matches;
+}
+
+function isSidebarOverlayPanelOnly() {
+  return isSidebarOverlayPanel() && !isSidebarMobileDropdown();
 }
 
 function isSidebarMobileDropdown() {
@@ -2017,7 +2026,7 @@ function isPortfolioEntryFromLanding() {
 }
 
 function shouldSidebarStartCollapsed() {
-  return isSidebarMobileDropdown();
+  return isSidebarOverlayPanel();
 }
 
 function syncMobileProjectTabLabel() {
@@ -2060,7 +2069,7 @@ function syncSidebarCollapseUi() {
   if (sidebarCollapseBtn) {
     sidebarCollapseBtn.setAttribute(
       'aria-label',
-      isSidebarMobileDropdown()
+      isSidebarMobileDropdown() || isSidebarOverlayPanelOnly()
         ? collapsed
           ? 'Show projects list'
           : 'Hide projects list'
@@ -2071,13 +2080,13 @@ function syncSidebarCollapseUi() {
   }
 
   if (sidebarReopenTab) {
-    sidebarReopenTab.hidden = isSidebarMobileDropdown() || !collapsed;
+    sidebarReopenTab.hidden = isSidebarOverlayPanel() || !collapsed;
     sidebarReopenTab.setAttribute('aria-hidden', sidebarReopenTab.hidden ? 'true' : 'false');
     sidebarReopenTab.setAttribute('aria-label', 'Open projects panel');
   }
 
   if (sidebarResizer) {
-    const disabled = collapsed || !isSidebarCollapseEnabled() || isSidebarMobileDropdown();
+    const disabled = collapsed || !isSidebarCollapseEnabled() || isSidebarOverlayPanel();
     sidebarResizer.setAttribute('aria-hidden', disabled ? 'true' : 'false');
     sidebarResizer.tabIndex = disabled ? -1 : 0;
   }
@@ -2268,12 +2277,53 @@ function toggleSidebarMobileDropdown() {
   }
 }
 
+function collapseSidebarOverlayInstant() {
+  if (isSidebarCollapsed()) return;
+
+  clearMobilePanelAnimationState();
+  document.body.classList.remove('sidebar-mobile-panel-expanded');
+  document.body.classList.add('sidebar-collapsed');
+  setSidebarPanelToggleX(false);
+  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
+  syncSidebarCollapseUi();
+  syncStickyHeaderAlignHeight();
+  projectTitleLastFitWidth = -1;
+  scheduleProjectTitleFit({ force: true });
+  scheduleProjectListLabelCollisionCheck();
+}
+
+function expandSidebarOverlayInstant() {
+  if (!isSidebarCollapsed()) return;
+
+  document.body.classList.remove('sidebar-collapsed');
+  setSidebarPanelToggleX(false);
+  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'false');
+  syncSidebarCollapseUi();
+  syncStickyHeaderAlignHeight();
+  projectTitleLastFitWidth = -1;
+  scheduleProjectTitleFit();
+  scheduleProjectListLabelCollisionCheck();
+}
+
+function toggleSidebarOverlayPanel() {
+  if (isSidebarCollapsed()) {
+    expandSidebarOverlayInstant();
+  } else {
+    collapseSidebarOverlayInstant();
+  }
+}
+
 function collapseSidebar() {
   if (!isSidebarCollapseEnabled() || isSidebarCollapsed()) return;
   if (document.body.classList.contains('sidebar-desktop-closing')) return;
 
   if (isSidebarMobileDropdown()) {
     collapseSidebarMobileAnimated();
+    return;
+  }
+
+  if (isSidebarOverlayPanelOnly()) {
+    collapseSidebarOverlayInstant();
     return;
   }
 
@@ -2316,6 +2366,11 @@ function expandSidebar() {
 
   if (isSidebarMobileDropdown()) {
     expandSidebarMobileAnimated();
+    return;
+  }
+
+  if (isSidebarOverlayPanelOnly()) {
+    expandSidebarOverlayInstant();
     return;
   }
 
@@ -2386,6 +2441,11 @@ function initSidebarCollapse() {
 
     if (isSidebarMobileDropdown()) {
       toggleSidebarMobileDropdown();
+      return;
+    }
+
+    if (isSidebarOverlayPanel()) {
+      toggleSidebarOverlayPanel();
       return;
     }
 

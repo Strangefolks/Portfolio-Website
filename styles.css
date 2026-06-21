@@ -4664,15 +4664,24 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   body:not(.sidebar-collapsed) .sidebar {
     position: fixed;
-    top: var(--header-height);
-    bottom: 0;
+    top: 0;
     left: 0;
     right: 0;
+    bottom: auto;
     width: 100%;
     min-width: 0;
+    height: 100dvh;
+    max-height: 100dvh;
     opacity: 1;
     pointer-events: auto;
     box-shadow: none;
+    z-index: 105;
+  }
+
+  body:not(.sidebar-collapsed) .top-banner-shell,
+  body:not(.sidebar-collapsed) .header-shell {
+    transform: translateY(-100%);
+    pointer-events: none;
   }
 
   .sidebar-resizer {
