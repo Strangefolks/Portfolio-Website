@@ -36,18 +36,11 @@ function initTheme() {
   applyTheme('dark');
 }
 
-const isUnifiedPortfolioShell = Boolean(document.getElementById('project-list'));
-
-function initLandingTheme() {
-  if (!themeToggle) return;
+if (themeToggle) {
   initTheme();
   themeToggle.addEventListener('click', () => {
     applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
   });
-}
-
-if (!isUnifiedPortfolioShell) {
-  initLandingTheme();
 }
 
 function alignLandingLocationWithEmail() {
@@ -157,41 +150,84 @@ function initEmailLink(refreshCursor) {
   });
 }
 
-if (!isUnifiedPortfolioShell) {
-  const refreshCursor = typeof initCustomCursor === 'function' ? initCustomCursor() : undefined;
-  initEmailLink(refreshCursor);
-}
+const refreshCursor = typeof initCustomCursor === 'function' ? initCustomCursor() : undefined;
+initEmailLink(refreshCursor);
 
+const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
+const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
+const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
+const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
+const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
 const LANDING_EXIT_MS = 520;
 const LANDING_BURST_PEAK_HOLD_MS = 100;
-const LANDING_BURST_SHRINK_MS = 520;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-async function waitForPortfolioContentReady() {
-  if (typeof window.__waitForPortfolioContentReady === 'function') {
-    return window.__waitForPortfolioContentReady();
+function waitForPortfolioPrefetchReady() {
+  const iframe = document.getElementById('portfolio-prefetch-frame');
+  if (!iframe) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const cap = window.setTimeout(resolve, 3500);
+    const done = () => {
+      window.clearTimeout(cap);
+      window.setTimeout(resolve, 80);
+    };
+
+    try {
+      if (iframe.contentDocument?.readyState === 'complete') {
+        done();
+        return;
+      }
+    } catch (_) {}
+
+    iframe.addEventListener('load', done, { once: true });
+  });
+}
+
+function prefetchPortfolio() {
+  if (!document.querySelector('link[data-prefetch-portfolio]')) {
+    const prefetchLink = document.createElement('link');
+    prefetchLink.rel = 'prefetch';
+    prefetchLink.href = 'home.html';
+    prefetchLink.setAttribute('data-prefetch-portfolio', '');
+    document.head.appendChild(prefetchLink);
   }
 
-  await (document.fonts?.ready ?? Promise.resolve());
-
-  const gallery = document.getElementById('project-gallery');
-  const projectList = document.getElementById('project-list');
-  const deadline = Date.now() + 3500;
-
-  while (Date.now() < deadline) {
-    const galleryReady = gallery && gallery.children.length > 0;
-    const listReady = projectList && projectList.children.length > 0;
-    if (galleryReady && listReady) break;
-    await wait(16);
+  if (!document.querySelector('link[data-preload-portfolio-app]')) {
+    const preloadApp = document.createElement('link');
+    preloadApp.rel = 'preload';
+    preloadApp.href = 'app.js?v=20250620ac';
+    preloadApp.as = 'script';
+    preloadApp.setAttribute('data-preload-portfolio-app', '');
+    document.head.appendChild(preloadApp);
   }
 
-  void document.body.offsetHeight;
-  for (let i = 0; i < 4; i++) {
-    await new Promise((resolve) => requestAnimationFrame(resolve));
+  if (!window.__portfolioHtmlPrefetched) {
+    window.__portfolioHtmlPrefetched = true;
+    fetch('home.html', { credentials: 'same-origin' }).catch(() => {});
+  }
+
+  if (!document.getElementById('portfolio-prefetch-frame')) {
+    const iframe = document.createElement('iframe');
+    iframe.id = 'portfolio-prefetch-frame';
+    iframe.src = 'home.html';
+    iframe.hidden = true;
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.setAttribute('tabindex', '-1');
+    iframe.setAttribute('title', '');
+    Object.assign(iframe.style, {
+      position: 'absolute',
+      width: '0',
+      height: '0',
+      border: '0',
+      opacity: '0',
+      pointerEvents: 'none',
+    });
+    document.body.appendChild(iframe);
   }
 }
 
@@ -217,67 +253,33 @@ function waitForLandingBurstExpand(link) {
   });
 }
 
-function waitForLandingBurstShrink(link) {
-  const stack = link.querySelector('.landing-starburst-stack');
-  if (!stack) return wait(LANDING_BURST_SHRINK_MS);
-
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      stack.removeEventListener('transitionend', onTransitionEnd);
-      resolve();
-    };
-    const onTransitionEnd = (event) => {
-      if (event.target !== stack || event.propertyName !== 'transform') return;
-      finish();
-    };
-
-    stack.addEventListener('transitionend', onTransitionEnd);
-    window.setTimeout(finish, LANDING_BURST_SHRINK_MS + 80);
-  });
-}
-
-function finishPortfolioReveal() {
-  const body = document.body;
-  if (window.matchMedia('(max-width: 560px)').matches) {
-    body.classList.add('sidebar-collapsed');
-  }
-  body.classList.remove(
-    'landing-page',
-    'is-top-banner-hidden',
-    'is-landing-transitioning',
-    'is-landing-launching',
-    'is-landing-exiting-burst',
-    'is-landing-revealing',
-    'is-landing-shrinking',
-    'is-landing-expanded',
-    'is-landing-launch-ready'
-  );
-
-  const landing = document.querySelector('.landing');
-  if (landing) {
-    landing.hidden = true;
-    landing.setAttribute('aria-hidden', 'true');
-  }
-
+function navigateToPortfolio(
+  href,
+  { burstReveal = false, burstScale = null, burstX = null, burstY = null } = {}
+) {
   try {
-    history.replaceState(null, '', 'home.html');
+    sessionStorage.setItem(PORTFOLIO_ENTRY_KEY, '1');
+    if (burstReveal) {
+      sessionStorage.setItem(PORTFOLIO_BURST_REVEAL_KEY, '1');
+      if (burstScale != null) {
+        sessionStorage.setItem(PORTFOLIO_BURST_SCALE_KEY, String(burstScale));
+      }
+      if (burstX != null) {
+        sessionStorage.setItem(PORTFOLIO_BURST_X_KEY, String(burstX));
+      }
+      if (burstY != null) {
+        sessionStorage.setItem(PORTFOLIO_BURST_Y_KEY, String(burstY));
+      }
+    }
   } catch (_) {}
-
-  document.title = 'tedp.io — Portfolio';
+  window.location.href = href;
 }
 
-function revealPortfolioImmediate() {
-  finishPortfolioReveal();
-}
-
-async function playLandingExit(link) {
+async function playLandingExit(href, link) {
   const launchBtn = link.querySelector('.landing-launch-btn');
   const starburst = link.querySelector('.landing-starburst');
   if (!starburst) {
-    revealPortfolioImmediate();
+    navigateToPortfolio(href);
     return;
   }
 
@@ -307,19 +309,29 @@ async function playLandingExit(link) {
     fill.style.opacity = '0';
   }
 
-  await waitForPortfolioContentReady();
-
-  document.body.classList.add('is-landing-revealing');
-
   await new Promise((resolve) => {
     requestAnimationFrame(() => {
       requestAnimationFrame(resolve);
     });
   });
 
-  document.body.classList.add('is-landing-shrinking');
-  await waitForLandingBurstShrink(link);
-  finishPortfolioReveal();
+  await waitForPortfolioPrefetchReady();
+
+  const stack = link.querySelector('.landing-starburst-stack');
+  const stackRect = stack?.getBoundingClientRect();
+  const burstCenterX = stackRect
+    ? stackRect.left + stackRect.width / 2
+    : window.innerWidth / 2;
+  const burstCenterY = stackRect
+    ? stackRect.top + stackRect.height / 2
+    : window.innerHeight / 2;
+
+  navigateToPortfolio(href, {
+    burstReveal: true,
+    burstScale: coverScale,
+    burstX: burstCenterX,
+    burstY: burstCenterY,
+  });
 }
 
 function parseSvgPath(pathData) {
@@ -529,6 +541,7 @@ function initLandingBurstAnchor(link) {
 function setLandingExpanded(link, expanded) {
   if (expanded) {
     updateLandingBurstAnchor(link);
+    prefetchPortfolio();
     if (isTouchLandingUi()) {
       if (!document.body.classList.contains('is-landing-expanded')) {
         requestAnimationFrame(() => {
@@ -585,15 +598,16 @@ function initLandingTransition() {
 
   const isTouchLanding = isTouchLandingUi();
   const launchBtn = link.querySelector('.landing-launch-btn');
+  const href = link.getAttribute('href') || 'home.html';
   let touchExpandLockUntil = 0;
 
   const proceedToPortfolio = () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      revealPortfolioImmediate();
+      navigateToPortfolio(href);
       return;
     }
 
-    void playLandingExit(link);
+    void playLandingExit(href, link);
   };
 
   if (isTouchLanding) {
@@ -637,75 +651,25 @@ function initLandingTransition() {
     event.preventDefault();
 
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      revealPortfolioImmediate();
+      navigateToPortfolio(href);
       return;
     }
 
-    void playLandingExit(link);
+    void playLandingExit(href, link);
   });
 }
 
 function initLandingOrbitTextFit() {
-  const svg = document.querySelector('.landing-orbit-svg');
-  const path = document.getElementById('landing-orbit-text-path');
-  const textEl = document.querySelector('.landing-orbit-text');
-  const textPath = textEl?.querySelector('textPath');
-  const outerRing = svg?.querySelector('.landing-orbit-ring--outer');
-  const innerRing = svg?.querySelector('.landing-orbit-ring--inner');
-  const orbit = document.querySelector('.landing-orbit');
-  if (!path || !textPath || !textEl || !svg) return;
+  const apply = window.__applyLandingOrbitTextFit;
+  if (typeof apply !== 'function') return;
 
-  const centerX = 250;
-  const centerY = 250;
-  const svgNs = 'http://www.w3.org/2000/svg';
-
-  const buildCirclePath = (radius) =>
-    `M ${centerX},${centerY} m 0,-${radius} a ${radius},${radius} 0 1,1 0,${radius * 2} a ${radius},${radius} 0 1,1 0,-${radius * 2}`;
-
-  const measureGlyphCenterOffset = () => {
-    const styles = getComputedStyle(textEl);
-    const probe = document.createElementNS(svgNs, 'text');
-    probe.setAttribute('font-family', styles.fontFamily);
-    probe.setAttribute('font-size', styles.fontSize);
-    probe.setAttribute('font-weight', styles.fontWeight);
-    probe.setAttribute('letter-spacing', styles.letterSpacing);
-    probe.setAttribute('dominant-baseline', 'central');
-    probe.setAttribute('visibility', 'hidden');
-    probe.setAttribute('x', '0');
-    probe.setAttribute('y', '0');
-    probe.textContent = 'H';
-    svg.appendChild(probe);
-
-    const box = probe.getBBox();
-    svg.removeChild(probe);
-
-    return box.y + box.height / 2;
-  };
-
-  const apply = () => {
-    const outerR = parseFloat(outerRing?.getAttribute('r') || '206');
-    const innerR = parseFloat(innerRing?.getAttribute('r') || '186');
-    const midRadius = (outerR + innerR) / 2;
-    const glyphCenterOffset = measureGlyphCenterOffset();
-    const radius = midRadius + glyphCenterOffset;
-
-    path.setAttribute('d', buildCirclePath(radius));
-    textPath.removeAttribute('dy');
-
-    const length = path.getTotalLength();
-    if (length <= 0) return;
-    textPath.setAttribute('textLength', String(length));
-    textPath.setAttribute('lengthAdjust', 'spacing');
-    orbit?.classList.add('is-orbit-fitted');
-  };
-
-  window.__applyLandingOrbitTextFit = apply;
-  apply();
   window.addEventListener('resize', apply);
   if (document.fonts?.ready) {
     document.fonts.ready.then(apply);
   }
 }
+
+initLandingStarburstMorph();
 
 function initMobileBrowserUiInset() {
   if (!window.matchMedia('(max-width: 560px)').matches) return;
@@ -726,13 +690,8 @@ function initMobileBrowserUiInset() {
   window.addEventListener('orientationchange', sync);
 }
 
-if (!isUnifiedPortfolioShell) {
-  initMobileBrowserUiInset();
-}
-if (document.body.classList.contains('landing-page')) {
-  initLandingStarburstMorph();
-  initLandingHero();
-  initLandingTransition();
-  initLandingMetaAlign();
-  initLandingOrbitTextFit();
-}
+initMobileBrowserUiInset();
+initLandingHero();
+initLandingTransition();
+initLandingMetaAlign();
+initLandingOrbitTextFit();
