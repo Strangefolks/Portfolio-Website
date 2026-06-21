@@ -5836,7 +5836,7 @@ body.is-about-open .about-stage {
   padding: 0;
   box-sizing: border-box;
   background: transparent;
-  border: 1px solid var(--brand-blue);
+  border: none;
   box-shadow: none;
   border-radius: var(--content-radius);
 }
@@ -5852,7 +5852,7 @@ body.is-about-open .about-stage {
   padding: var(--window-padding);
   box-sizing: border-box;
   background: var(--bg-sidebar);
-  border: 1px solid var(--brand-blue);
+  border: none;
   box-shadow: none;
   border-radius: var(--content-radius);
 }
@@ -6369,7 +6369,7 @@ body.is-profile-open .profile-stage {
   padding: 0;
   box-sizing: border-box;
   background: transparent;
-  border: 1px solid var(--brand-blue);
+  border: none;
   box-shadow: none;
   border-radius: var(--content-radius);
 }
@@ -6385,7 +6385,7 @@ body.is-profile-open .profile-stage {
   padding: var(--window-padding);
   box-sizing: border-box;
   background: var(--bg-sidebar);
-  border: 1px solid var(--brand-blue);
+  border: none;
   box-shadow: none;
   border-radius: var(--content-radius);
 }
