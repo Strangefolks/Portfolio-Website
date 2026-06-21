@@ -1187,6 +1187,7 @@ body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mob
   .about-close.header-shade-close:focus-visible,
   .profile-close.header-shade-close:hover,
   .profile-close.header-shade-close:focus-visible {
+    border-color: #000000;
     box-shadow: var(--red-close-btn-focus-ring);
   }
 }
@@ -6149,6 +6150,23 @@ body.is-about-layout-measuring .about-layer {
   pointer-events: auto;
   z-index: 5;
   text-decoration: none;
+  border: 1px solid var(--red-close-btn-bg);
+  background: var(--red-close-btn-bg);
+  color: #ffffff;
+}
+
+.about-close.header-shade-close:hover,
+.about-close.header-shade-close:focus-visible {
+  background: var(--red-close-btn-hover-bg);
+  border-color: var(--red-close-btn-hover-border);
+  color: #ffffff;
+  outline: none;
+}
+
+.about-close.header-shade-close:active,
+.about-close.header-shade-close:hover:active {
+  background: var(--red-close-btn-active-bg);
+  border-color: var(--red-close-btn-active-bg);
 }
 
 @media (max-width: 900px) and (min-width: 561px) {
@@ -8037,8 +8055,11 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
   .sidebar-collapse-btn:hover,
   .sidebar-collapse-btn:focus-visible,
   .filter-pill:hover,
+  .filter-pill:focus,
   .filter-pill:focus-visible,
   .filter-pill.active:hover,
+  .filter-pill.active:focus,
+  .filter-pill.active:focus-visible,
   .project-item:hover,
   .project-item:focus-visible,
   .email-link:hover,
@@ -8091,6 +8112,35 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     background: transparent;
     border-color: var(--border);
     color: var(--text-primary);
+  }
+
+  .filter-pill.active:focus,
+  .filter-pill.active:focus-visible {
+    background: var(--accent) !important;
+    border-color: transparent !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 0 0 1px #000000 !important;
+    outline: none !important;
+  }
+
+  .filter-pill:not(.active):focus,
+  .filter-pill:not(.active):focus-visible {
+    background: transparent !important;
+    border-color: var(--border) !important;
+    color: var(--text-secondary) !important;
+    box-shadow: 0 0 0 1px #000000 !important;
+    outline: none !important;
+  }
+
+  .about-close.header-shade-close:hover,
+  .about-close.header-shade-close:focus-visible,
+  .profile-close.header-shade-close:hover,
+  .profile-close.header-shade-close:focus-visible {
+    background: var(--red-close-btn-bg);
+    border-color: var(--red-close-btn-bg);
+    color: #ffffff;
+    box-shadow: none;
+    outline: none;
   }
 
   .landing-launch-btn:active {
