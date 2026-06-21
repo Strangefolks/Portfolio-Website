@@ -8247,3 +8247,58 @@ body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.head
   left: auto !important;
   bottom: auto !important;
 }
+
+/* ── Mobile pull-to-refresh ── */
+@media (max-width: 560px), (hover: none), (pointer: coarse) {
+  body.has-pull-to-refresh,
+  body.has-pull-to-refresh .main,
+  body.has-pull-to-refresh .project-list,
+  body.has-pull-to-refresh .about-layout,
+  body.has-pull-to-refresh .profile-layout,
+  body.has-pull-to-refresh .landing,
+  body.has-pull-to-refresh .page-wrapper {
+    overscroll-behavior-y: contain;
+  }
+
+  .pull-to-refresh-indicator {
+    --pull-offset: 0px;
+    --pull-progress: 0;
+    position: fixed;
+    top: calc(env(safe-area-inset-top, 0px) + 10px);
+    left: 50%;
+    z-index: 145;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(-50%, calc(-100% - 16px + var(--pull-offset)), 0)
+      scale(calc(0.72 + var(--pull-progress) * 0.28));
+    transition: opacity 0.16s ease, transform 0.16s ease;
+    will-change: transform, opacity;
+  }
+
+  .pull-to-refresh-indicator.is-visible {
+    opacity: calc(0.35 + var(--pull-progress) * 0.65);
+  }
+
+  .pull-to-refresh-indicator.is-snapping {
+    transition:
+      opacity 0.32s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pull-to-refresh-indicator.is-ready .pull-to-refresh-indicator__shape {
+    box-shadow: 0 6px 20px rgba(0, 94, 255, 0.38);
+  }
+
+  .pull-to-refresh-indicator__shape {
+    display: block;
+    width: 44px;
+    height: 22px;
+    border-radius: 999px;
+    background: var(--brand-blue);
+    box-shadow: 0 4px 14px rgba(0, 94, 255, 0.28);
+    transition: box-shadow 0.16s ease;
+  }
+}
