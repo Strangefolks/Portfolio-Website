@@ -8744,3 +8744,18 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     height: var(--theme-toggle-size);
   }
 }
+
+/* Mobile about/profile — fixed close at viewport top-right (black panel is below blue stack) */
+@media (max-width: 560px) {
+  body.is-about-open .about-close.header-shade-close,
+  body.about-page .about-close.header-shade-close,
+  body.is-profile-open .profile-close.header-shade-close,
+  body.profile-page .profile-close.header-shade-close {
+    position: fixed !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 200 !important;
+  }
+}
