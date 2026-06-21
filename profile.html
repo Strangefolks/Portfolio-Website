@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620mobile-number-landing-header" />
+    <link rel="stylesheet" href="styles.css?v=20250620mobile-about-profile-stack" />
     <script>
       (function () {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -20,6 +20,15 @@
     <script src="entry-guard.js"></script>
   </head>
   <body class="profile-page is-profile-enter-pending">
+    <script>
+      (function () {
+        try {
+          if (window.matchMedia('(max-width: 560px)').matches) {
+            document.body.classList.remove('is-profile-enter-pending');
+          }
+        } catch (e) {}
+      })();
+    </script>
     <div class="site-grain" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
@@ -321,6 +330,6 @@
     <script src="marquee.js"></script>
     <script src="scrollbar.js"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="profile.js"></script>
+    <script src="profile.js?v=20250620mobile-about-profile-stack"></script>
   </body>
 </html>

@@ -4933,14 +4933,14 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   .footer {
     --theme-toggle-size: 28px;
-    gap: 0;
+    gap: 16px;
     padding-inline: 12px;
     flex-wrap: nowrap;
     min-width: 0;
   }
 
   .footer-left {
-    gap: 10px;
+    gap: 16px;
     flex-shrink: 0;
   }
 
@@ -4949,7 +4949,7 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
   }
 
   .footer-right {
-    gap: clamp(8px, 2.4vw, 14px);
+    gap: 16px;
     flex: 1 1 auto;
     min-width: 0;
     justify-content: flex-end;
@@ -4958,7 +4958,7 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
   }
 
   .footer-link {
-    gap: 4px;
+    gap: 6px;
     white-space: nowrap;
     flex-shrink: 0;
     font-size: inherit;
@@ -8473,8 +8473,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   }
 }
 
-/* About/profile slide animations — restore horizontal geometry when responsive layout overrides stack panels */
-@media (max-width: 900px) {
+/* About/profile slide animations — restore horizontal geometry when responsive layout overrides stack panels (tablet only; mobile stays stacked) */
+@media (max-width: 900px) and (min-width: 561px) {
   body.is-about-enter-pending .about-layout,
   body.is-about-entering .about-layout,
   body.is-about-exiting .about-layout,
@@ -8590,6 +8590,83 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
 
 }
 
+/* Mobile about/profile — keep vertical stack during enter/exit (no horizontal layout snap) */
+@media (max-width: 560px) {
+  body.is-about-enter-pending .about-layout,
+  body.is-about-entering .about-layout,
+  body.is-about-exiting .about-layout,
+  body.about-page.is-about-enter-pending .about-layout,
+  body.about-page.is-about-entering .about-layout,
+  body.about-page.is-about-exiting .about-layout,
+  body.is-profile-enter-pending .profile-layout,
+  body.is-profile-entering .profile-layout,
+  body.is-profile-exiting .profile-layout,
+  body.profile-page.is-profile-enter-pending .profile-layout,
+  body.profile-page.is-profile-entering .profile-layout,
+  body.profile-page.is-profile-exiting .profile-layout {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  body.is-about-enter-pending .about-layer,
+  body.is-about-entering .about-layer,
+  body.is-about-exiting .about-layer,
+  body.about-page.is-about-enter-pending .about-layer,
+  body.about-page.is-about-entering .about-layer,
+  body.about-page.is-about-exiting .about-layer,
+  body.is-profile-enter-pending .profile-layer,
+  body.is-profile-entering .profile-layer,
+  body.is-profile-exiting .profile-layer,
+  body.profile-page.is-profile-enter-pending .profile-layer,
+  body.profile-page.is-profile-entering .profile-layer,
+  body.profile-page.is-profile-exiting .profile-layer {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    order: unset !important;
+    flex-shrink: unset !important;
+  }
+
+  body.is-about-enter-pending .about-layer--blue,
+  body.is-about-entering .about-layer--blue,
+  body.is-about-exiting .about-layer--blue,
+  body.about-page.is-about-enter-pending .about-layer--blue,
+  body.about-page.is-about-entering .about-layer--blue,
+  body.about-page.is-about-exiting .about-layer--blue,
+  body.is-profile-enter-pending .profile-layer--blue,
+  body.is-profile-entering .profile-layer--blue,
+  body.is-profile-exiting .profile-layer--blue,
+  body.profile-page.is-profile-enter-pending .profile-layer--blue,
+  body.profile-page.is-profile-entering .profile-layer--blue,
+  body.profile-page.is-profile-exiting .profile-layer--blue {
+    min-height: 100svh !important;
+    order: -1 !important;
+    box-shadow: none !important;
+  }
+
+  body.is-about-enter-pending .about-layer--black,
+  body.is-about-entering .about-layer--black,
+  body.is-about-exiting .about-layer--black,
+  body.about-page.is-about-enter-pending .about-layer--black,
+  body.about-page.is-about-entering .about-layer--black,
+  body.about-page.is-about-exiting .about-layer--black,
+  body.is-profile-enter-pending .profile-layer--black,
+  body.is-profile-entering .profile-layer--black,
+  body.is-profile-exiting .profile-layer--black,
+  body.profile-page.is-profile-enter-pending .profile-layer--black,
+  body.profile-page.is-profile-entering .profile-layer--black,
+  body.profile-page.is-profile-exiting .profile-layer--black {
+    order: 1 !important;
+    box-shadow: none !important;
+  }
+}
+
 /* ── Mobile pull-to-refresh ── */
 @media (max-width: 560px), (hover: none), (pointer: coarse) {
   body.has-pull-to-refresh,
@@ -8657,5 +8734,13 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     z-index: 110 !important;
     transform: translateZ(0) !important;
     backface-visibility: hidden;
+  }
+}
+
+/* Mobile footer: LinkedIn icon matches theme-toggle control size */
+@media (max-width: 560px) {
+  .footer-link.linkedin svg {
+    width: var(--theme-toggle-size);
+    height: var(--theme-toggle-size);
   }
 }
