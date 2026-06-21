@@ -3349,7 +3349,7 @@ html:not([data-theme]) .sticky-header {
 }
 
 .meta-item--icon {
-  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-columns: 14px minmax(0, 1fr);
 }
 
 .meta-icon-wrap {
@@ -3359,16 +3359,16 @@ html:not([data-theme]) .sticky-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 14px;
+  height: 14px;
   color: var(--text-muted);
   opacity: 0.82;
 }
 
 .meta-icon {
   display: block;
-  width: 28px;
-  height: 28px;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
 }
 
