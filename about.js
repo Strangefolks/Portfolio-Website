@@ -307,7 +307,9 @@ async function prepareAboutStoryLayout(scope = document) {
   } finally {
     document.body.classList.remove('is-about-layout-measuring');
   }
+}
 
+function revealAboutStoryLayout() {
   document.body.classList.remove('is-about-story-layout-pending');
 }
 
@@ -486,7 +488,9 @@ async function openAboutOverlay() {
     initCustomScrollbars(stage);
     await playAboutEnter(document.body);
     applyAboutStoryLayout(stage, { force: true });
+    revealAboutStoryLayout();
   } finally {
+    revealAboutStoryLayout();
     aboutOverlayBusy = false;
   }
 }
@@ -500,11 +504,16 @@ function initAboutPage() {
   });
 
   void (async () => {
-    await prepareAboutStoryLayout(document);
-    initAboutStoryLayoutObservers(document);
-    initCustomScrollbars();
-    await playAboutEnter(document.body);
-    applyAboutStoryLayout(document, { force: true });
+    try {
+      await prepareAboutStoryLayout(document);
+      initAboutStoryLayoutObservers(document);
+      initCustomScrollbars();
+      await playAboutEnter(document.body);
+      applyAboutStoryLayout(document, { force: true });
+      revealAboutStoryLayout();
+    } finally {
+      revealAboutStoryLayout();
+    }
   })();
 }
 
