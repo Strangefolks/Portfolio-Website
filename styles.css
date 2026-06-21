@@ -5162,9 +5162,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
 
   .about-layer--black > .about-close.header-shade-close,
   .profile-layer--black > .profile-close.header-shade-close {
-    position: fixed;
-    top: calc(12px + env(safe-area-inset-top, 0px));
-    right: calc(12px + env(safe-area-inset-right, 0px));
     z-index: 140;
   }
 
@@ -6185,6 +6182,15 @@ body.is-about-layout-measuring .about-layer {
   width: 100%;
   height: auto;
   margin-bottom: 8px;
+}
+
+.about-layer--black > .about-close.header-shade-close,
+.profile-layer--black > .profile-close.header-shade-close {
+  position: absolute;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  left: auto;
+  bottom: auto;
 }
 
 .about-close.header-shade-close {
@@ -7857,9 +7863,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
 
   .about-layer--black > .about-close.header-shade-close,
   .profile-layer--black > .profile-close.header-shade-close {
-    position: fixed !important;
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
     z-index: 140 !important;
   }
 
@@ -8413,44 +8416,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     transition: none !important;
   }
 
-  body.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
-  body.is-about-entering .about-layer--black > .about-close.header-shade-close,
-  body.is-about-exiting .about-layer--black > .about-close.header-shade-close,
-  body.about-page.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
-  body.about-page.is-about-entering .about-layer--black > .about-close.header-shade-close,
-  body.about-page.is-about-exiting .about-layer--black > .about-close.header-shade-close,
-  body.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
-  body.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
-  body.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close,
-  body.profile-page.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
-  body.profile-page.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
-  body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close {
-    position: absolute !important;
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
-    left: auto !important;
-    bottom: auto !important;
-  }
-}
-
-/* Close buttons travel with panel during about/profile slide (all breakpoints) */
-body.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
-body.is-about-entering .about-layer--black > .about-close.header-shade-close,
-body.is-about-exiting .about-layer--black > .about-close.header-shade-close,
-body.about-page.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
-body.about-page.is-about-entering .about-layer--black > .about-close.header-shade-close,
-body.about-page.is-about-exiting .about-layer--black > .about-close.header-shade-close,
-body.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
-body.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
-body.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close,
-body.profile-page.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
-body.profile-page.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
-body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close {
-  position: absolute !important;
-  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-  right: calc(12px + env(safe-area-inset-right, 0px)) !important;
-  left: auto !important;
-  bottom: auto !important;
 }
 
 /* ── Mobile pull-to-refresh ── */
