@@ -8796,3 +8796,44 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     display: none !important;
   }
 }
+
+/* Mobile projects panel: full viewport height when open */
+@media (max-width: 560px) {
+  body.sidebar-mobile-panel-opening .sidebar,
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar,
+  body.sidebar-mobile-panel-expanded .sidebar,
+  body.sidebar-mobile-panel-closing .sidebar,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar {
+    height: 100vh;
+    height: 100dvh;
+    height: 100svh;
+    min-height: 100vh;
+    min-height: 100dvh;
+    min-height: 100svh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    max-height: 100svh;
+  }
+
+  body.sidebar-mobile-panel-opening .sidebar {
+    top: var(--mobile-sidebar-collapsed-top);
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar,
+  body.sidebar-mobile-panel-expanded .sidebar,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar {
+    top: 0;
+  }
+
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar {
+    top: var(--mobile-sidebar-collapsed-top);
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content {
+    max-height: calc(100vh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
+    max-height: calc(100dvh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
+    max-height: calc(100svh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
+  }
+}

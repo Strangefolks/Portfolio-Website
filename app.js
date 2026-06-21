@@ -2017,7 +2017,7 @@ function isPortfolioEntryFromLanding() {
 }
 
 function shouldSidebarStartCollapsed() {
-  return isSidebarMobileDropdown() && isPortfolioEntryFromLanding();
+  return isSidebarMobileDropdown();
 }
 
 function syncMobileProjectTabLabel() {
