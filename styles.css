@@ -92,6 +92,7 @@
   --red-close-btn-hover-bg: color-mix(in srgb, #ffffff 16%, #ff0000);
   --red-close-btn-hover-border: color-mix(in srgb, #000000 10%, #ff0000);
   --red-close-btn-active-bg: #cc0000;
+  --red-close-btn-outer-border: 0 0 0 1px #000000;
   --red-close-btn-focus-ring: 0 0 0 2px #000000;
   --project-item-text-default: #e4e8ec;
   --project-item-text-muted: #9ca5ae;
@@ -1131,6 +1132,8 @@ html:not([data-theme]) .avatar {
 
 body.sidebar-panel-toggle-x .sidebar-collapse-btn,
 .sketchbook-lightbox__close.header-shade-close,
+.about-close.header-shade-close,
+.profile-close.header-shade-close,
 body.sidebar-mobile-panel-expanded .sidebar-collapse-btn,
 body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn,
 body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn,
@@ -1139,6 +1142,7 @@ body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mob
   border: 1px solid var(--red-close-btn-bg);
   background: var(--red-close-btn-bg);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 body.sidebar-panel-toggle-x .sidebar-collapse-btn:hover,
@@ -1188,7 +1192,7 @@ body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mob
   .profile-close.header-shade-close:hover,
   .profile-close.header-shade-close:focus-visible {
     border-color: #000000;
-    box-shadow: var(--red-close-btn-focus-ring);
+    box-shadow: var(--red-close-btn-outer-border), var(--red-close-btn-focus-ring);
   }
 }
 
@@ -8221,6 +8225,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     outline: none;
   }
 
+  body.sidebar-panel-toggle-x .sidebar-collapse-btn:hover,
+  body.sidebar-panel-toggle-x .sidebar-collapse-btn:focus-visible,
   body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:hover,
   body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:focus-visible,
   body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:hover,
@@ -8232,6 +8238,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     background: var(--red-close-btn-bg);
     border-color: var(--red-close-btn-bg);
     color: #ffffff;
+    box-shadow: var(--red-close-btn-outer-border);
   }
 
   body.sidebar-collapsed:not(.sidebar-mobile-panel-expanded):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-opening-active):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:hover,
@@ -8266,7 +8273,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     background: var(--red-close-btn-bg);
     border-color: var(--red-close-btn-bg);
     color: #ffffff;
-    box-shadow: none;
+    box-shadow: var(--red-close-btn-outer-border);
     outline: none;
   }
 
