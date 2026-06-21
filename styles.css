@@ -6821,34 +6821,35 @@ body.is-profile-exiting .profile-layout {
 }
 
 
-.profile-patent {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 16px 20px;
-  align-items: start;
+.profile-meta-list .meta-item--patent {
+  --meta-patent-mark-size: 50px;
+  grid-template-columns: var(--meta-patent-mark-size) minmax(0, 1fr);
+  column-gap: 20px;
 }
 
-.profile-patent-icon {
-  --profile-patent-mark-size: 50px;
-  width: var(--profile-patent-mark-size);
-  height: var(--profile-patent-mark-size);
+.profile-meta-list .meta-item--patent .meta-patent-icon {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  align-self: start;
+  width: var(--meta-patent-mark-size);
+  height: var(--meta-patent-mark-size);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: calc(
     var(--text-size-overline) * var(--text-leading-snug) + 6px +
-      clamp(28px, 4.5cqw, 42px) / 2 - var(--profile-patent-mark-size) / 2
+      clamp(28px, 4.5cqw, 42px) / 2 - var(--meta-patent-mark-size) / 2
   );
 }
 
-.profile-patent-mark {
+.profile-meta-list .meta-item--patent .meta-patent-mark {
   position: relative;
   flex-shrink: 0;
-  width: var(--profile-patent-mark-size);
-  height: var(--profile-patent-mark-size);
+  width: var(--meta-patent-mark-size);
+  height: var(--meta-patent-mark-size);
 }
 
-.profile-patent-mark-frame {
+.profile-meta-list .meta-item--patent .meta-patent-mark-frame {
   position: absolute;
   inset: 0;
   border: 1px solid var(--detail-line);
@@ -6857,7 +6858,7 @@ body.is-profile-exiting .profile-layout {
   transform: rotate(45deg);
 }
 
-.profile-patent-mark-icon {
+.profile-meta-list .meta-item--patent .meta-patent-mark-icon {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -6867,13 +6868,13 @@ body.is-profile-exiting .profile-layout {
   height: 34px;
 }
 
-.profile-patent-label {
-  margin: 0 0 6px;
-  color: var(--text-muted);
+.profile-meta-list .meta-item--patent .meta-value--patent {
+  display: grid;
+  gap: 8px;
 }
 
-.profile-patent-id {
-  margin: 0 0 8px;
+.profile-meta-list .meta-item--patent .meta-patent-id {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: clamp(28px, 4.5cqw, 42px);
   font-weight: 300;
@@ -6883,7 +6884,7 @@ body.is-profile-exiting .profile-layout {
   color: var(--text-primary);
 }
 
-.profile-patent-desc {
+.profile-meta-list .meta-item--patent .meta-patent-desc {
   margin: 0;
   color: var(--text-secondary);
   max-width: none;
