@@ -23,7 +23,7 @@
   --app-border: rgba(255, 255, 255, 0.04);
   --project-number-bg: rgba(255, 255, 255, 0.02);
   --project-number-border: rgba(255, 255, 255, 0.12);
-  --project-number-radius: 7px;
+  --project-number-radius: 10px;
   --app-shadow: 0 32px 100px rgba(0, 0, 0, 0.4);
   --font-sans: 'Barlow', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
@@ -3345,7 +3345,7 @@ html:not([data-theme]) .sticky-header {
 }
 
 .meta-item--icon {
-  grid-template-columns: 14px minmax(0, 1fr);
+  grid-template-columns: 28px minmax(0, 1fr);
 }
 
 .meta-icon-wrap {
@@ -3355,16 +3355,16 @@ html:not([data-theme]) .sticky-header {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
+  width: 28px;
+  height: 28px;
   color: var(--text-muted);
   opacity: 0.82;
 }
 
 .meta-icon {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 28px;
+  height: 28px;
   flex-shrink: 0;
 }
 
