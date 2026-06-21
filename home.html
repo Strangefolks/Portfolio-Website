@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620y" />
-    <link rel="preload" href="app.js?v=20250620t" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20250620z" />
+    <link rel="preload" href="app.js?v=20250620u" as="script" />
     <style>
       html.is-portfolio-burst-entry .portfolio-entry-reveal {
         background: transparent;
@@ -20,14 +20,23 @@
       html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
         display: none !important;
       }
+      html.is-portfolio-burst-entry .page-wrapper,
+      html.is-portfolio-burst-entry .app,
+      html.is-portfolio-burst-entry .top-banner-shell,
+      html.is-portfolio-burst-entry .header-shell,
+      html.is-portfolio-burst-entry .footer-shell,
       html.is-portfolio-burst-entry .sidebar,
       html.is-portfolio-burst-entry .sidebar-resizer,
+      html.is-portfolio-burst-entry .main,
       html.is-portfolio-burst-entry .main > .text-overline,
       html.is-portfolio-burst-entry .project-intro,
-      html.is-portfolio-burst-entry .project-body {
+      html.is-portfolio-burst-entry .project-body,
+      html.is-portfolio-burst-entry .project-list,
+      html.is-portfolio-burst-entry .project-list-viewport {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
+        visibility: visible !important;
       }
       @media (min-width: 901px) {
         html.is-portfolio-burst-entry .sidebar {
@@ -56,14 +65,6 @@
             if (scale) root.style.setProperty('--entry-burst-scale', scale);
             if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
             if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-              root.dataset.portfolioEntryAnimateAt = String(Date.now());
-              requestAnimationFrame(function () {
-                requestAnimationFrame(function () {
-                  root.classList.add('is-portfolio-entry-animate');
-                });
-              });
-            }
           }
         } catch (e) {}
       })();
@@ -569,6 +570,6 @@
     <script src="about.js"></script>
     <script src="profile.js"></script>
     <script src="pull-to-refresh.js?v=20250620t"></script>
-    <script src="app.js?v=20250620t"></script>
+    <script src="app.js?v=20250620u"></script>
   </body>
 </html>

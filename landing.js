@@ -159,6 +159,7 @@ const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
 const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
 const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
 const LANDING_EXIT_MS = 520;
+const LANDING_BURST_PEAK_HOLD_MS = 100;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
 function wait(ms) {
@@ -177,7 +178,7 @@ function prefetchPortfolio() {
   if (!document.querySelector('link[data-preload-portfolio-app]')) {
     const preloadApp = document.createElement('link');
     preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250620t';
+    preloadApp.href = 'app.js?v=20250620u';
     preloadApp.as = 'script';
     preloadApp.setAttribute('data-preload-portfolio-app', '');
     document.head.appendChild(preloadApp);
@@ -279,6 +280,18 @@ async function playLandingExit(href, link) {
   });
 
   await waitForLandingBurstExpand(link);
+  await wait(LANDING_BURST_PEAK_HOLD_MS);
+
+  const fill = link.querySelector('.landing-starburst-fill');
+  if (fill) {
+    fill.style.opacity = '0';
+  }
+
+  await new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(resolve);
+    });
+  });
 
   const stack = link.querySelector('.landing-starburst-stack');
   const stackRect = stack?.getBoundingClientRect();

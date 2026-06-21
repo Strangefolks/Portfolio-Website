@@ -7245,7 +7245,7 @@ body.landing-page .app {
 }
 
 body.is-landing-exiting-burst .landing-starburst-fill {
-  opacity: 1;
+  opacity: 0;
 }
 
 body.landing-page .landing-starburst-stack {
@@ -7637,14 +7637,23 @@ html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal
       calc(var(--landing-exit-duration) * 0.82);
 }
 
+html.is-portfolio-burst-entry .page-wrapper,
+html.is-portfolio-burst-entry .app,
+html.is-portfolio-burst-entry .top-banner-shell,
+html.is-portfolio-burst-entry .header-shell,
+html.is-portfolio-burst-entry .footer-shell,
 html.is-portfolio-burst-entry .sidebar,
 html.is-portfolio-burst-entry .sidebar-resizer,
+html.is-portfolio-burst-entry .main,
 html.is-portfolio-burst-entry .main > .text-overline,
 html.is-portfolio-burst-entry .project-intro,
-html.is-portfolio-burst-entry .project-body {
+html.is-portfolio-burst-entry .project-body,
+html.is-portfolio-burst-entry .project-list,
+html.is-portfolio-burst-entry .project-list-viewport {
   opacity: 1;
   transform: none;
   transition: none;
+  visibility: visible;
 }
 
 @media (min-width: 901px) {
@@ -7653,7 +7662,7 @@ html.is-portfolio-burst-entry .project-body {
   }
 }
 
-html.is-portfolio-entry .portfolio-entry-curtain {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry) .portfolio-entry-curtain {
   display: block;
   position: fixed;
   inset: 0;
@@ -7663,42 +7672,42 @@ html.is-portfolio-entry .portfolio-entry-curtain {
   opacity: 1;
 }
 
-html.is-portfolio-entry.is-portfolio-entry-animate .portfolio-entry-curtain {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .portfolio-entry-curtain {
   opacity: 0;
   transition: opacity 0.32s var(--ease-smooth) 0.02s;
 }
 
 @media (min-width: 901px) {
-  html.is-portfolio-entry .sidebar {
+  html.is-portfolio-entry:not(.is-portfolio-burst-entry) .sidebar {
     transform: translateX(-100%);
     transition: none;
   }
 
-  html.is-portfolio-entry.is-portfolio-entry-animate .sidebar {
+  html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .sidebar {
     transform: translateX(0);
     transition: transform 0.4s var(--ease-soft) 0.08s;
   }
 
-  html.is-portfolio-entry .sidebar-resizer {
+  html.is-portfolio-entry:not(.is-portfolio-burst-entry) .sidebar-resizer {
     opacity: 0;
     transition: none;
   }
 
-  html.is-portfolio-entry.is-portfolio-entry-animate .sidebar-resizer {
+  html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .sidebar-resizer {
     opacity: 1;
     transition: opacity 0.2s var(--ease-smooth) 0.28s;
   }
 }
 
-html.is-portfolio-entry .main > .text-overline,
-html.is-portfolio-entry .project-intro,
-html.is-portfolio-entry .project-body {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry) .main > .text-overline,
+html.is-portfolio-entry:not(.is-portfolio-burst-entry) .project-intro,
+html.is-portfolio-entry:not(.is-portfolio-burst-entry) .project-body {
   opacity: 0;
   transform: translateY(28px);
   transition: none;
 }
 
-html.is-portfolio-entry.is-portfolio-entry-animate .main > .text-overline {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .main > .text-overline {
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -7706,7 +7715,7 @@ html.is-portfolio-entry.is-portfolio-entry-animate .main > .text-overline {
     transform 0.36s var(--ease-soft) 0.12s;
 }
 
-html.is-portfolio-entry.is-portfolio-entry-animate .project-intro {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .project-intro {
   opacity: 1;
   transform: translateY(0);
   transition:
@@ -7714,7 +7723,7 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-intro {
     transform 0.38s var(--ease-soft) 0.14s;
 }
 
-html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
+html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animate .project-body {
   opacity: 1;
   transform: translateY(0);
   transition:

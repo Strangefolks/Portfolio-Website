@@ -2595,8 +2595,25 @@ const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
 const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
 const PORTFOLIO_ENTRY_MS = 920;
 const PORTFOLIO_BURST_ENTRY_MS = 520;
+const PORTFOLIO_BURST_HOLD_MS = 100;
 
-function initPortfolioEntryAnimation() {
+function waitForLayoutReady() {
+  const fontsReady = document.fonts?.ready ?? Promise.resolve();
+  return fontsReady.then(
+    () =>
+      new Promise((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(resolve);
+        });
+      })
+  );
+}
+
+function wait(ms) {
+  return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+async function initPortfolioEntryAnimation() {
   const root = document.documentElement;
   if (!root.classList.contains('is-portfolio-entry')) return;
 
@@ -2619,6 +2636,8 @@ function initPortfolioEntryAnimation() {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     root.classList.remove('is-portfolio-entry');
     root.classList.remove('is-portfolio-burst-entry');
+    root.classList.remove('is-portfolio-entry-animate');
+    delete root.dataset.portfolioEntryAnimateAt;
     return;
   }
 
@@ -2643,10 +2662,11 @@ function initPortfolioEntryAnimation() {
   };
 
   const duration = burstReveal ? PORTFOLIO_BURST_ENTRY_MS : PORTFOLIO_ENTRY_MS;
-  const startedAt = parseInt(root.dataset.portfolioEntryAnimateAt || '', 10);
-  const elapsed = Number.isFinite(startedAt) ? Date.now() - startedAt : 0;
 
-  if (!root.classList.contains('is-portfolio-entry-animate')) {
+  if (burstReveal) {
+    await waitForLayoutReady();
+    await wait(PORTFOLIO_BURST_HOLD_MS);
+    root.classList.remove('is-portfolio-entry-animate');
     root.dataset.portfolioEntryAnimateAt = String(Date.now());
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
@@ -2657,10 +2677,15 @@ function initPortfolioEntryAnimation() {
     return;
   }
 
-  window.setTimeout(finish, Math.max(0, duration - elapsed));
+  root.classList.remove('is-portfolio-entry-animate');
+  root.dataset.portfolioEntryAnimateAt = String(Date.now());
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      root.classList.add('is-portfolio-entry-animate');
+    });
+  });
+  window.setTimeout(finish, duration);
 }
-
-initPortfolioEntryAnimation();
 initSidebarCollapse();
 initMobileProjectNav();
 
@@ -3085,3 +3110,4 @@ initProjectListLabelCollisionSync();
 initProjectTitleFit();
 initCustomScrollbars();
 initSketchbookLightbox();
+void initPortfolioEntryAnimation();
