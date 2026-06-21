@@ -1510,6 +1510,11 @@ body.is-resizing *::after {
   box-shadow: 0 0 0 1px #000000;
 }
 
+[data-theme='light'] .filter-pill:not(.active) {
+  border-color: #000000;
+  box-shadow: none;
+}
+
 /* 388px = --sidebar-filter-wrap-threshold; literal required — var() in @container size queries is unreliable */
 @container sidebar (max-width: 388px) {
   .filters {
@@ -8321,6 +8326,12 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     color: var(--text-secondary) !important;
     box-shadow: 0 0 0 1px #000000 !important;
     outline: none !important;
+  }
+
+  [data-theme='light'] .filter-pill:not(.active):focus,
+  [data-theme='light'] .filter-pill:not(.active):focus-visible {
+    border-color: #000000 !important;
+    box-shadow: none !important;
   }
 
   .about-close.header-shade-close:hover,
