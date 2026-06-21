@@ -1814,9 +1814,21 @@ body.is-resizing *::after {
   background: var(--project-item-hover-bg);
 }
 
+.project-item.active::before {
+  box-shadow: inset 0 0 0 1px #000000;
+}
+
 .project-item:hover:active::before,
 .project-item.active:active::before {
   background: var(--project-item-pressed-bg);
+}
+
+.project-item.active:active::before {
+  box-shadow: inset 0 0 0 1px #000000;
+}
+
+.project-item.active:focus-visible {
+  outline: none;
 }
 
 .project-item-label,
@@ -8252,6 +8264,16 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     color: #ffffff !important;
     box-shadow: inset 0 0 0 1px #000000 !important;
     outline: none !important;
+  }
+
+  .project-item.active:focus,
+  .project-item.active:focus-visible {
+    outline: none !important;
+  }
+
+  .project-item.active:focus::before,
+  .project-item.active:focus-visible::before {
+    box-shadow: inset 0 0 0 1px #000000 !important;
   }
 
   .filter-pill:not(.active):focus,
