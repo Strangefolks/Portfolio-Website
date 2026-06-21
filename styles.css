@@ -15,6 +15,7 @@
   --border: rgba(255, 255, 255, 0.08);
   --border-subtle: rgba(255, 255, 255, 0.05);
   --text-primary: #f0f0f0;
+  --logo-part-filter: brightness(0) saturate(100%) invert(94%) sepia(3%) saturate(13%) hue-rotate(314deg) brightness(104%) contrast(92%);
   --text-gray: #a8b0b8;
   --text-secondary: var(--text-gray);
   --text-muted: var(--text-gray);
@@ -920,6 +921,21 @@ body.is-bottom-banner-hidden .bottom-banner-reveal-edge:active {
   height: calc(var(--logo-height) * 25 / 44);
   width: auto;
   margin-top: calc(var(--logo-height) * 12 / 44);
+}
+
+[data-theme='dark'] .logo-part--icon-mark,
+[data-theme='dark'] .logo-part--wordmark,
+html:not([data-theme]) .logo-part--icon-mark,
+html:not([data-theme]) .logo-part--wordmark {
+  filter: var(--logo-part-filter);
+  transition: filter var(--duration-fast) var(--ease-smooth);
+}
+
+[data-theme='dark'] .logo:hover .logo-part--icon-mark,
+[data-theme='dark'] .logo:focus-visible .logo-part--icon-mark,
+html:not([data-theme]) .logo:hover .logo-part--icon-mark,
+html:not([data-theme]) .logo:focus-visible .logo-part--icon-mark {
+  filter: brightness(0) invert(1);
 }
 
 [data-theme='light'] .logo-part--icon-mark,
