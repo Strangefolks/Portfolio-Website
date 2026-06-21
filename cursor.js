@@ -171,3 +171,24 @@ function initCustomCursor() {
 
   return () => syncCursorFromPoint(lastPointerX, lastPointerY);
 }
+
+function initTouchHoverFix() {
+  const touchUiMq = window.matchMedia('(hover: none), (pointer: coarse)');
+  if (!touchUiMq.matches) return;
+
+  const BLUR_SELECTOR =
+    '.theme-toggle, .footer-link, .footer-copyright-btn, .filter-pill, .view-toggle-btn, .sidebar-collapse-btn, .sidebar-reopen-tab, .email-link, .mobile-project-nav-btn, .logo';
+
+  document.addEventListener(
+    'click',
+    (event) => {
+      const target = event.target.closest(BLUR_SELECTOR);
+      if (target && typeof target.blur === 'function') {
+        target.blur();
+      }
+    },
+    true
+  );
+}
+
+initTouchHoverFix();
