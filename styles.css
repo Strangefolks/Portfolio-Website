@@ -7115,6 +7115,12 @@ body.landing-page .app {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   dominant-baseline: central;
+  alignment-baseline: central;
+}
+
+.landing-orbit-text textPath {
+  dominant-baseline: central;
+  alignment-baseline: central;
 }
 
 @keyframes landing-orbit-text-rotate {
