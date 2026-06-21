@@ -510,6 +510,7 @@ let selectedId = 'affera';
 
 const projectListEl = document.getElementById('project-list');
 const projectNumberEl = document.getElementById('project-number');
+const projectNumberStickyEl = document.getElementById('project-number-sticky');
 const projectTitleEl = document.getElementById('project-title');
 const projectDescEl = document.getElementById('project-desc');
 const projectSummaryEl = document.getElementById('project-summary');
@@ -525,7 +526,6 @@ const stickyHeaderEl = document.getElementById('sticky-header');
 const sidebarEl = document.querySelector('.sidebar');
 const sidebarFiltersEl = document.querySelector('.sidebar .filters');
 const projectTitleStickyEl = document.getElementById('project-title-sticky');
-const projectDescStickyEl = document.getElementById('project-desc-sticky');
 const mainContentEl = document.getElementById('main-content');
 const filterButtons = document.querySelectorAll('.filter-pill');
 
@@ -1268,7 +1268,6 @@ function syncProjectIntroStickyContent(project) {
   if (!project) return;
 
   if (projectTitleStickyEl) projectTitleStickyEl.textContent = project.name;
-  if (projectDescStickyEl) projectDescStickyEl.textContent = project.description;
 }
 
 function sortProjectsAlphabetically(list) {
@@ -1307,6 +1306,12 @@ function getProjectDisplayNumber(projectId) {
   const index = getFilteredProjects().findIndex((project) => project.id === projectId);
   if (index === -1) return '01';
   return formatProjectDisplayNumber(index);
+}
+
+function syncProjectNumberDisplay(projectId = selectedId) {
+  const displayNumber = getProjectDisplayNumber(projectId);
+  if (projectNumberEl) projectNumberEl.textContent = displayNumber;
+  if (projectNumberStickyEl) projectNumberStickyEl.textContent = displayNumber;
 }
 
 function getProjectListLabel(project) {
@@ -1699,7 +1704,7 @@ function selectProject(id) {
   resetProjectIntroScroll();
   selectedId = id;
   syncSketchbookProjectChrome(project);
-  projectNumberEl.textContent = getProjectDisplayNumber(id);
+  syncProjectNumberDisplay(id);
   renderProjectTitle(projectTitleEl, project.name);
   renderProjectSubhead(projectDescEl, project.description);
   refitProjectIntroTitle();
@@ -1710,7 +1715,7 @@ function selectProject(id) {
   syncMobileProjectTabLabel();
   syncProjectNextCta();
 
-  if (isSidebarMobileDropdown() && !isSidebarCollapsed()) {
+  if (!isSidebarCollapsed() && (isSidebarMobileDropdown() || isSidebarOverlayPanelOnly())) {
     collapseSidebar();
   }
 
@@ -1726,9 +1731,7 @@ function setFilter(filter) {
     btn.setAttribute('aria-selected', isActive);
   });
 
-  if (projectNumberEl) {
-    projectNumberEl.textContent = getProjectDisplayNumber(selectedId);
-  }
+  syncProjectNumberDisplay();
     renderProjectList();
   syncProjectNextCta();
 }
@@ -2056,6 +2059,10 @@ function setSidebarPanelToggleX(isX) {
   document.body.classList.toggle('sidebar-panel-toggle-x', isX);
 }
 
+function syncSidebarLayoutMode() {
+  document.body.classList.toggle('sidebar-overlay-panel', isSidebarOverlayPanelOnly());
+}
+
 function syncSidebarCollapseUi() {
   const collapsed = isSidebarCollapsed() && isSidebarCollapseEnabled();
 
@@ -2064,6 +2071,7 @@ function syncSidebarCollapseUi() {
   }
 
   document.body.classList.toggle('sidebar-collapsed', collapsed);
+  syncSidebarLayoutMode();
   sidebarCollapseBtn?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
 
   if (sidebarCollapseBtn) {
@@ -2080,7 +2088,7 @@ function syncSidebarCollapseUi() {
   }
 
   if (sidebarReopenTab) {
-    sidebarReopenTab.hidden = isSidebarOverlayPanel() || !collapsed;
+    sidebarReopenTab.hidden = isSidebarMobileDropdown() || !collapsed;
     sidebarReopenTab.setAttribute('aria-hidden', sidebarReopenTab.hidden ? 'true' : 'false');
     sidebarReopenTab.setAttribute('aria-label', 'Open projects panel');
   }
@@ -2459,7 +2467,16 @@ function initSidebarCollapse() {
 
   sidebarReopenTab?.addEventListener('click', expandSidebar);
 
-  const handleCollapseMqChange = () => {
+  const handleSidebarLayoutMqChange = () => {
+    document.body.classList.remove(
+      'sidebar-desktop-opening',
+      'sidebar-desktop-opening-active',
+      'sidebar-desktop-closing'
+    );
+    clearMobilePanelAnimationState();
+    sidebarMobilePanelAnimating = false;
+    setMobileChromeHidden(false);
+
     if (!SIDEBAR_COLLAPSE_MQ.matches) {
       const current = getSidebarWidthPx();
       if (!Number.isNaN(current) && current > 0) {
@@ -2469,24 +2486,6 @@ function initSidebarCollapse() {
       setSidebarPanelToggleX(false);
       localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
     }
-
-    syncSidebarCollapseUi();
-    syncStickyHeaderAlignHeight();
-    projectTitleLastFitWidth = -1;
-    scheduleProjectTitleFit();
-    scheduleProjectListLabelCollisionCheck();
-  };
-
-  if (typeof SIDEBAR_COLLAPSE_MQ.addEventListener === 'function') {
-    SIDEBAR_COLLAPSE_MQ.addEventListener('change', handleCollapseMqChange);
-  } else if (typeof SIDEBAR_COLLAPSE_MQ.addListener === 'function') {
-    SIDEBAR_COLLAPSE_MQ.addListener(handleCollapseMqChange);
-  }
-
-  const handleMobileMqChange = () => {
-    clearMobilePanelAnimationState();
-    sidebarMobilePanelAnimating = false;
-    setMobileChromeHidden(false);
 
     if (isSidebarMobileDropdown() && !isSidebarCollapsed()) {
       collapseSidebar();
@@ -2500,6 +2499,22 @@ function initSidebarCollapse() {
     projectSubheadLastFitMode = '';
     scheduleProjectTitleFit({ force: true });
     scheduleProjectListLabelCollisionCheck();
+  };
+
+  if (typeof SIDEBAR_COLLAPSE_MQ.addEventListener === 'function') {
+    SIDEBAR_COLLAPSE_MQ.addEventListener('change', handleSidebarLayoutMqChange);
+  } else if (typeof SIDEBAR_COLLAPSE_MQ.addListener === 'function') {
+    SIDEBAR_COLLAPSE_MQ.addListener(handleSidebarLayoutMqChange);
+  }
+
+  if (typeof SIDEBAR_OVERLAY_MQ.addEventListener === 'function') {
+    SIDEBAR_OVERLAY_MQ.addEventListener('change', handleSidebarLayoutMqChange);
+  } else if (typeof SIDEBAR_OVERLAY_MQ.addListener === 'function') {
+    SIDEBAR_OVERLAY_MQ.addListener(handleSidebarLayoutMqChange);
+  }
+
+  const handleMobileMqChange = () => {
+    handleSidebarLayoutMqChange();
   };
 
   if (typeof SIDEBAR_MOBILE_MQ.addEventListener === 'function') {
@@ -2539,7 +2554,7 @@ function clampSidebarWidth(width) {
 }
 
 function setSidebarWidth(width) {
-  if (isSidebarCollapsed()) return getSidebarWidthPx();
+  if (isSidebarCollapsed() || isSidebarOverlayPanel()) return getSidebarWidthPx();
 
   const clamped = clampSidebarWidth(width);
   document.documentElement.style.setProperty('--sidebar-width', `${clamped}px`);
@@ -2588,12 +2603,12 @@ function resolveSidebarDragWidth(clientX) {
 }
 
 function resizeFromPointer(clientX) {
-  if (isSidebarCollapsed()) return;
+  if (isSidebarCollapsed() || isSidebarOverlayPanel()) return;
   setSidebarWidth(resolveSidebarDragWidth(clientX));
 }
 
 sidebarResizer.addEventListener('mousedown', (e) => {
-  if (isSidebarCollapsed()) return;
+  if (isSidebarCollapsed() || isSidebarOverlayPanel()) return;
     e.preventDefault();
   startResize();
 
@@ -2612,7 +2627,7 @@ sidebarResizer.addEventListener('mousedown', (e) => {
 });
 
 sidebarResizer.addEventListener('keydown', (e) => {
-  if (isSidebarCollapsed()) return;
+  if (isSidebarCollapsed() || isSidebarOverlayPanel()) return;
 
   const step = e.shiftKey ? 32 : 8;
   const current = getSidebarWidthPx();
@@ -2627,7 +2642,7 @@ sidebarResizer.addEventListener('keydown', (e) => {
 });
 
 window.addEventListener('resize', () => {
-  if (isSidebarCollapsed()) return;
+  if (isSidebarCollapsed() || isSidebarOverlayPanel()) return;
 
   const current = getSidebarWidthPx();
   if (!Number.isNaN(current)) {
@@ -2644,6 +2659,7 @@ if (document.fonts?.ready) {
     if (
       !isSidebarCollapsed()
       && !isSidebarMobileDropdown()
+      && !isSidebarOverlayPanel()
       && previousDefault
       && getSidebarWidthPx() === previousDefault
     ) {
