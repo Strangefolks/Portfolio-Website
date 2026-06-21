@@ -6367,6 +6367,7 @@ body.is-profile-open .profile-stage {
   overflow: hidden;
   will-change: transform;
   transform: translateX(0);
+  --profile-slide-offset: 105%;
 }
 
 .profile-layer--blue {
@@ -6404,8 +6405,7 @@ body.is-profile-open .profile-stage {
 
 .is-profile-entering .profile-layer--black {
   transform: translateX(0);
-  transition:
-    transform var(--profile-slide-duration) var(--profile-slide-ease) var(--profile-slide-stagger);
+  transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
   z-index: 1;
 }
 

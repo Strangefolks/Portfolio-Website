@@ -52,7 +52,7 @@ async function playProfileEnter(host) {
     });
   });
 
-  await wait(PROFILE_SLIDE_DURATION_MS + PROFILE_SLIDE_STAGGER_MS + 40);
+  await wait(PROFILE_SLIDE_DURATION_MS + 40);
   host.classList.remove('is-profile-entering');
 }
 
