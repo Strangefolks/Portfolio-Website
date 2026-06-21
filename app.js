@@ -3050,45 +3050,6 @@ function setDetailView(mode) {
   syncStickyHeaderAlignHeight();
 }
 
-function initEmailLink(refreshCursor) {
-  const emailLink = document.getElementById('email-link');
-  if (!emailLink) return;
-
-  const emailText = emailLink.querySelector('.email-link-text');
-  const email = emailLink.dataset.email || 'hello@tedpio.design';
-  let copiedTimeout;
-
-  emailLink.addEventListener('click', async (e) => {
-    e.preventDefault();
-    if (emailLink.classList.contains('is-copied')) return;
-
-    try {
-      await navigator.clipboard.writeText(email);
-    } catch {
-      const textarea = document.createElement('textarea');
-      textarea.value = email;
-      textarea.setAttribute('readonly', '');
-      textarea.style.position = 'fixed';
-      textarea.style.opacity = '0';
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-    }
-
-    emailLink.classList.add('is-copied');
-    emailText.textContent = 'Copied to clipboard';
-    refreshCursor?.();
-
-    clearTimeout(copiedTimeout);
-    copiedTimeout = setTimeout(() => {
-      emailLink.classList.remove('is-copied');
-      emailText.textContent = email;
-      refreshCursor?.();
-    }, 1000);
-  });
-}
-
 viewBtnImage?.addEventListener('click', () => setDetailView('images'));
 viewBtnList?.addEventListener('click', () => setDetailView('text'));
 viewBtnImageSticky?.addEventListener('click', () => setDetailView('images'));
