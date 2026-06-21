@@ -7663,7 +7663,15 @@ html.is-portfolio-burst-entry .main > .text-overline,
 html.is-portfolio-burst-entry .project-intro,
 html.is-portfolio-burst-entry .project-body,
 html.is-portfolio-burst-entry .project-list,
-html.is-portfolio-burst-entry .project-list-viewport {
+html.is-portfolio-burst-entry .project-list-viewport,
+html.is-portfolio-burst-entry .body,
+html.is-portfolio-burst-entry .filters,
+html.is-portfolio-burst-entry .project-item,
+html.is-portfolio-burst-entry .detail-header,
+html.is-portfolio-burst-entry .metadata-area,
+html.is-portfolio-burst-entry .project-gallery,
+html.is-portfolio-burst-entry .gallery-item,
+html.is-portfolio-burst-entry .hero-panel {
   opacity: 1;
   transform: none;
   transition: none;

@@ -415,14 +415,14 @@ const heroPlaceholderIcon = `<svg class="hero-placeholder-icon" viewBox="0 0 24 
   <path d="M21 15l-5-5L5 21"/>
 </svg>`;
 
-function renderHeroPanelContent(image, project, index, { revealOnScroll = false } = {}) {
+function renderHeroPanelContent(image, project, index, { revealOnScroll = false, eagerLoad = false } = {}) {
   if (image?.src) {
     return `<img
           src="${image.src}"
           alt="${image.alt || `${project.name} — gallery image ${index + 1}`}"
           width="1200"
           height="577"
-          loading="lazy"
+          loading="${eagerLoad ? 'eager' : 'lazy'}"
           decoding="async"
         />`;
   }
@@ -2009,7 +2009,11 @@ function isSidebarCollapseEnabled() {
 }
 
 function isPortfolioEntryFromLanding() {
-  return document.documentElement.classList.contains('is-portfolio-entry');
+  const root = document.documentElement;
+  return (
+    root.classList.contains('is-portfolio-entry')
+    || root.classList.contains('is-portfolio-burst-entry')
+  );
 }
 
 function shouldSidebarStartCollapsed() {
@@ -2597,16 +2601,38 @@ const PORTFOLIO_ENTRY_MS = 920;
 const PORTFOLIO_BURST_ENTRY_MS = 520;
 const PORTFOLIO_BURST_HOLD_MS = 100;
 
-function waitForLayoutReady() {
-  const fontsReady = document.fonts?.ready ?? Promise.resolve();
-  return fontsReady.then(
-    () =>
-      new Promise((resolve) => {
-        requestAnimationFrame(() => {
-          requestAnimationFrame(resolve);
-        });
-      })
-  );
+function waitForImage(img) {
+  if (img.complete) return Promise.resolve();
+  return new Promise((resolve) => {
+    img.addEventListener('load', resolve, { once: true });
+    img.addEventListener('error', resolve, { once: true });
+  });
+}
+
+async function waitForPortfolioContentReady() {
+  await (document.fonts?.ready ?? Promise.resolve());
+
+  const gallery = document.getElementById('project-gallery');
+  const projectList = document.getElementById('project-list');
+  const deadline = Date.now() + 3000;
+
+  while (Date.now() < deadline) {
+    const galleryReady = gallery && gallery.children.length > 0;
+    const listReady = projectList && projectList.children.length > 0;
+    if (galleryReady && listReady) break;
+    await wait(16);
+  }
+
+  const images = document.querySelectorAll('.page-wrapper img[src]');
+  await Promise.race([
+    Promise.all([...images].map(waitForImage)),
+    wait(2500),
+  ]);
+
+  void document.body.offsetHeight;
+  for (let i = 0; i < 4; i++) {
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+  }
 }
 
 function wait(ms) {
@@ -2615,9 +2641,8 @@ function wait(ms) {
 
 async function initPortfolioEntryAnimation() {
   const root = document.documentElement;
-  if (!root.classList.contains('is-portfolio-entry')) return;
-
   const burstReveal = root.classList.contains('is-portfolio-burst-entry');
+  if (!root.classList.contains('is-portfolio-entry') && !burstReveal) return;
   let burstScale = null;
   let burstX = null;
   let burstY = null;
@@ -2664,7 +2689,7 @@ async function initPortfolioEntryAnimation() {
   const duration = burstReveal ? PORTFOLIO_BURST_ENTRY_MS : PORTFOLIO_ENTRY_MS;
 
   if (burstReveal) {
-    await waitForLayoutReady();
+    await waitForPortfolioContentReady();
     await wait(PORTFOLIO_BURST_HOLD_MS);
     root.classList.remove('is-portfolio-entry-animate');
     root.dataset.portfolioEntryAnimateAt = String(Date.now());
@@ -2823,6 +2848,7 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
 
   const images = getProjectGalleryImages(project);
   const sketchbookLayout = isSketchbookProject(project);
+  const eagerLoad = isPortfolioEntryFromLanding();
 
   projectGallery.classList.toggle('project-gallery--sketchbook', sketchbookLayout);
 
@@ -2835,7 +2861,7 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
       return `
     <div class="gallery-item${sketchbookLayout ? ' gallery-item--sketchbook' : ''}"${sketchbookLayout ? ` data-gallery-index="${index}"` : ''}>
       <div class="${panelClasses}">
-        ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src })}
+        ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src, eagerLoad })}
       </div>
       ${image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
     </div>

@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620v" />
-    <link rel="preload" href="app.js?v=20250620ab" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20250620w" />
+    <link rel="preload" href="app.js?v=20250620ac" as="script" />
     <style>
       html.is-portfolio-burst-entry .portfolio-entry-reveal {
         background: transparent;
@@ -32,7 +32,15 @@
       html.is-portfolio-burst-entry .project-intro,
       html.is-portfolio-burst-entry .project-body,
       html.is-portfolio-burst-entry .project-list,
-      html.is-portfolio-burst-entry .project-list-viewport {
+      html.is-portfolio-burst-entry .project-list-viewport,
+      html.is-portfolio-burst-entry .body,
+      html.is-portfolio-burst-entry .filters,
+      html.is-portfolio-burst-entry .project-item,
+      html.is-portfolio-burst-entry .detail-header,
+      html.is-portfolio-burst-entry .metadata-area,
+      html.is-portfolio-burst-entry .project-gallery,
+      html.is-portfolio-burst-entry .gallery-item,
+      html.is-portfolio-burst-entry .hero-panel {
         opacity: 1 !important;
         transform: none !important;
         transition: none !important;
@@ -56,8 +64,8 @@
         try {
           if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
           var root = document.documentElement;
-          root.classList.add('is-portfolio-entry');
-          if (sessionStorage.getItem('portfolio-entry-burst-reveal') === '1') {
+          var burstReveal = sessionStorage.getItem('portfolio-entry-burst-reveal') === '1';
+          if (burstReveal) {
             root.classList.add('is-portfolio-burst-entry');
             var scale = sessionStorage.getItem('portfolio-entry-burst-scale');
             var burstX = sessionStorage.getItem('portfolio-entry-burst-x');
@@ -65,6 +73,8 @@
             if (scale) root.style.setProperty('--entry-burst-scale', scale);
             if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
             if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
+          } else {
+            root.classList.add('is-portfolio-entry');
           }
         } catch (e) {}
       })();
@@ -570,6 +580,6 @@
     <script src="about.js"></script>
     <script src="profile.js"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="app.js?v=20250620ab"></script>
+    <script src="app.js?v=20250620ac"></script>
   </body>
 </html>

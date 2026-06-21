@@ -166,6 +166,28 @@ function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
+function waitForPortfolioPrefetchReady() {
+  const iframe = document.getElementById('portfolio-prefetch-frame');
+  if (!iframe) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const cap = window.setTimeout(resolve, 3500);
+    const done = () => {
+      window.clearTimeout(cap);
+      window.setTimeout(resolve, 80);
+    };
+
+    try {
+      if (iframe.contentDocument?.readyState === 'complete') {
+        done();
+        return;
+      }
+    } catch (_) {}
+
+    iframe.addEventListener('load', done, { once: true });
+  });
+}
+
 function prefetchPortfolio() {
   if (!document.querySelector('link[data-prefetch-portfolio]')) {
     const prefetchLink = document.createElement('link');
@@ -178,7 +200,7 @@ function prefetchPortfolio() {
   if (!document.querySelector('link[data-preload-portfolio-app]')) {
     const preloadApp = document.createElement('link');
     preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250620ab';
+    preloadApp.href = 'app.js?v=20250620ac';
     preloadApp.as = 'script';
     preloadApp.setAttribute('data-preload-portfolio-app', '');
     document.head.appendChild(preloadApp);
@@ -292,6 +314,8 @@ async function playLandingExit(href, link) {
       requestAnimationFrame(resolve);
     });
   });
+
+  await waitForPortfolioPrefetchReady();
 
   const stack = link.querySelector('.landing-starburst-stack');
   const stackRect = stack?.getBoundingClientRect();
