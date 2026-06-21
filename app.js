@@ -537,7 +537,6 @@ let mobileChromeLastScrollTop = 0;
 
 const MOBILE_CHROME_SCROLL_THRESHOLD = 8;
 let stickyHeaderAlignResizeObserver;
-let stickyHeaderExpandedSourceHeight = null;
 
 const PROJECT_INTRO_STICKY_ENTER_OFFSET = 1;
 const STICKY_HEADER_HEIGHT_OFFSET = 27;
@@ -1064,46 +1063,25 @@ function applyStickyHeaderAlignHeight(sourceHeight) {
   );
 }
 
-function shouldCacheStickyHeaderExpandedHeight() {
-  if (isSidebarCollapsed()) return false;
-  if (document.body.classList.contains('sidebar-desktop-closing')) return false;
-
-  const threshold =
-    parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue('--sidebar-filter-wrap-threshold'),
-      10
-    ) || 388;
-
-  return getSidebarWidthPx() >= threshold;
-}
-
 function syncStickyHeaderAlignHeight() {
   if (!sidebarEl) return;
 
-  if (isSidebarCollapsed()) {
-    if (isSidebarMobileDropdown() && sidebarHeader) {
+  if (isSidebarMobileDropdown()) {
+    if (sidebarHeader) {
       const height = measureSidebarHeaderSourceHeight();
       if (height != null) {
         applyStickyHeaderAlignHeight(height);
       }
-      return;
-    }
-
-    if (stickyHeaderExpandedSourceHeight != null) {
-      applyStickyHeaderAlignHeight(stickyHeaderExpandedSourceHeight);
     }
     return;
   }
 
-  if (!sidebarFiltersEl) return;
-
-  const height = measureSidebarHeaderSourceHeight();
-  if (height != null) {
-    if (shouldCacheStickyHeaderExpandedHeight()) {
-      stickyHeaderExpandedSourceHeight = height;
-    }
-    applyStickyHeaderAlignHeight(stickyHeaderExpandedSourceHeight ?? height);
-  }
+  /* Desktop/tablet: fixed height from CSS — do not mirror sidebar filter height */
+  document.documentElement.style.setProperty(
+    '--sticky-header-align-height',
+    getComputedStyle(document.documentElement).getPropertyValue('--sticky-header-fixed-height').trim()
+      || '54px'
+  );
 }
 
 function initStickyHeaderAlignHeightSync() {
