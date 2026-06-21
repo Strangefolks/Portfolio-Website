@@ -30,8 +30,7 @@ function copyEmailToClipboard(text) {
   return Promise.resolve(copyTextFallback(text));
 }
 
-function initEmailLink(refreshCursor) {
-  const emailLink = document.getElementById('email-link');
+function bindEmailLink(emailLink, refreshCursor) {
   if (!emailLink || emailLink.dataset.emailCopyBound === 'true') return;
 
   emailLink.dataset.emailCopyBound = 'true';
@@ -76,5 +75,12 @@ function initEmailLink(refreshCursor) {
   emailLink.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter' && event.key !== ' ') return;
     handleCopy(event);
+  });
+}
+
+function initEmailLink(refreshCursor, root = document) {
+  const scope = root instanceof Element || root instanceof Document ? root : document;
+  scope.querySelectorAll('[data-email]').forEach((emailLink) => {
+    bindEmailLink(emailLink, refreshCursor);
   });
 }

@@ -299,11 +299,18 @@ async function openProfileOverlay() {
     initCustomScrollbars(stage);
     refreshProfileBurstArt(stage);
     initProfileNameFit(stage);
+    initProfileEmailLinks(stage);
     await playProfileEnter(document.body);
     fitProfileName(stage);
   } finally {
     profileOverlayBusy = false;
   }
+}
+
+function initProfileEmailLinks(scope = document) {
+  if (typeof initEmailLink !== 'function') return;
+  const refreshCursorFn = typeof refreshCursor === 'function' ? refreshCursor : undefined;
+  initEmailLink(refreshCursorFn, scope);
 }
 
 function initProfilePage() {
@@ -318,6 +325,7 @@ function initProfilePage() {
     initCustomScrollbars();
     refreshProfileBurstArt(document);
     initProfileNameFit(document);
+    initProfileEmailLinks(document);
     await playProfileEnter(document.body);
     fitProfileName(document);
   })();

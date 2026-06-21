@@ -6753,6 +6753,30 @@ body.is-profile-exiting .profile-layout {
   color: var(--text-primary);
 }
 
+.profile-meta-list .profile-meta-link {
+  width: 100%;
+  min-width: 0;
+  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--duration-fast) var(--ease-smooth);
+}
+
+.profile-meta-list .profile-meta-link.email-link {
+  color: var(--text-primary);
+}
+
+.profile-meta-list .profile-meta-link:hover:not(.is-copied),
+.profile-meta-list .profile-meta-link:focus-visible:not(.is-copied) {
+  color: var(--brand-blue);
+}
+
+.profile-meta-list .profile-meta-link.email-link.is-copied {
+  color: var(--brand-green);
+}
+
 .profile-skill-values {
   width: 100%;
   min-width: 0;
