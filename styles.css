@@ -8035,14 +8035,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   }
 
   .profile-panel-left,
-  .profile-portrait-stack,
-  .profile-burst-bg {
-    overflow: hidden !important;
-  }
-
-  .profile-burst-bg {
-    position: relative;
-    contain: paint;
+  .profile-portrait-stack {
+    overflow: visible !important;
   }
 
   .about-panel-right h1.about-story-title.project-title {
@@ -8827,5 +8821,27 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     max-height: calc(100vh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
     max-height: calc(100dvh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
     max-height: calc(100svh - var(--sidebar-mobile-row-height) - env(safe-area-inset-top, 0px)) !important;
+  }
+}
+
+/* Mobile profile — keep large sunburst visible behind portrait */
+@media (max-width: 560px) {
+  .profile-burst-bg {
+    position: absolute !important;
+    inset: 0 !important;
+    overflow: visible !important;
+    z-index: 0 !important;
+    contain: none !important;
+    pointer-events: none;
+  }
+
+  .profile-portrait-stack {
+    position: relative !important;
+    overflow: visible !important;
+  }
+
+  .profile-portrait-card {
+    position: relative !important;
+    z-index: 2 !important;
   }
 }
