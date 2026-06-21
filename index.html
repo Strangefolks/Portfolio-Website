@@ -3,22 +3,111 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>tedp.io</title>
+    <title>tedp.io — Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="styles.css?v=20250620w" />
+    <link rel="preload" href="app.js?v=20250620ac" as="script" />
+    <style>
+      html.is-portfolio-burst-entry .portfolio-entry-reveal {
+        background: transparent;
+      }
+      html.is-portfolio-burst-entry .portfolio-entry-curtain,
+      html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
+        display: none !important;
+      }
+      html.is-portfolio-burst-entry .page-wrapper,
+      html.is-portfolio-burst-entry .app,
+      html.is-portfolio-burst-entry .top-banner-shell,
+      html.is-portfolio-burst-entry .header-shell,
+      html.is-portfolio-burst-entry .footer-shell,
+      html.is-portfolio-burst-entry .sidebar,
+      html.is-portfolio-burst-entry .sidebar-resizer,
+      html.is-portfolio-burst-entry .main,
+      html.is-portfolio-burst-entry .main > .text-overline,
+      html.is-portfolio-burst-entry .project-intro,
+      html.is-portfolio-burst-entry .project-body,
+      html.is-portfolio-burst-entry .project-list,
+      html.is-portfolio-burst-entry .project-list-viewport,
+      html.is-portfolio-burst-entry .body,
+      html.is-portfolio-burst-entry .filters,
+      html.is-portfolio-burst-entry .project-item,
+      html.is-portfolio-burst-entry .detail-header,
+      html.is-portfolio-burst-entry .metadata-area,
+      html.is-portfolio-burst-entry .project-gallery,
+      html.is-portfolio-burst-entry .gallery-item,
+      html.is-portfolio-burst-entry .hero-panel {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+        visibility: visible !important;
+      }
+      @media (min-width: 901px) {
+        html.is-portfolio-burst-entry .sidebar {
+          transform: translateX(0) !important;
+        }
+      }
+    </style>
     <script>
       (function () {
         document.documentElement.setAttribute('data-theme', 'dark');
         try { localStorage.setItem('theme', 'dark'); } catch (e) {}
       })();
     </script>
+    <script src="entry-guard.js"></script>
+    <script>
+      (function () {
+        try {
+          if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
+          var root = document.documentElement;
+          var burstReveal = sessionStorage.getItem('portfolio-entry-burst-reveal') === '1';
+          if (burstReveal) {
+            root.classList.add('is-portfolio-burst-entry');
+            var scale = sessionStorage.getItem('portfolio-entry-burst-scale');
+            var burstX = sessionStorage.getItem('portfolio-entry-burst-x');
+            var burstY = sessionStorage.getItem('portfolio-entry-burst-y');
+            if (scale) root.style.setProperty('--entry-burst-scale', scale);
+            if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
+            if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
+          } else {
+            root.classList.add('is-portfolio-entry');
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="landing-page is-bottom-banner-hidden is-top-banner-hidden">
+  <body class="is-bottom-banner-hidden">
+    <script>
+      (function () {
+        try {
+          if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
+          if (window.matchMedia('(max-width: 560px)').matches) {
+            document.body.classList.add('sidebar-collapsed');
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <div class="portfolio-entry-curtain" aria-hidden="true"></div>
+    <div class="portfolio-entry-reveal" aria-hidden="true">
+      <svg
+        class="portfolio-entry-reveal-burst"
+        viewBox="0 0 182 182"
+        width="182"
+        height="182"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          class="portfolio-entry-reveal-burst-path"
+          fill="#005EFF"
+          d="M98.8075 2.67415C100.027 -1.40784 106.029 -0.60662 106.135 3.6522L107.427 55.6964C107.496 58.4888 110.489 60.2239 112.947 58.8966L158.754 34.1573C162.502 32.1329 166.18 36.9441 163.243 40.0303L127.356 77.7447C125.431 79.7682 126.32 83.1114 128.996 83.9107L178.88 98.8075C182.962 100.027 182.161 106.029 177.902 106.135L125.858 107.427C123.065 107.496 121.33 110.489 122.657 112.947L147.397 158.754C149.421 162.502 144.61 166.18 141.524 163.243L103.809 127.356C101.786 125.431 98.4425 126.32 97.6433 128.996L82.7465 178.88C81.5274 182.962 75.5246 182.161 75.4189 177.902L74.1269 125.858C74.0576 123.065 71.0647 121.33 68.607 122.657L22.8004 147.397C19.052 149.421 15.374 144.61 18.3106 141.524L54.1979 103.809C56.1234 101.786 55.234 98.4425 52.5576 97.6433L2.67415 82.7465C-1.40784 81.5274 -0.60662 75.5246 3.6522 75.4189L55.6964 74.1269C58.4888 74.0576 60.2239 71.0647 58.8966 68.607L34.1573 22.8004C32.1329 19.052 36.9441 15.374 40.0303 18.3106L77.7447 54.1979C79.7682 56.1234 83.1114 55.234 83.9107 52.5576L98.8075 2.67415Z"
+        />
+      </svg>
+    </div>
     <div class="site-grain" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
@@ -31,152 +120,322 @@
         </div>
       </div>
       <div class="app">
+        <button
+          type="button"
+          class="top-banner-reveal-edge"
+          id="top-banner-reveal-edge"
+          hidden
+          aria-label="Show announcement banner"
+        ></button>
+        <!-- Header -->
         <div class="header-shell" id="header-shell">
           <header class="header">
-            <span class="landing-logo" aria-hidden="true">
-              <span class="logo-stack" aria-hidden="true">
-                <span class="logo-icon-wrap">
-                  <span class="logo-icon-bg" aria-hidden="true"></span>
-                  <img
-                    class="logo-part logo-part--icon-mark"
-                    src="assets/logo icon static.svg"
-                    alt=""
-                    width="44"
-                    height="44"
-                    decoding="async"
-                  />
-                </span>
+          <a href="about.html" class="logo" aria-label="About the logo">
+            <span class="logo-stack" aria-hidden="true">
+              <span class="logo-icon-wrap">
+                <span class="logo-icon-bg" aria-hidden="true"></span>
                 <img
-                  class="logo-part logo-part--wordmark"
-                  src="assets/logo text.svg"
+                  class="logo-part logo-part--icon-mark"
+                  src="assets/logo icon static.svg"
                   alt=""
-                  width="96"
-                  height="25"
+                  width="44"
+                  height="44"
                   decoding="async"
                 />
               </span>
+              <img
+                class="logo-part logo-part--wordmark"
+                src="assets/logo text.svg"
+                alt=""
+                width="96"
+                height="25"
+                decoding="async"
+              />
             </span>
-            <div class="header-right">
-              <a
-                href="mailto:hello@tedpio.design"
-                class="email-link"
-                id="email-link"
-                data-email="hello@tedpio.design"
-              >
-                <span class="email-link-icon" aria-hidden="true">
-                  <svg class="email-icon email-icon--mail" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <rect x="2" y="4" width="20" height="16" rx="2"/>
-                    <path d="M2 7l10 7 10-7"/>
-                  </svg>
-                  <svg class="email-icon email-icon--copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <rect x="9" y="9" width="13" height="13" rx="2"/>
-                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
-                  </svg>
-                  <svg class="email-icon email-icon--check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <polyline points="20 6 9 17 4 12"/>
-                  </svg>
-                </span>
-                <span class="email-link-text text-ui-sm" aria-live="polite">hello@tedpio.design</span>
-              </a>
-              <div class="avatar">
-                <img src="assets/avatar.png" alt="Profile" width="39" height="39" decoding="async" />
-              </div>
-            </div>
-          </header>
-        </div>
-
-        <main class="landing" aria-label="Enter portfolio">
-          <div class="landing-meta landing-meta--top">
-            <div class="meta-item landing-meta-item landing-meta-item--left">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Site</span>
-              </div>
-              <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
-            </div>
-            <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Location</span>
-              </div>
-              <span class="landing-meta-location-icon" aria-hidden="true">
-                <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
-                  <path fill="currentColor" d="M6 0C2.69 0 0 2.69 0 6c0 4.2 6 8 6 8s6-3.8 6-8c0-3.31-2.69-6-6-6zm0 8.25a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/>
+          </a>
+          <div class="header-right">
+            <a
+              href="mailto:hello@tedpio.design"
+              class="email-link"
+              id="email-link"
+              data-email="hello@tedpio.design"
+            >
+              <span class="email-link-icon" aria-hidden="true">
+                <svg class="email-icon email-icon--mail" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="2" y="4" width="20" height="16" rx="2"/>
+                  <path d="M2 7l10 7 10-7"/>
+                </svg>
+                <svg class="email-icon email-icon--copy" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="9" y="9" width="13" height="13" rx="2"/>
+                  <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                </svg>
+                <svg class="email-icon email-icon--check" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <polyline points="20 6 9 17 4 12"/>
                 </svg>
               </span>
-              <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
-            </div>
-          </div>
-
-          <div class="landing-hero">
-            <div class="landing-orbit" aria-hidden="true">
-              <svg class="landing-orbit-svg" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-                <circle class="landing-orbit-ring landing-orbit-ring--outer" cx="250" cy="250" r="206" />
-                <circle class="landing-orbit-ring landing-orbit-ring--inner" cx="250" cy="250" r="186" />
-                <defs>
-                  <path
-                    id="landing-orbit-text-path"
-                    d="M 250,250 m 0,-196 a 196,196 0 1,1 0,392 a 196,196 0 1,1 0,-392"
-                  />
-                </defs>
-                <g class="landing-orbit-text-rotator">
-                  <text class="landing-orbit-text" dominant-baseline="central">
-                    <textPath href="#landing-orbit-text-path" startOffset="0%" dominant-baseline="central">
-                      · I'M A DESIGNER. I BRING IDEAS TO LIFE &amp; INFLUENCE CREATIVE ENDEAVORS IN A THOUGHTFUL &amp; PRAGMATIC WAY. I'M GOOD AT NAVIGATING FLEDGLING CONCEPTS WITHOUT A LOT OF STRUCTURE. I CAN HELP THINGS FEEL STRUCTURED &amp; ENJOYABLE
-                    </textPath>
-                  </text>
-                </g>
-              </svg>
-            </div>
-
-            <a href="home.html" class="landing-starburst-link" id="landing-starburst-link" aria-label="Launch portfolio">
-              <span class="landing-starburst-stage">
-                <span class="landing-starburst-stack">
-                  <span class="landing-starburst-fill" aria-hidden="true"></span>
-                  <svg
-                    class="landing-starburst"
-                    viewBox="0 0 182 182"
-                    width="182"
-                    height="182"
-                    aria-hidden="true"
-                    focusable="false"
-                  >
-                    <path
-                      class="landing-starburst-path"
-                      fill="#005EFF"
-                      d="M98.8075 2.67415C100.027 -1.40784 106.029 -0.60662 106.135 3.6522L107.427 55.6964C107.496 58.4888 110.489 60.2239 112.947 58.8966L158.754 34.1573C162.502 32.1329 166.18 36.9441 163.243 40.0303L127.356 77.7447C125.431 79.7682 126.32 83.1114 128.996 83.9107L178.88 98.8075C182.962 100.027 182.161 106.029 177.902 106.135L125.858 107.427C123.065 107.496 121.33 110.489 122.657 112.947L147.397 158.754C149.421 162.502 144.61 166.18 141.524 163.243L103.809 127.356C101.786 125.431 98.4425 126.32 97.6433 128.996L82.7465 178.88C81.5274 182.962 75.5246 182.161 75.4189 177.902L74.1269 125.858C74.0576 123.065 71.0647 121.33 68.607 122.657L22.8004 147.397C19.052 149.421 15.374 144.61 18.3106 141.524L54.1979 103.809C56.1234 101.786 55.234 98.4425 52.5576 97.6433L2.67415 82.7465C-1.40784 81.5274 -0.60662 75.5246 3.6522 75.4189L55.6964 74.1269C58.4888 74.0576 60.2239 71.0647 58.8966 68.607L34.1573 22.8004C32.1329 19.052 36.9441 15.374 40.0303 18.3106L77.7447 54.1979C79.7682 56.1234 83.1114 55.234 83.9107 52.5576L98.8075 2.67415Z"
-                    />
-                  </svg>
-                </span>
-                <span class="landing-center-ui">
-                  <span class="landing-terminal-cursor landing-terminal-cursor--idle" aria-hidden="true"></span>
-                  <span class="landing-launch-btn">
-                    <span class="landing-launch-btn-label">Launch Portfolio</span><span class="landing-terminal-cursor landing-terminal-cursor--inline" aria-hidden="true"></span>
-                  </span>
-                </span>
-              </span>
+              <span class="email-link-text text-ui-sm" aria-live="polite">hello@tedpio.design</span>
             </a>
+            <button type="button" class="avatar profile-avatar-trigger" id="profile-avatar-trigger" aria-label="About Ted Pioli">
+              <img src="assets/avatar.png" alt="" width="39" height="39" decoding="async" />
+            </button>
           </div>
+        </header>
+        </div>
 
-          <div class="landing-meta landing-meta--bottom">
-            <div class="meta-item landing-meta-item landing-meta-item--left">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Current company</span>
+        <!-- Body -->
+        <div class="body">
+          <!-- Sidebar -->
+          <aside class="sidebar">
+            <div class="sidebar-header" id="sidebar-header">
+              <h2 class="text-overline sidebar-header-label" id="sidebar-header-label">Projects</h2>
+              <div class="sidebar-header-mobile-trailing">
+                <span class="sidebar-project-count-pill text-caption" id="sidebar-project-count-pill" hidden></span>
+                <button
+                  type="button"
+                  class="sidebar-collapse-btn"
+                  id="sidebar-collapse-btn"
+                  aria-label="Collapse projects panel"
+                  aria-expanded="true"
+                  aria-controls="project-list"
+                >
+                  <svg class="sidebar-collapse-icon sidebar-collapse-icon--desktop sidebar-panel-toggle-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <g transform="translate(7 7)">
+                      <g class="sidebar-panel-toggle-burst">
+                        <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--top" d="M-5 -2.5H5" stroke-linecap="round" />
+                        <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--bottom" d="M-5 2.5H5" stroke-linecap="round" />
+                      </g>
+                    </g>
+                  </svg>
+                  <svg class="sidebar-collapse-icon sidebar-collapse-icon--mobile" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M8 3.5v9M3.5 8h9" stroke-linecap="round"/>
+                  </svg>
+                  <svg class="sidebar-collapse-icon sidebar-collapse-icon--close" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+                  </svg>
+                </button>
               </div>
-              <span class="text-caption meta-value">Medtronic</span>
             </div>
-            <div class="meta-item landing-meta-item landing-meta-item--right">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Current role</span>
-              </div>
-              <span class="text-caption meta-value">Principal UX / UI Designer</span>
-            </div>
-          </div>
-        </main>
 
+            <div class="sidebar-mobile-panel-content" id="sidebar-mobile-panel-content">
+            <div class="filters" role="tablist">
+              <button class="filter-pill text-list active" data-filter="all" role="tab" aria-selected="true">
+                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
+                All
+              </button>
+              <button class="filter-pill text-list" data-filter="product" role="tab" aria-selected="false">
+                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
+                Product
+              </button>
+              <button class="filter-pill text-list" data-filter="brand" role="tab" aria-selected="false">
+                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
+                Brand
+              </button>
+              <button class="filter-pill text-list" data-filter="art" role="tab" aria-selected="false">
+                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
+                Art
+              </button>
+            </div>
+
+            <div class="project-list-viewport">
+              <nav class="project-list" id="project-list"></nav>
+              <p class="project-nav-hint tooltip tooltip--pill" id="project-nav-hint" role="status" aria-live="polite">
+                Use <span class="project-nav-hint__keys" aria-hidden="true">↑ ↓</span> to change projects
+              </p>
+            </div>
+            </div>
+          </aside>
+
+          <div
+            class="sidebar-resizer"
+            id="sidebar-resizer"
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Resize projects panel"
+            tabindex="0"
+          ></div>
+
+          <button
+            type="button"
+            class="sidebar-reopen-tab"
+            id="sidebar-reopen-tab"
+            aria-label="Open projects panel"
+            hidden
+          >
+            <svg class="sidebar-reopen-tab-icon sidebar-panel-toggle-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <g transform="translate(7 7)">
+                <g class="sidebar-panel-toggle-burst">
+                  <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--top" d="M-5 -2.5H5" stroke-linecap="round" />
+                  <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--bottom" d="M-5 2.5H5" stroke-linecap="round" />
+                </g>
+              </g>
+            </svg>
+          </button>
+
+          <!-- Main -->
+          <main class="main" id="main-content" data-detail-view="images">
+            <h2 class="text-overline">Project Details</h2>
+
+            <div class="project-intro">
+              <div class="detail-header">
+                <div class="detail-title-row">
+                  <div class="project-number" id="project-number">01</div>
+                  <div class="title-block">
+                    <h1 class="text-title project-title" id="project-title">Affera</h1>
+                    <h3 class="project-desc" id="project-desc">
+                      Software that creates a 3D map of the electrical activity in the heart. Used to treat atrial fibrillation.
+                    </h3>
+                  </div>
+                </div>
+                <div class="detail-actions">
+                  <div class="view-toggle" role="group" aria-label="View mode" data-view="images">
+                    <span class="view-toggle-indicator" aria-hidden="true"></span>
+                    <button type="button" class="view-toggle-btn" id="view-btn-image" aria-label="Show images" aria-pressed="true">
+                      <img class="view-toggle-icon" src="assets/image.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                    </button>
+                    <button type="button" class="view-toggle-btn" id="view-btn-list" aria-label="Show text" aria-pressed="false">
+                      <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="metadata-area metadata-area--full" id="metadata-area">
+                <div class="project-summary" id="project-summary"></div>
+                <div class="metadata-row metadata-row--full" id="metadata-row"></div>
+              </div>
+            </div>
+
+            <div class="sticky-header-host" id="sticky-header-host" aria-hidden="true">
+              <div class="sticky-header" id="sticky-header">
+                <div class="sticky-header__main">
+                  <div class="sticky-header__icon" aria-hidden="true">
+                    <svg class="sticky-header__icon-svg" width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 1.25h5.17L13 5.08v8.67a1.25 1.25 0 0 1-1.25 1.25H4A1.25 1.25 0 0 1 2.75 13.75V2.5A1.25 1.25 0 0 1 4 1.25z"/>
+                      <path d="M9.25 1.25V5h3.75"/>
+                    </svg>
+                  </div>
+                  <div class="sticky-header__info">
+                    <h1 class="text-title project-title" id="project-title-sticky">Affera</h1>
+                    <h3 class="project-desc" id="project-desc-sticky">
+                      Software that creates a 3D map of the electrical activity in the heart. Used to treat atrial fibrillation.
+                    </h3>
+                  </div>
+                  <div class="sticky-header__actions">
+                    <div class="view-toggle" role="group" aria-label="View mode" data-view="images">
+                      <span class="view-toggle-indicator" aria-hidden="true"></span>
+                      <button type="button" class="view-toggle-btn" id="view-btn-image-sticky" aria-label="Show images" aria-pressed="true">
+                        <img class="view-toggle-icon" src="assets/image.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                      </button>
+                      <button type="button" class="view-toggle-btn" id="view-btn-list-sticky" aria-label="Show text" aria-pressed="false">
+                        <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="metadata-row metadata-row--compact" id="metadata-row-compact"></div>
+              </div>
+            </div>
+
+            <div class="project-body" id="project-body">
+              <div class="project-lock-gate is-hidden" id="project-lock-gate" hidden>
+                <div class="project-lock-gate-inner">
+                  <span class="project-lock-gate-icon" aria-hidden="true">
+                    <svg class="project-lock-gate-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </span>
+                  <h4 class="text-heading project-lock-gate-title">This project is locked. Enter the password to view it.</h4>
+                  <div class="project-lock-gate-form">
+                    <input
+                      type="password"
+                      id="project-lock-password"
+                      class="text-input project-lock-gate-input"
+                      placeholder="Enter password"
+                      autocomplete="off"
+                    />
+                    <button type="button" class="text-ui-sm project-lock-gate-submit" id="project-lock-submit">
+                      <svg class="project-lock-gate-submit-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8.5 2C6.71 2 5.25 3.45 5.25 5.25V7.25H4.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h9c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25h-.75V5.25C11.75 3.45 10.29 2 8.5 2zm0 1.5c.97 0 1.75.78 1.75 1.75v2H6.75V5.25c0-.97.78-1.75 1.75-1.75z"/>
+                      </svg>
+                      Unlock
+                    </button>
+                  </div>
+                  <p class="text-caption project-lock-gate-error is-hidden" id="project-lock-error" role="alert">
+                    Incorrect password. Please try again.
+                  </p>
+                </div>
+              </div>
+
+              <div class="project-gallery" id="project-gallery"></div>
+
+              <div class="project-text is-hidden" id="project-text" hidden>
+                <p><strong>Atrial fibrillation affects</strong> millions of patients worldwide, yet mapping the chaotic electrical signals inside the heart remains one of the most complex challenges in electrophysiology. Clinicians need a clear, spatial understanding of activation patterns before they can confidently deliver ablation therapy. Without that clarity, procedures take longer, uncertainty increases, and teams spend critical minutes reconciling conflicting signal readouts instead of treating the patient. The product was built to collapse that uncertainty into a single, trustworthy spatial model that everyone in the room can read at a glance.</p>
+                <p>The mapping platform translates raw intracardiac signals into a real-time three-dimensional model of cardiac electrical activity. By combining catheter position data with high-density signal processing, the system gives physicians a dynamic view of how electrical waves propagate across atrial tissue during a procedure. Each beat contributes to a living map that updates as catheters move, as contact improves, and as the team narrows in on the circuits driving the arrhythmia. That continuity matters because ablation decisions are made minute by minute, often under fluoroscopy, often while multiple signals compete for attention on adjacent monitors.</p>
+                <p>Early workflow studies revealed that speed and clarity matter as much as accuracy. Operators needed to orient themselves within the model in seconds, identify re-entrant circuits without hunting through nested menus, and maintain confidence that the map reflected what they were seeing on their monitors. We observed cases where experienced users paused mid-procedure to rebuild mental models of left-right orientation, or to confirm which wall they were viewing when the anatomy folded back on itself. Those pauses were small individually, but they accumulated into friction that eroded trust in the software during the moments when trust mattered most.</p>
+                <p>The interface was structured around a persistent spatial canvas with contextual controls that appear only when relevant. Color mapping, signal review, and annotation tools were grouped into predictable zones so users could move between analysis modes without losing their place in the case. Rather than forcing users through modal workflows or stacked configuration panels, the layout keeps the map anchored while supporting tools orbit the primary view. The goal was to make advanced functionality feel ambient—available when needed, invisible when not—so the user's attention stays on anatomy and signal, not on software mechanics.</p>
+                <p>Information hierarchy played a central role in reducing cognitive load. Large-format map views carry primary attention, while secondary panels expose beat selection, reference channels, and measurement tools in compact, scannable layouts that support fast decision-making under time pressure. We tested multiple density levels for the secondary panels, comparing compact tables against card-based summaries and inline sparkline histories. The winning patterns emphasized legibility at arm's length, high contrast for active states, and strict limits on simultaneous color encodings so the map itself remained the dominant visual signal in the room.</p>
+                <p>Validation sessions with electrophysiologists highlighted the importance of legibility at a distance. Typography, contrast, and motion were tuned so critical map updates remain readable on large clinical displays, even in dimly lit lab environments. Subtle animations indicate fresh data without shimmering distractions, and stale regions desaturate gently rather than disappearing abruptly. We also aligned iconography and label language with terminology already used in lab documentation, reducing the translation overhead between what the team says out loud and what the interface displays on screen.</p>
+                <p>Collaboration workflows were another key consideration. Multiple team members often review the same map simultaneously, so the product supports shared views, synchronized navigation, and clear visual states that indicate when data is live, cached, or under review. When a colleague zooms to a region of interest, others can follow without losing global context, and annotations persist across sessions so handoffs between operators remain coherent. These details rarely appear in marketing screenshots, but they define whether a team adopts the product as their default working environment or treats it as a fallback utility.</p>
+                <p>Performance constraints shaped the design as much as aesthetics. Maps can contain hundreds of thousands of points, multiple simultaneous signals, and frequent recalculations as catheters reposition. The interface therefore prioritizes progressive rendering and stable frame rates over decorative transitions. Loading states are explicit but brief, and the system communicates when interpolation is provisional versus fully sampled. Users should never wonder whether a visual gap reflects missing data or a rendering delay, because that ambiguity directly affects clinical confidence.</p>
+                <p>Accessibility and error prevention were treated as clinical requirements, not polish items. Destructive actions require deliberate confirmation, color palettes were tested for common forms of color vision deficiency, and text sizes scale without breaking the spatial layout of adjacent controls. When signal quality drops below usable thresholds, the product surfaces actionable guidance—adjust contact, revisit reference placement, or exclude noisy beats—instead of silently degrading the map into misleading geometry.</p>
+                <p>Across iterations, the north star remained consistent: reduce the distance between what the team knows and what the software shows. Every layout decision, typography choice, and motion curve was evaluated against that standard. The result is a mapping experience designed to feel calm and precise in high-stakes moments—giving clinical teams a dependable spatial picture of cardiac activity when every minute of procedure time counts, and helping them move from interpretation to action with fewer interruptions, fewer doubts, and greater shared certainty.</p>
+              </div>
+
+              <div class="project-next-cta is-hidden" id="project-next-cta" hidden>
+                <button type="button" class="project-next-cta-btn" id="project-next-cta-btn">
+                  <span class="project-next-cta-icon" aria-hidden="true">
+                    <svg class="project-next-cta-icon-layer project-next-cta-icon-layer--outline" viewBox="0 0 27 21" fill="none" stroke="currentColor" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1.52 4.62V1.774A.25.25 0 0 1 1.77 1.52H8.532L10.717 3.097H25.3V19.251H1.52V4.62Z"/>
+                      <path d="M1.52 4.62H25.3"/>
+                    </svg>
+                    <img class="project-next-cta-icon-layer project-next-cta-icon-layer--hover" src="assets/folder-hovered.svg" alt="" width="28" height="21" decoding="async" />
+                  </span>
+                  <span class="project-next-cta-copy">
+                    <span class="text-caption project-next-cta-eyebrow">Next project</span>
+                    <span class="text-heading project-next-cta-name" id="project-next-cta-name"></span>
+                  </span>
+                  <svg class="project-next-cta-arrow" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M5 2l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </main>
+        </div>
+
+        <!-- Footer -->
         <div class="footer-shell" id="footer-shell">
+          <div class="mobile-project-nav" id="mobile-project-nav" aria-hidden="true">
+            <button
+              type="button"
+              class="mobile-project-nav-btn mobile-project-nav-btn--prev"
+              id="mobile-project-prev"
+              aria-label="Previous project"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M9 2L4 7l5 5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="mobile-project-nav-btn mobile-project-nav-btn--next"
+              id="mobile-project-next"
+              aria-label="Next project"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M5 2l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <button
+            type="button"
+            class="footer-resizer"
+            id="footer-resizer"
+            aria-label="Reveal services banner"
+            aria-expanded="false"
+            aria-controls="footer-reveal"
+          ></button>
           <footer class="footer">
             <div class="footer-left">
               <div class="footer-copyright-group">
@@ -186,20 +445,20 @@
                 <span class="text-caption text-display footer-year">2026</span>
               </div>
               <div class="theme-toggle-wrap">
-                <button
-                  type="button"
-                  class="theme-toggle"
-                  id="theme-toggle"
-                  aria-describedby="theme-toggle-tooltip"
-                  aria-label="Switch to light mode"
-                >
-                  <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
-                    <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
-                  </span>
-                  <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
-                    <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
-                  </span>
-                </button>
+              <button
+                type="button"
+                class="theme-toggle"
+                id="theme-toggle"
+                aria-describedby="theme-toggle-tooltip"
+                aria-label="Switch to light mode"
+              >
+                <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
+                  <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
+                </span>
+                <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
+                  <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
+                </span>
+              </button>
               </div>
             </div>
             <div class="footer-right">
@@ -239,15 +498,88 @@
               </a>
             </div>
           </footer>
+          <div class="footer-reveal" id="footer-reveal" aria-hidden="true">
+            <div class="footer-marquee">
+              <div class="footer-marquee-track" id="footer-marquee-track" aria-hidden="true"></div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="bottom-banner-reveal-edge"
+            id="bottom-banner-reveal-edge"
+            aria-label="Show services banner"
+          ></button>
         </div>
       </div>
     </div>
 
+    <div
+      class="sketchbook-lightbox"
+      id="sketchbook-lightbox"
+      hidden
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sketchbook image viewer"
+    >
+      <div class="sketchbook-lightbox__backdrop" id="sketchbook-lightbox-backdrop"></div>
+      <div class="sketchbook-lightbox__stage">
+        <figure class="sketchbook-lightbox__figure">
+          <div class="sketchbook-lightbox__media">
+            <button
+              type="button"
+              class="header-shade-close sketchbook-lightbox__close"
+              id="sketchbook-lightbox-close"
+              aria-label="Close image viewer"
+            >
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div class="sketchbook-lightbox__content" id="sketchbook-lightbox-content"></div>
+            <footer class="sketchbook-lightbox__footer">
+              <button
+                type="button"
+                class="mobile-project-nav-btn mobile-project-nav-btn--prev sketchbook-lightbox__nav-btn"
+                id="sketchbook-lightbox-prev"
+                aria-label="Previous image"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M9 2L4 7l5 5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <div class="sketchbook-lightbox__footer-center">
+                <p
+                  class="sketchbook-lightbox__counter text-caption"
+                  id="sketchbook-lightbox-counter"
+                  aria-live="polite"
+                ></p>
+              </div>
+              <button
+                type="button"
+                class="mobile-project-nav-btn mobile-project-nav-btn--next sketchbook-lightbox__nav-btn"
+                id="sketchbook-lightbox-next"
+                aria-label="Next image"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M5 2l5 5-5 5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </footer>
+          </div>
+        </figure>
+      </div>
+    </div>
+
     <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
+    <div class="profile-stage" id="profile-stage" hidden aria-hidden="true"></div>
 
     <script src="cursor.js"></script>
-    <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="landing.js?v=20250620ac"></script>
+    <script src="marquee.js"></script>
+    <script src="scrollbar.js"></script>
     <script src="about.js"></script>
+    <script src="profile.js"></script>
+    <script src="pull-to-refresh.js?v=20250620v"></script>
+    <script src="app.js?v=20250620ac"></script>
   </body>
 </html>

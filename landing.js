@@ -660,59 +660,9 @@ function initLandingTransition() {
 }
 
 function initLandingOrbitTextFit() {
-  const svg = document.querySelector('.landing-orbit-svg');
-  const path = document.getElementById('landing-orbit-text-path');
-  const textEl = document.querySelector('.landing-orbit-text');
-  const textPath = textEl?.querySelector('textPath');
-  const outerRing = svg?.querySelector('.landing-orbit-ring--outer');
-  const innerRing = svg?.querySelector('.landing-orbit-ring--inner');
-  if (!path || !textPath || !textEl || !svg) return;
+  const apply = window.__applyLandingOrbitTextFit;
+  if (typeof apply !== 'function') return;
 
-  const centerX = 250;
-  const centerY = 250;
-  const svgNs = 'http://www.w3.org/2000/svg';
-
-  const buildCirclePath = (radius) =>
-    `M ${centerX},${centerY} m 0,-${radius} a ${radius},${radius} 0 1,1 0,${radius * 2} a ${radius},${radius} 0 1,1 0,-${radius * 2}`;
-
-  const measureGlyphCenterOffset = () => {
-    const styles = getComputedStyle(textEl);
-    const probe = document.createElementNS(svgNs, 'text');
-    probe.setAttribute('font-family', styles.fontFamily);
-    probe.setAttribute('font-size', styles.fontSize);
-    probe.setAttribute('font-weight', styles.fontWeight);
-    probe.setAttribute('letter-spacing', styles.letterSpacing);
-    probe.setAttribute('dominant-baseline', 'central');
-    probe.setAttribute('visibility', 'hidden');
-    probe.setAttribute('x', '0');
-    probe.setAttribute('y', '0');
-    probe.textContent = 'H';
-    svg.appendChild(probe);
-
-    const box = probe.getBBox();
-    svg.removeChild(probe);
-
-    // Positive = glyph visual center sits below the em box center (toward inner ring at 12 o'clock).
-    return box.y + box.height / 2;
-  };
-
-  const apply = () => {
-    const outerR = parseFloat(outerRing?.getAttribute('r') || '206');
-    const innerR = parseFloat(innerRing?.getAttribute('r') || '186');
-    const midRadius = (outerR + innerR) / 2;
-    const glyphCenterOffset = measureGlyphCenterOffset();
-    const radius = midRadius + glyphCenterOffset;
-
-    path.setAttribute('d', buildCirclePath(radius));
-    textPath.removeAttribute('dy');
-
-    const length = path.getTotalLength();
-    if (length <= 0) return;
-    textPath.setAttribute('textLength', String(length));
-    textPath.setAttribute('lengthAdjust', 'spacing');
-  };
-
-  apply();
   window.addEventListener('resize', apply);
   if (document.fonts?.ready) {
     document.fonts.ready.then(apply);

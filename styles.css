@@ -7164,7 +7164,12 @@ body.landing-page .app {
   justify-content: center;
   pointer-events: none;
   z-index: 1;
+  visibility: hidden;
   transition: opacity 0.35s var(--ease-smooth);
+}
+
+.landing-orbit.is-orbit-fitted {
+  visibility: visible;
 }
 
 .landing-orbit-svg {
@@ -7508,6 +7513,7 @@ body.landing-page.is-landing-expanded .landing-terminal-cursor--idle {
 
   .landing-orbit {
     transition: none;
+    visibility: visible;
   }
 
   .landing-orbit-text-rotator {
