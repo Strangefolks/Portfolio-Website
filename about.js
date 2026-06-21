@@ -71,7 +71,7 @@ async function playAboutEnter(host) {
     });
   });
 
-  await wait(ABOUT_SLIDE_DURATION_MS + ABOUT_SLIDE_STAGGER_MS + 40);
+  await wait(ABOUT_SLIDE_DURATION_MS + 40);
   host.classList.remove('is-about-entering');
 }
 

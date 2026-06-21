@@ -5841,7 +5841,7 @@ body.is-about-open .about-stage {
   left: 0;
   z-index: 2;
   width: calc(50% + 2px);
-  --about-slide-offset: -105%;
+  --about-slide-offset: -210%;
   --about-slide-offset-exit: -210%;
   background: var(--brand-blue);
   border-radius: 0;
@@ -5862,7 +5862,7 @@ body.is-about-open .about-stage {
   transition: none;
 }
 
-/* Enter: blue leads on top, black follows underneath — blue covers the seam first */
+/* Enter from left: blue leads, black follows (reverse of exit) */
 .is-about-entering .about-layer--blue {
   transform: translateX(0);
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
@@ -5871,8 +5871,7 @@ body.is-about-open .about-stage {
 
 .is-about-entering .about-layer--black {
   transform: translateX(0);
-  transition:
-    transform var(--about-slide-duration) var(--about-slide-ease) var(--about-slide-stagger);
+  transition: transform var(--about-slide-duration) var(--about-slide-ease);
   z-index: 1;
 }
 
@@ -6368,13 +6367,13 @@ body.is-profile-open .profile-stage {
   overflow: hidden;
   will-change: transform;
   transform: translateX(0);
-  --profile-slide-offset: 105%;
 }
 
 .profile-layer--blue {
   left: 0;
   z-index: 2;
   width: calc(50% + 2px);
+  --profile-slide-offset: 210%;
   --profile-slide-offset-exit: 210%;
   background: #000000;
   border-radius: 0;
@@ -6396,14 +6395,14 @@ body.is-profile-open .profile-stage {
   transition: none;
 }
 
-/* Enter from right: black panel leads, blue follows */
-.is-profile-entering .profile-layer--black {
+/* Enter from right: blue panel leads, black follows (reverse of exit) */
+.is-profile-entering .profile-layer--blue {
   transform: translateX(0);
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
   z-index: 3;
 }
 
-.is-profile-entering .profile-layer--blue {
+.is-profile-entering .profile-layer--black {
   transform: translateX(0);
   transition:
     transform var(--profile-slide-duration) var(--profile-slide-ease) var(--profile-slide-stagger);
@@ -8402,7 +8401,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   body.about-page.is-about-exiting .about-layer--blue {
     left: 0 !important;
     width: calc(50% + 2px) !important;
-    --about-slide-offset: -105%;
+    --about-slide-offset: -210%;
   }
 
   body.is-about-enter-pending .about-layer--black,
@@ -8425,7 +8424,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   body.profile-page.is-profile-exiting .profile-layer--blue {
     left: 0 !important;
     width: calc(50% + 2px) !important;
-    --profile-slide-offset: 105%;
+    --profile-slide-offset: 210%;
   }
 
   body.is-profile-enter-pending .profile-layer--black,
