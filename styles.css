@@ -8895,4 +8895,21 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     position: relative !important;
     z-index: 2 !important;
   }
+
+  .profile-burst-art {
+    width: 520%;
+    min-width: 2000px;
+    transform: translate(-58%, calc(-44% + 16px));
+    animation: profile-burst-spin-mobile 96s linear infinite;
+  }
+}
+
+@keyframes profile-burst-spin-mobile {
+  from {
+    transform: translate(-58%, calc(-44% + 16px)) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-58%, calc(-44% + 16px)) rotate(360deg);
+  }
 }
