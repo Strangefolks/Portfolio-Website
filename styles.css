@@ -5523,6 +5523,14 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     color: #ffffff;
   }
 
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-collapse-btn {
+    width: var(--sidebar-mobile-toggle-size);
+    height: var(--sidebar-mobile-toggle-size);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+  }
+
   .sidebar-collapse-btn .sidebar-collapse-icon {
     display: none !important;
   }
@@ -5544,6 +5552,12 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     display: block !important;
     width: 11px;
     height: 11px;
+  }
+
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-collapse-btn .sidebar-collapse-icon--desktop {
+    display: block !important;
+    width: 14px;
+    height: 14px;
   }
 
 
@@ -7737,17 +7751,23 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
 
   body.sidebar-mobile-panel-expanded .sidebar-collapse-btn .sidebar-collapse-icon--close,
   body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn .sidebar-collapse-icon--close,
-  body.sidebar-mobile-panel-closing .sidebar-collapse-btn .sidebar-collapse-icon--close,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn .sidebar-collapse-icon--close,
   body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn .sidebar-collapse-icon--close {
     display: block !important;
     width: 11px;
     height: 11px;
   }
 
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-collapse-btn .sidebar-collapse-icon--desktop {
+    display: block !important;
+    width: 14px;
+    height: 14px;
+  }
+
   body.sidebar-mobile-panel-expanded .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
   body.sidebar-mobile-panel-opening .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
   body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
-  body.sidebar-mobile-panel-closing .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
   body:not(.sidebar-collapsed) .sidebar-collapse-btn .sidebar-collapse-icon--desktop {
     display: none !important;
   }
