@@ -8774,11 +8774,11 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   }
 }
 
-/* Mobile footer: LinkedIn icon matches theme-toggle control size */
+/* Mobile footer: LinkedIn icon-only — slightly larger than text-paired icons, not theme-toggle scale */
 @media (max-width: 560px) {
   .footer-link.linkedin svg {
-    width: var(--theme-toggle-size);
-    height: var(--theme-toggle-size);
+    width: 20px;
+    height: 20px;
   }
 }
 
