@@ -5842,6 +5842,7 @@ body.is-about-open .about-stage {
   z-index: 2;
   width: calc(50% + 2px);
   --about-slide-offset: -105%;
+  --about-slide-offset-exit: -210%;
   background: var(--brand-blue);
   border-radius: 0;
   box-shadow: 8px 0 28px rgba(0, 0, 0, 0.28);
@@ -5877,7 +5878,7 @@ body.is-about-open .about-stage {
 
 /* Exit: both panels slide fully off-screen to the left */
 .is-about-exiting .about-layer--blue {
-  transform: translateX(var(--about-slide-offset));
+  transform: translateX(var(--about-slide-offset-exit));
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
   z-index: 3;
 }
@@ -6374,6 +6375,7 @@ body.is-profile-open .profile-stage {
   left: 0;
   z-index: 2;
   width: calc(50% + 2px);
+  --profile-slide-offset-exit: 210%;
   background: #000000;
   border-radius: 0;
   box-shadow: 8px 0 28px rgba(0, 0, 0, 0.28);
@@ -6416,7 +6418,7 @@ body.is-profile-exiting .profile-layout {
 }
 
 .is-profile-exiting .profile-layer--blue {
-  transform: translateX(var(--profile-slide-offset));
+  transform: translateX(var(--profile-slide-offset-exit));
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
   z-index: 3;
 }
@@ -8443,6 +8445,16 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   body.about-page.is-about-entering .about-layer,
   body.profile-page.is-profile-entering .profile-layer {
     transform: translateX(0) !important;
+  }
+
+  body.is-about-exiting .about-layer--blue,
+  body.about-page.is-about-exiting .about-layer--blue {
+    transform: translateX(var(--about-slide-offset-exit, -210%)) !important;
+  }
+
+  body.is-profile-exiting .profile-layer--blue,
+  body.profile-page.is-profile-exiting .profile-layer--blue {
+    transform: translateX(var(--profile-slide-offset-exit, 210%)) !important;
   }
 
   body.is-about-enter-pending .about-layer,
