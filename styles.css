@@ -93,7 +93,6 @@
   --red-close-btn-hover-border: color-mix(in srgb, #000000 10%, #ff0000);
   --red-close-btn-active-bg: #cc0000;
   --red-close-btn-outer-border: 0 0 0 1px #000000;
-  --red-close-btn-focus-ring: 0 0 0 2px #000000;
   --project-item-text-default: #e4e8ec;
   --project-item-text-muted: #9ca5ae;
   --project-item-text-category: #727b85;
@@ -1149,6 +1148,10 @@ body.sidebar-panel-toggle-x .sidebar-collapse-btn:hover,
 body.sidebar-panel-toggle-x .sidebar-collapse-btn:focus-visible,
 .sketchbook-lightbox__close.header-shade-close:hover,
 .sketchbook-lightbox__close.header-shade-close:focus-visible,
+.about-close.header-shade-close:hover,
+.about-close.header-shade-close:focus-visible,
+.profile-close.header-shade-close:hover,
+.profile-close.header-shade-close:focus-visible,
 body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:hover,
 body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:focus-visible,
 body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:hover,
@@ -1160,40 +1163,24 @@ body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mob
   background: var(--red-close-btn-hover-bg);
   border-color: var(--red-close-btn-hover-border);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
   outline: none;
 }
 
 body.sidebar-panel-toggle-x .sidebar-collapse-btn:active,
 .sketchbook-lightbox__close.header-shade-close:active,
 .sketchbook-lightbox__close.header-shade-close:hover:active,
+.about-close.header-shade-close:active,
+.about-close.header-shade-close:hover:active,
+.profile-close.header-shade-close:active,
+.profile-close.header-shade-close:hover:active,
 body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:active,
 body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:active,
 body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn:active,
 body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:active {
   background: var(--red-close-btn-active-bg);
   border-color: var(--red-close-btn-active-bg);
-}
-
-@media (hover: hover) {
-  body.sidebar-panel-toggle-x .sidebar-collapse-btn:hover,
-  body.sidebar-panel-toggle-x .sidebar-collapse-btn:focus-visible,
-  .sketchbook-lightbox__close.header-shade-close:hover,
-  .sketchbook-lightbox__close.header-shade-close:focus-visible,
-  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:hover,
-  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:focus-visible,
-  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:hover,
-  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:focus-visible,
-  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn:hover,
-  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn:focus-visible,
-  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:hover,
-  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:focus-visible,
-  .about-close.header-shade-close:hover,
-  .about-close.header-shade-close:focus-visible,
-  .profile-close.header-shade-close:hover,
-  .profile-close.header-shade-close:focus-visible {
-    border-color: #000000;
-    box-shadow: var(--red-close-btn-outer-border), var(--red-close-btn-focus-ring);
-  }
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 body.sidebar-panel-toggle-x .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
@@ -1545,19 +1532,20 @@ body.is-resizing *::after {
   color: var(--text-primary);
   background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
   border-color: var(--brand-blue);
-  box-shadow: 0 0 0 1px var(--brand-blue);
+  box-shadow: none;
 }
 
 [data-theme='light'] .filter-pill:hover:not(.active) {
   background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
   border-color: var(--brand-blue);
-  box-shadow: 0 0 0 1px var(--brand-blue);
+  box-shadow: none;
 }
 
 .filter-pill:not(.active):active {
   background: color-mix(in srgb, var(--brand-blue) 10%, transparent);
   border-color: var(--brand-blue);
   color: var(--text-primary);
+  box-shadow: none;
 }
 
 .filter-pill.active:active {
@@ -6201,6 +6189,7 @@ body.is-about-layout-measuring .about-layer {
   border: 1px solid var(--red-close-btn-bg);
   background: var(--red-close-btn-bg);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 .about-close.header-shade-close:hover,
@@ -6208,6 +6197,7 @@ body.is-about-layout-measuring .about-layer {
   background: var(--red-close-btn-hover-bg);
   border-color: var(--red-close-btn-hover-border);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
   outline: none;
 }
 
@@ -6215,6 +6205,7 @@ body.is-about-layout-measuring .about-layer {
 .about-close.header-shade-close:hover:active {
   background: var(--red-close-btn-active-bg);
   border-color: var(--red-close-btn-active-bg);
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 @media (max-width: 900px) and (min-width: 561px) {
@@ -6955,6 +6946,7 @@ body.is-profile-exiting .profile-layout {
   border: 1px solid var(--red-close-btn-bg);
   background: var(--red-close-btn-bg);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 .profile-close.header-shade-close:hover,
@@ -6962,6 +6954,7 @@ body.is-profile-exiting .profile-layout {
   background: var(--red-close-btn-hover-bg);
   border-color: var(--red-close-btn-hover-border);
   color: #ffffff;
+  box-shadow: var(--red-close-btn-outer-border);
   outline: none;
 }
 
@@ -6969,6 +6962,7 @@ body.is-profile-exiting .profile-layout {
 .profile-close.header-shade-close:hover:active {
   background: var(--red-close-btn-active-bg);
   border-color: var(--red-close-btn-active-bg);
+  box-shadow: var(--red-close-btn-outer-border);
 }
 
 button.profile-avatar-trigger {
