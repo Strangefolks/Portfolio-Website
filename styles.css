@@ -6456,39 +6456,10 @@ body.is-profile-exiting .profile-layout {
   position: relative;
 }
 
-.profile-layer--blue .profile-lockup::after {
-  content: '';
-  position: absolute;
-  left: var(--profile-left-gutter);
-  right: var(--profile-left-gutter);
-  bottom: 0;
-  height: 1px;
-  background: var(--window-border);
-  pointer-events: none;
-}
-
 .profile-lockup .meta-item {
   min-width: 0;
   width: 100%;
   margin: 0;
-}
-
-.profile-lockup--left {
-  position: relative;
-  z-index: 2;
-}
-
-.profile-layer--blue .profile-lockup--left::after {
-  background: var(--window-border);
-}
-
-.profile-lockup--left .meta-label,
-.profile-lockup--left .meta-value {
-  color: #ffffff;
-}
-
-.profile-lockup--left .meta-dot {
-  background: #ffffff;
 }
 
 .profile-lockup--right {
