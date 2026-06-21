@@ -92,6 +92,7 @@
   --red-close-btn-hover-bg: color-mix(in srgb, #ffffff 16%, #ff0000);
   --red-close-btn-hover-border: color-mix(in srgb, #000000 10%, #ff0000);
   --red-close-btn-active-bg: #cc0000;
+  --red-close-btn-focus-ring: 0 0 0 2px #000000;
   --project-item-text-default: #e4e8ec;
   --project-item-text-muted: #9ca5ae;
   --project-item-text-category: #727b85;
@@ -1167,6 +1168,27 @@ body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sid
 body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:active {
   background: var(--red-close-btn-active-bg);
   border-color: var(--red-close-btn-active-bg);
+}
+
+@media (hover: hover) {
+  body.sidebar-panel-toggle-x .sidebar-collapse-btn:hover,
+  body.sidebar-panel-toggle-x .sidebar-collapse-btn:focus-visible,
+  .sketchbook-lightbox__close.header-shade-close:hover,
+  .sketchbook-lightbox__close.header-shade-close:focus-visible,
+  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:hover,
+  body.sidebar-mobile-panel-expanded .sidebar-collapse-btn:focus-visible,
+  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:hover,
+  body.sidebar-mobile-panel-opening-active .sidebar-collapse-btn:focus-visible,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn:hover,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-collapse-btn:focus-visible,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:hover,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar-collapse-btn:focus-visible,
+  .about-close.header-shade-close:hover,
+  .about-close.header-shade-close:focus-visible,
+  .profile-close.header-shade-close:hover,
+  .profile-close.header-shade-close:focus-visible {
+    box-shadow: var(--red-close-btn-focus-ring);
+  }
 }
 
 body.sidebar-panel-toggle-x .sidebar-collapse-btn .sidebar-collapse-icon--desktop,
