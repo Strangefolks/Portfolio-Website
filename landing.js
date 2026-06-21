@@ -156,9 +156,7 @@ initEmailLink(refreshCursor);
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
-const LANDING_LAUNCH_LABEL_EXIT_MS = 240;
-const LANDING_LAUNCH_CURSOR_EXIT_MS = 560;
-const LANDING_BURST_EXPAND_MS = LANDING_LAUNCH_CURSOR_EXIT_MS;
+const LANDING_EXIT_MS = 520;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
 function wait(ms) {
@@ -200,17 +198,13 @@ async function playLandingExit(href, link) {
   updateLandingBurstAnchor(link);
   document.body.classList.add('is-landing-transitioning');
 
-  launchBtn?.classList.add('is-label-exiting');
-
-  await wait(LANDING_LAUNCH_LABEL_EXIT_MS);
-
   const rect = starburst.getBoundingClientRect();
   const size = Math.max(rect.width, rect.height, 1);
   const coverScale = (Math.hypot(window.innerWidth, window.innerHeight) / size) * 1.35;
 
   link.style.setProperty('--landing-cover-scale', String(coverScale));
+  launchBtn?.classList.add('is-label-exiting', 'is-cursor-exiting');
   document.body.classList.add('is-landing-launching', 'is-landing-exiting-burst');
-  launchBtn?.classList.add('is-cursor-exiting');
 
   await new Promise((resolve) => {
     requestAnimationFrame(() => {
@@ -218,7 +212,7 @@ async function playLandingExit(href, link) {
     });
   });
 
-  await wait(LANDING_BURST_EXPAND_MS);
+  await wait(LANDING_EXIT_MS);
 
   navigateToPortfolio(href, { burstReveal: true, burstScale: coverScale });
 }

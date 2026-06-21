@@ -113,6 +113,7 @@
   --duration-fast: 0.22s;
   --duration-normal: 0.32s;
   --duration-theme: 0.5s;
+  --landing-exit-duration: 0.52s;
   --ease-theme: cubic-bezier(0.4, 0, 0.2, 1);
   --footer-control-size: 26px;
   --theme-toggle-size: 32px;
@@ -7252,8 +7253,8 @@ body.landing-page .landing-starburst-stack {
   overflow: hidden;
   margin: 0;
   transition:
-    max-width 0.24s var(--ease-soft),
-    opacity 0.18s var(--ease-smooth);
+    max-width 0.2s var(--ease-soft),
+    opacity 0.16s var(--ease-smooth);
 }
 
 .landing-launch-btn.is-cursor-exiting {
@@ -7262,16 +7263,17 @@ body.landing-page .landing-starburst-stack {
   padding: 0;
   border-width: 0;
   transition:
-    transform 0.34s var(--ease-soft),
-    opacity 0.28s var(--ease-smooth),
-    padding 0.24s var(--ease-soft),
-    border-width 0.24s var(--ease-soft);
+    transform var(--landing-exit-duration) var(--ease-soft),
+    opacity calc(var(--landing-exit-duration) * 0.85) var(--ease-smooth),
+    padding calc(var(--landing-exit-duration) * 0.75) var(--ease-soft),
+    border-width calc(var(--landing-exit-duration) * 0.75) var(--ease-soft);
 }
 
-body.is-landing-exiting-burst .landing-starburst-stack {
+body.is-landing-exiting-burst .landing-starburst-stack,
+body.landing-page.is-landing-expanded.is-landing-exiting-burst .landing-starburst-stack {
   transform: scale(var(--landing-cover-scale, var(--burst-hover-scale, 35.2)));
   transform-origin: center center;
-  transition: transform 0.56s var(--ease-soft);
+  transition: transform var(--landing-exit-duration) var(--ease-soft);
 }
 
 body.is-landing-exiting-burst .landing-orbit,
@@ -7281,7 +7283,6 @@ body.is-landing-exiting-burst .landing-meta {
   transition: none;
 }
 
-body.is-landing-launching .landing-launch-btn,
 body.is-landing-launching .landing-terminal-cursor--idle {
   opacity: 0;
   visibility: hidden;
@@ -7532,7 +7533,7 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
   height: 182px;
   transform: translate(-50%, -50%) scale(var(--entry-burst-scale));
   transform-origin: center center;
-  transition: transform 0.56s var(--ease-soft);
+  transition: transform var(--landing-exit-duration) var(--ease-soft);
 }
 
 .portfolio-entry-reveal-burst-path {
@@ -7938,6 +7939,11 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     transform-origin: center center !important;
     transition: transform calc(0.5s / 3) var(--ease-soft) !important;
     pointer-events: none !important;
+  }
+
+  body.landing-page.is-landing-expanded.is-landing-exiting-burst .landing-starburst-stack {
+    transform: scale(var(--landing-cover-scale, var(--burst-hover-scale, 35.2))) !important;
+    transition: transform var(--landing-exit-duration) var(--ease-soft) !important;
   }
 
   body.landing-page.is-landing-expanded .landing-center-ui {

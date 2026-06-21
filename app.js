@@ -2592,7 +2592,7 @@ const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
 const PORTFOLIO_ENTRY_MS = 920;
-const PORTFOLIO_BURST_ENTRY_MS = 580;
+const PORTFOLIO_BURST_ENTRY_MS = 520;
 
 function initPortfolioEntryAnimation() {
   const root = document.documentElement;
