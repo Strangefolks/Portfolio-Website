@@ -8,10 +8,11 @@
 
   const MOBILE_MQ = window.matchMedia('(max-width: 560px), (hover: none), (pointer: coarse)');
 
-  let indicator = null;
+  let bar = null;
   let startY = 0;
   let pullDistance = 0;
   let activeScrollEl = null;
+  let shiftEl = null;
   let isDragging = false;
   let isRefreshing = false;
   let enabled = false;
@@ -68,6 +69,16 @@
     return main;
   }
 
+  function getShiftTarget() {
+    if (document.body.classList.contains('is-about-open')) {
+      return document.querySelector('.about-stage');
+    }
+    if (document.body.classList.contains('is-profile-open')) {
+      return document.querySelector('.profile-stage');
+    }
+    return document.querySelector('.page-wrapper');
+  }
+
   function getScrollTop(el) {
     if (!el || el === document.documentElement) return window.scrollY || 0;
     return el.scrollTop;
@@ -85,36 +96,48 @@
     return Math.min(MAX_PULL, distance * RESISTANCE);
   }
 
-  function createIndicator() {
+  function createBar() {
     const root = document.createElement('div');
-    root.className = 'pull-to-refresh-indicator';
+    root.className = 'pull-to-refresh-bar';
     root.setAttribute('aria-hidden', 'true');
-    root.innerHTML = '<span class="pull-to-refresh-indicator__shape"></span>';
-    document.body.appendChild(root);
+    const pageWrapper = document.querySelector('.page-wrapper');
+    if (pageWrapper) {
+      document.body.insertBefore(root, pageWrapper);
+    } else {
+      document.body.prepend(root);
+    }
     return root;
   }
 
-  function setIndicatorPull(distance, { animate = false } = {}) {
-    if (!indicator) return;
+  function setPull(distance, { animate = false } = {}) {
+    if (!shiftEl) shiftEl = getShiftTarget();
+    if (!shiftEl) return;
 
-    const progress = Math.min(1, distance / THRESHOLD);
-    indicator.classList.toggle('is-visible', distance > 0);
-    indicator.classList.toggle('is-ready', distance >= THRESHOLD);
-    indicator.classList.toggle('is-snapping', animate);
+    shiftEl.classList.toggle('pull-to-refresh-shift--snapping', animate);
+    shiftEl.classList.toggle('pull-to-refresh-shift--ready', distance >= THRESHOLD);
 
-    indicator.style.setProperty('--pull-offset', `${distance}px`);
-    indicator.style.setProperty('--pull-progress', String(progress));
+    if (distance > 0) {
+      shiftEl.classList.add('pull-to-refresh-shift');
+      shiftEl.style.transform = `translate3d(0, ${distance}px, 0)`;
+      return;
+    }
+
+    shiftEl.classList.remove('pull-to-refresh-shift', 'pull-to-refresh-shift--ready');
+    shiftEl.style.transform = '';
   }
 
-  function snapIndicator(callback) {
-    if (!indicator) {
+  function clearShift(callback) {
+    if (!shiftEl) {
       callback?.();
       return;
     }
 
-    setIndicatorPull(0, { animate: true });
+    setPull(0, { animate: true });
     window.setTimeout(() => {
-      indicator?.classList.remove('is-snapping', 'is-visible', 'is-ready');
+      if (shiftEl) {
+        shiftEl.classList.remove('pull-to-refresh-shift', 'pull-to-refresh-shift--snapping', 'pull-to-refresh-shift--ready');
+        shiftEl.style.transform = '';
+      }
       callback?.();
     }, SNAP_DURATION_MS);
   }
@@ -123,12 +146,13 @@
     isDragging = false;
     pullDistance = 0;
     activeScrollEl = null;
+    shiftEl = null;
     startY = 0;
   }
 
   function reloadPage() {
     isRefreshing = true;
-    setIndicatorPull(0, { animate: true });
+    setPull(0, { animate: true });
     window.setTimeout(() => {
       window.location.reload();
     }, SNAP_DURATION_MS);
@@ -143,6 +167,9 @@
     if (!activeScrollEl) return;
     if (getScrollTop(activeScrollEl) > 0) return;
 
+    shiftEl = getShiftTarget();
+    if (!shiftEl) return;
+
     startY = event.touches[0].clientY;
     isDragging = false;
     pullDistance = 0;
@@ -153,7 +180,7 @@
     if (event.touches.length !== 1) return;
     if (getScrollTop(activeScrollEl) > 0) {
       if (isDragging) {
-        setIndicatorPull(0);
+        setPull(0);
         resetGesture();
       }
       return;
@@ -161,7 +188,7 @@
 
     const deltaY = event.touches[0].clientY - startY;
     if (deltaY <= 0) {
-      if (isDragging) setIndicatorPull(0);
+      if (isDragging) setPull(0);
       isDragging = false;
       pullDistance = 0;
       return;
@@ -169,7 +196,7 @@
 
     isDragging = true;
     pullDistance = applyResistance(deltaY);
-    setIndicatorPull(pullDistance);
+    setPull(pullDistance);
     event.preventDefault();
   }
 
@@ -181,7 +208,7 @@
       return;
     }
 
-    if (isDragging) snapIndicator();
+    if (isDragging) clearShift();
     resetGesture();
   }
 
@@ -189,7 +216,7 @@
     if (enabled) return;
     enabled = true;
     document.body.classList.add('has-pull-to-refresh');
-    if (!indicator) indicator = createIndicator();
+    if (!bar) bar = createBar();
 
     document.addEventListener('touchstart', onTouchStart, { passive: true });
     document.addEventListener('touchmove', onTouchMove, { passive: false });
@@ -202,7 +229,7 @@
     enabled = false;
     document.body.classList.remove('has-pull-to-refresh');
     resetGesture();
-    setIndicatorPull(0);
+    setPull(0);
 
     document.removeEventListener('touchstart', onTouchStart);
     document.removeEventListener('touchmove', onTouchMove);
