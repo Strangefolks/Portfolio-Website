@@ -1,5 +1,10 @@
 const PROFILE_SLIDE_DURATION_MS = 560;
 const PROFILE_SLIDE_STAGGER_MS = 110;
+const PROFILE_MOBILE_LAYOUT_MQ = window.matchMedia('(max-width: 560px)');
+
+function isProfileMobileLayout() {
+  return PROFILE_MOBILE_LAYOUT_MQ.matches;
+}
 const PROFILE_NAME_FIT_MIN = 12;
 
 let profileOverlayBusy = false;
@@ -39,6 +44,11 @@ function clearInlineProfileLayerTransforms() {
 
 async function playProfileEnter(host) {
   clearInlineProfileLayerTransforms();
+  if (isProfileMobileLayout()) {
+    host.classList.remove('is-profile-exiting', 'is-profile-enter-pending', 'is-profile-entering');
+    return;
+  }
+
   setProfileEnterPending(host);
   flushLayout();
 
@@ -59,6 +69,13 @@ async function playProfileEnter(host) {
 async function playProfileExit(host, { resetPending = true } = {}) {
   host.classList.remove('is-profile-enter-pending', 'is-profile-entering');
   clearInlineProfileLayerTransforms();
+
+  if (isProfileMobileLayout()) {
+    host.classList.remove('is-profile-exiting');
+    if (resetPending) setProfileEnterPending(host);
+    return;
+  }
+
   flushLayout();
 
   await new Promise((resolve) => {
@@ -266,7 +283,10 @@ async function openProfileOverlay() {
     const layout = await ensureProfileMounted(stage);
     if (!layout) return;
 
-    setProfileEnterPending(document.body);
+    if (!isProfileMobileLayout()) {
+      setProfileEnterPending(document.body);
+    }
+
     stage.hidden = false;
     stage.setAttribute('aria-hidden', 'false');
     flushLayout(stage);

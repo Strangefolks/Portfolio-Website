@@ -1,5 +1,10 @@
 const ABOUT_SLIDE_DURATION_MS = 560;
 const ABOUT_SLIDE_STAGGER_MS = 110;
+const ABOUT_MOBILE_LAYOUT_MQ = window.matchMedia('(max-width: 560px)');
+
+function isAboutMobileLayout() {
+  return ABOUT_MOBILE_LAYOUT_MQ.matches;
+}
 const ABOUT_LOGO_VISUAL_TOP_RATIO = 5.92725 / 44;
 const ABOUT_STORY_TITLE_FIT_MIN = 12;
 
@@ -58,6 +63,11 @@ function clearInlineAboutLayerTransforms() {
 
 async function playAboutEnter(host) {
   clearInlineAboutLayerTransforms();
+  if (isAboutMobileLayout()) {
+    host.classList.remove('is-about-exiting', 'is-about-enter-pending', 'is-about-entering');
+    return;
+  }
+
   setAboutEnterPending(host);
   flushLayout();
 
@@ -78,6 +88,13 @@ async function playAboutEnter(host) {
 async function playAboutExit(host, { resetPending = true } = {}) {
   host.classList.remove('is-about-enter-pending', 'is-about-entering');
   clearInlineAboutLayerTransforms();
+
+  if (isAboutMobileLayout()) {
+    host.classList.remove('is-about-exiting');
+    if (resetPending) setAboutEnterPending(host);
+    return;
+  }
+
   flushLayout();
 
   await new Promise((resolve) => {
@@ -456,8 +473,10 @@ async function openAboutOverlay() {
     await prepareAboutStoryLayout(stage);
     initAboutStoryLayoutObservers(stage);
 
-    setAboutEnterPending(document.body);
-    flushLayout(stage);
+    if (!isAboutMobileLayout()) {
+      setAboutEnterPending(document.body);
+      flushLayout(stage);
+    }
 
     lockAboutOverlayScroll();
     initCustomScrollbars(stage);
