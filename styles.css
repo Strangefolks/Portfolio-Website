@@ -6058,7 +6058,7 @@ body.is-about-story-layout-pending .about-panel-right .project-text {
   visibility: hidden;
 }
 
-body.is-about-layout-measuring .about-layer {
+body.is-about-layout-measuring:not(.is-about-enter-pending):not(.is-about-entering):not(.is-about-exiting) .about-layer {
   transform: translateX(0) !important;
   transition: none !important;
 }

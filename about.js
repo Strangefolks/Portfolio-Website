@@ -213,10 +213,7 @@ function alignAboutStoryWithLogo(scope = aboutStoryTitleFitScope) {
     return;
   }
 
-  if (
-    isAboutTransitioning()
-    && !document.body.classList.contains('is-about-layout-measuring')
-  ) {
+  if (isAboutTransitioning()) {
     return;
   }
 
@@ -452,14 +449,17 @@ async function openAboutOverlay() {
     const layout = await ensureAboutMounted(stage);
     if (!layout) return;
 
-    setAboutEnterPending(document.body);
     stage.hidden = false;
     stage.setAttribute('aria-hidden', 'false');
     flushLayout(stage);
 
-    lockAboutOverlayScroll();
     await prepareAboutStoryLayout(stage);
     initAboutStoryLayoutObservers(stage);
+
+    setAboutEnterPending(document.body);
+    flushLayout(stage);
+
+    lockAboutOverlayScroll();
     initCustomScrollbars(stage);
     await playAboutEnter(document.body);
     applyAboutStoryLayout(stage, { force: true });
