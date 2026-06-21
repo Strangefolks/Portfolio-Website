@@ -208,7 +208,7 @@ function prefetchPortfolio() {
   if (!document.querySelector('link[data-preload-portfolio-app]')) {
     const preloadApp = document.createElement('link');
     preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250620ad';
+    preloadApp.href = 'app.js?v=20250620ae';
     preloadApp.as = 'script';
     preloadApp.setAttribute('data-preload-portfolio-app', '');
     document.head.appendChild(preloadApp);
