@@ -58,8 +58,17 @@ async function playProfileEnter(host) {
 
 async function playProfileExit(host, { resetPending = true } = {}) {
   host.classList.remove('is-profile-enter-pending', 'is-profile-entering');
-  host.classList.add('is-profile-exiting');
+  clearInlineProfileLayerTransforms();
   flushLayout();
+
+  await new Promise((resolve) => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        host.classList.add('is-profile-exiting');
+        resolve();
+      });
+    });
+  });
 
   await wait(PROFILE_SLIDE_DURATION_MS + PROFILE_SLIDE_STAGGER_MS + 40);
   host.classList.remove('is-profile-exiting');

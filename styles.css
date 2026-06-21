@@ -5116,26 +5116,6 @@ html:not([data-theme]) .view-toggle-btn[aria-pressed='true'] .view-toggle-icon {
     z-index: 140;
   }
 
-  .is-about-enter-pending .about-layer,
-  .is-profile-enter-pending .profile-layer {
-    transform: none !important;
-    opacity: 0;
-  }
-
-  .is-about-entering .about-layer,
-  .is-profile-entering .profile-layer {
-    transform: none !important;
-    opacity: 1;
-    transition: opacity var(--about-slide-duration) var(--about-slide-ease);
-  }
-
-  .is-about-exiting .about-layer,
-  .is-profile-exiting .profile-layer {
-    transform: none !important;
-    opacity: 0;
-    transition: opacity 0.32s var(--about-slide-ease);
-  }
-
   .body {
     flex-direction: column;
     overflow: hidden;
@@ -5779,7 +5759,6 @@ body.is-about-open .about-stage {
   z-index: 2;
   width: calc(50% + 2px);
   --about-slide-offset: -105%;
-  --about-slide-offset-exit: 100vw;
   background: var(--brand-blue);
   border-radius: 0;
   box-shadow: 8px 0 28px rgba(0, 0, 0, 0.28);
@@ -5789,7 +5768,6 @@ body.is-about-open .about-stage {
   left: 50%;
   z-index: 1;
   --about-slide-offset: -215%;
-  --about-slide-offset-exit: 100vw;
   background: var(--bg-app);
   border-radius: 0;
   box-shadow: 8px 0 28px rgba(0, 0, 0, 0.45);
@@ -5814,21 +5792,15 @@ body.is-about-open .about-stage {
   z-index: 1;
 }
 
-/* Exit: both panels slide fully off-screen to the right */
-body.is-about-exiting .about-stage,
-body.is-about-exiting .about-stage .app--about,
-body.is-about-exiting .about-layout {
-  overflow: visible;
-}
-
+/* Exit: both panels slide fully off-screen to the left */
 .is-about-exiting .about-layer--blue {
-  transform: translateX(var(--about-exit-x, var(--about-slide-offset-exit)));
+  transform: translateX(var(--about-slide-offset));
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
   z-index: 3;
 }
 
 .is-about-exiting .about-layer--black {
-  transform: translateX(var(--about-exit-x, var(--about-slide-offset-exit)));
+  transform: translateX(var(--about-slide-offset));
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
   z-index: 1;
 }
@@ -6305,12 +6277,8 @@ body.is-profile-open .profile-stage {
   box-shadow: -8px 0 28px rgba(0, 0, 0, 0.45);
 }
 
-.is-profile-enter-pending .profile-layer,
-.is-profile-exiting .profile-layer {
-  transform: translateX(var(--profile-slide-offset));
-}
-
 .is-profile-enter-pending .profile-layer {
+  transform: translateX(var(--profile-slide-offset));
   transition: none;
 }
 
@@ -6329,6 +6297,12 @@ body.is-profile-open .profile-stage {
 }
 
 /* Exit to right: blue leads on top, black follows underneath */
+body.is-profile-exiting .profile-stage,
+body.is-profile-exiting .profile-stage .app--profile,
+body.is-profile-exiting .profile-layout {
+  overflow: visible;
+}
+
 .is-profile-exiting .profile-layer--blue {
   transform: translateX(var(--profile-slide-offset));
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
@@ -8087,5 +8061,111 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
 
   .landing-launch-btn:hover .landing-terminal-cursor--inline {
     background: #ffffff;
+  }
+}
+
+/* About/profile slide animations — restore horizontal geometry when responsive layout overrides stack panels */
+@media (max-width: 900px) {
+  body.is-about-enter-pending .about-layout,
+  body.is-about-entering .about-layout,
+  body.is-about-exiting .about-layout,
+  body.is-profile-enter-pending .profile-layout,
+  body.is-profile-entering .profile-layout,
+  body.is-profile-exiting .profile-layout,
+  body.about-page.is-about-enter-pending .about-layout,
+  body.about-page.is-about-entering .about-layout,
+  body.about-page.is-about-exiting .about-layout,
+  body.profile-page.is-profile-enter-pending .profile-layout,
+  body.profile-page.is-profile-entering .profile-layout,
+  body.profile-page.is-profile-exiting .profile-layout {
+    display: block !important;
+    flex-direction: unset !important;
+  }
+
+  body.is-about-enter-pending .about-layer,
+  body.is-about-entering .about-layer,
+  body.is-about-exiting .about-layer,
+  body.is-profile-enter-pending .profile-layer,
+  body.is-profile-entering .profile-layer,
+  body.is-profile-exiting .profile-layer,
+  body.about-page.is-about-enter-pending .about-layer,
+  body.about-page.is-about-entering .about-layer,
+  body.about-page.is-about-exiting .about-layer,
+  body.profile-page.is-profile-enter-pending .profile-layer,
+  body.profile-page.is-profile-entering .profile-layer,
+  body.profile-page.is-profile-exiting .profile-layer {
+    position: absolute !important;
+    top: 0 !important;
+    bottom: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    width: 50% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    opacity: 1 !important;
+    order: unset !important;
+    flex-shrink: unset !important;
+    transform: translateX(var(--about-slide-offset, var(--profile-slide-offset, 0)));
+  }
+
+  body.is-about-enter-pending .about-layer--blue,
+  body.is-about-entering .about-layer--blue,
+  body.is-about-exiting .about-layer--blue,
+  body.about-page.is-about-enter-pending .about-layer--blue,
+  body.about-page.is-about-entering .about-layer--blue,
+  body.about-page.is-about-exiting .about-layer--blue {
+    left: 0 !important;
+    width: calc(50% + 2px) !important;
+    --about-slide-offset: -105%;
+  }
+
+  body.is-about-enter-pending .about-layer--black,
+  body.is-about-entering .about-layer--black,
+  body.is-about-exiting .about-layer--black,
+  body.about-page.is-about-enter-pending .about-layer--black,
+  body.about-page.is-about-entering .about-layer--black,
+  body.about-page.is-about-exiting .about-layer--black {
+    left: 50% !important;
+    top: 0 !important;
+    width: 50% !important;
+    --about-slide-offset: -215%;
+  }
+
+  body.is-profile-enter-pending .profile-layer--blue,
+  body.is-profile-entering .profile-layer--blue,
+  body.is-profile-exiting .profile-layer--blue,
+  body.profile-page.is-profile-enter-pending .profile-layer--blue,
+  body.profile-page.is-profile-entering .profile-layer--blue,
+  body.profile-page.is-profile-exiting .profile-layer--blue {
+    left: 0 !important;
+    width: calc(50% + 2px) !important;
+    --profile-slide-offset: 105%;
+  }
+
+  body.is-profile-enter-pending .profile-layer--black,
+  body.is-profile-entering .profile-layer--black,
+  body.is-profile-exiting .profile-layer--black,
+  body.profile-page.is-profile-enter-pending .profile-layer--black,
+  body.profile-page.is-profile-entering .profile-layer--black,
+  body.profile-page.is-profile-exiting .profile-layer--black {
+    left: 50% !important;
+    top: 0 !important;
+    width: 50% !important;
+    --profile-slide-offset: 215%;
+  }
+
+  body.is-about-entering .about-layer,
+  body.is-profile-entering .profile-layer,
+  body.about-page.is-about-entering .about-layer,
+  body.profile-page.is-profile-entering .profile-layer {
+    transform: translateX(0) !important;
+  }
+
+  body.is-about-enter-pending .about-layer,
+  body.is-profile-enter-pending .profile-layer,
+  body.about-page.is-about-enter-pending .about-layer,
+  body.profile-page.is-profile-enter-pending .profile-layer {
+    transition: none !important;
   }
 }

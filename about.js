@@ -53,15 +53,6 @@ function clearInlineAboutLayerTransforms() {
   document.querySelectorAll('.about-layer').forEach((layer) => {
     layer.style.removeProperty('transform');
     layer.style.removeProperty('transition');
-    layer.style.removeProperty('--about-exit-x');
-  });
-}
-
-function setAboutExitOffsets() {
-  document.querySelectorAll('.about-layer').forEach((layer) => {
-    const rect = layer.getBoundingClientRect();
-    const exitX = window.innerWidth - rect.left + 24;
-    layer.style.setProperty('--about-exit-x', `${exitX}px`);
   });
 }
 
@@ -86,7 +77,7 @@ async function playAboutEnter(host) {
 
 async function playAboutExit(host, { resetPending = true } = {}) {
   host.classList.remove('is-about-enter-pending', 'is-about-entering');
-  setAboutExitOffsets();
+  clearInlineAboutLayerTransforms();
   flushLayout();
 
   await new Promise((resolve) => {
