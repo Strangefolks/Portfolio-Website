@@ -7539,18 +7539,8 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal {
   inset: 0;
   z-index: 99999;
   pointer-events: none;
-}
-
-html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
-  display: none;
-}
-
-.portfolio-entry-reveal-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--brand-blue);
-  opacity: 1;
-  transition: none;
+  background: transparent;
+  overflow: visible;
 }
 
 .portfolio-entry-reveal-burst {
@@ -7562,6 +7552,8 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
   transform: translate(-50%, -50%) scale(var(--entry-burst-scale));
   transform-origin: center center;
   transition: none;
+  overflow: visible;
+  pointer-events: none;
 }
 
 html.is-portfolio-burst-entry:not(.is-portfolio-entry-animate) .portfolio-entry-reveal-burst {
@@ -7574,19 +7566,27 @@ html.is-portfolio-burst-entry:not(.is-portfolio-entry-animate) .portfolio-entry-
 
 html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-burst {
   transform: translate(-50%, -50%) scale(0);
-  transition: transform var(--landing-exit-duration) var(--ease-soft);
+  opacity: 0;
+  transition:
+    transform var(--landing-exit-duration) var(--ease-soft),
+    opacity calc(var(--landing-exit-duration) * 0.18) var(--ease-smooth)
+      calc(var(--landing-exit-duration) * 0.82);
 }
 
-html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-fill {
-  display: none;
-}
-
+html.is-portfolio-burst-entry .sidebar,
+html.is-portfolio-burst-entry .sidebar-resizer,
 html.is-portfolio-burst-entry .main > .text-overline,
 html.is-portfolio-burst-entry .project-intro,
 html.is-portfolio-burst-entry .project-body {
   opacity: 1;
   transform: none;
   transition: none;
+}
+
+@media (min-width: 901px) {
+  html.is-portfolio-burst-entry .sidebar {
+    transform: translateX(0);
+  }
 }
 
 html.is-portfolio-entry .portfolio-entry-curtain {
@@ -7668,7 +7668,6 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
   .landing-transition-burst,
   .landing-transition-fill,
   .portfolio-entry-reveal-burst,
-  .portfolio-entry-reveal-fill,
   html.is-portfolio-entry .portfolio-entry-curtain,
   html.is-portfolio-burst-entry .portfolio-entry-reveal,
   html.is-portfolio-entry .sidebar,

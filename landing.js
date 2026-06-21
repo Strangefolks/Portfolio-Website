@@ -174,10 +174,60 @@ function prefetchPortfolio() {
     document.head.appendChild(prefetchLink);
   }
 
+  if (!document.querySelector('link[data-preload-portfolio-app]')) {
+    const preloadApp = document.createElement('link');
+    preloadApp.rel = 'preload';
+    preloadApp.href = 'app.js?v=20250620t';
+    preloadApp.as = 'script';
+    preloadApp.setAttribute('data-preload-portfolio-app', '');
+    document.head.appendChild(preloadApp);
+  }
+
   if (!window.__portfolioHtmlPrefetched) {
     window.__portfolioHtmlPrefetched = true;
     fetch('home.html', { credentials: 'same-origin' }).catch(() => {});
   }
+
+  if (!document.getElementById('portfolio-prefetch-frame')) {
+    const iframe = document.createElement('iframe');
+    iframe.id = 'portfolio-prefetch-frame';
+    iframe.src = 'home.html';
+    iframe.hidden = true;
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.setAttribute('tabindex', '-1');
+    iframe.setAttribute('title', '');
+    Object.assign(iframe.style, {
+      position: 'absolute',
+      width: '0',
+      height: '0',
+      border: '0',
+      opacity: '0',
+      pointerEvents: 'none',
+    });
+    document.body.appendChild(iframe);
+  }
+}
+
+function waitForLandingBurstExpand(link) {
+  const stack = link.querySelector('.landing-starburst-stack');
+  if (!stack) return wait(LANDING_EXIT_MS);
+
+  return new Promise((resolve) => {
+    let settled = false;
+    const finish = () => {
+      if (settled) return;
+      settled = true;
+      stack.removeEventListener('transitionend', onTransitionEnd);
+      resolve();
+    };
+    const onTransitionEnd = (event) => {
+      if (event.target !== stack || event.propertyName !== 'transform') return;
+      finish();
+    };
+
+    stack.addEventListener('transitionend', onTransitionEnd);
+    window.setTimeout(finish, LANDING_EXIT_MS + 80);
+  });
 }
 
 function navigateToPortfolio(
@@ -228,7 +278,7 @@ async function playLandingExit(href, link) {
     });
   });
 
-  await wait(LANDING_EXIT_MS);
+  await waitForLandingBurstExpand(link);
 
   const stack = link.querySelector('.landing-starburst-stack');
   const stackRect = stack?.getBoundingClientRect();

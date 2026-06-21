@@ -2639,15 +2639,25 @@ function initPortfolioEntryAnimation() {
     root.classList.remove('is-portfolio-entry');
     root.classList.remove('is-portfolio-burst-entry');
     root.classList.remove('is-portfolio-entry-animate');
+    delete root.dataset.portfolioEntryAnimateAt;
   };
 
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      root.classList.add('is-portfolio-entry-animate');
-    });
-  });
+  const duration = burstReveal ? PORTFOLIO_BURST_ENTRY_MS : PORTFOLIO_ENTRY_MS;
+  const startedAt = parseInt(root.dataset.portfolioEntryAnimateAt || '', 10);
+  const elapsed = Number.isFinite(startedAt) ? Date.now() - startedAt : 0;
 
-  window.setTimeout(finish, burstReveal ? PORTFOLIO_BURST_ENTRY_MS : PORTFOLIO_ENTRY_MS);
+  if (!root.classList.contains('is-portfolio-entry-animate')) {
+    root.dataset.portfolioEntryAnimateAt = String(Date.now());
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        root.classList.add('is-portfolio-entry-animate');
+      });
+    });
+    window.setTimeout(finish, duration);
+    return;
+  }
+
+  window.setTimeout(finish, Math.max(0, duration - elapsed));
 }
 
 initPortfolioEntryAnimation();

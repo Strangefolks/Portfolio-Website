@@ -10,7 +10,31 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620s" />
+    <link rel="stylesheet" href="styles.css?v=20250620t" />
+    <link rel="preload" href="app.js?v=20250620t" as="script" />
+    <style>
+      html.is-portfolio-burst-entry .portfolio-entry-reveal {
+        background: transparent;
+      }
+      html.is-portfolio-burst-entry .portfolio-entry-curtain,
+      html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
+        display: none !important;
+      }
+      html.is-portfolio-burst-entry .sidebar,
+      html.is-portfolio-burst-entry .sidebar-resizer,
+      html.is-portfolio-burst-entry .main > .text-overline,
+      html.is-portfolio-burst-entry .project-intro,
+      html.is-portfolio-burst-entry .project-body {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
+      @media (min-width: 901px) {
+        html.is-portfolio-burst-entry .sidebar {
+          transform: translateX(0) !important;
+        }
+      }
+    </style>
     <script>
       (function () {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -32,6 +56,14 @@
             if (scale) root.style.setProperty('--entry-burst-scale', scale);
             if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
             if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              root.dataset.portfolioEntryAnimateAt = String(Date.now());
+              requestAnimationFrame(function () {
+                requestAnimationFrame(function () {
+                  root.classList.add('is-portfolio-entry-animate');
+                });
+              });
+            }
           }
         } catch (e) {}
       })();
@@ -50,7 +82,6 @@
     </script>
     <div class="portfolio-entry-curtain" aria-hidden="true"></div>
     <div class="portfolio-entry-reveal" aria-hidden="true">
-      <div class="portfolio-entry-reveal-fill"></div>
       <svg
         class="portfolio-entry-reveal-burst"
         viewBox="0 0 182 182"
@@ -537,7 +568,7 @@
     <script src="scrollbar.js"></script>
     <script src="about.js"></script>
     <script src="profile.js"></script>
-    <script src="pull-to-refresh.js?v=20250620s"></script>
-    <script src="app.js?v=20250620s"></script>
+    <script src="pull-to-refresh.js?v=20250620t"></script>
+    <script src="app.js?v=20250620t"></script>
   </body>
 </html>
