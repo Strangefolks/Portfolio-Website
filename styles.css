@@ -8059,6 +8059,46 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     z-index: 1 !important;
   }
 
+  body.landing-page .landing-meta-item--right {
+    grid-template-columns: minmax(0, 1fr) 6px;
+  }
+
+  body.landing-page .landing-meta-item--right .meta-dot {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
+  }
+
+  body.landing-page .landing-meta-item--right .meta-label {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    text-align: right;
+  }
+
+  body.landing-page .landing-meta-item--right .meta-value {
+    grid-column: 1;
+    justify-self: end;
+    text-align: right;
+  }
+
+  body.landing-page .landing-meta-item--location {
+    grid-template-columns: minmax(0, 1fr) 10px;
+  }
+
+  body.landing-page .landing-meta-item--location .landing-meta-location-icon {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: end;
+  }
+
+  body.landing-page .landing-meta-item--location .landing-meta-value--location {
+    grid-column: 1;
+    grid-row: 2;
+    justify-self: end;
+    text-align: right;
+  }
+
   body.landing-page .landing-hero {
     z-index: 10 !important;
   }

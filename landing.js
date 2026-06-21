@@ -43,13 +43,19 @@ if (themeToggle) {
   });
 }
 
+const LANDING_META_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
+
 function alignLandingLocationWithEmail() {
   const emailIcon = document.querySelector('#email-link .email-link-icon');
   const locationItem = document.querySelector('.landing-meta--top .landing-meta-item--right');
   const dot = locationItem?.querySelector('.meta-dot');
-  if (!emailIcon || !locationItem || !dot) return;
+  if (!locationItem || !dot) return;
 
   locationItem.style.transform = '';
+
+  if (LANDING_META_MOBILE_MQ.matches) return;
+
+  if (!emailIcon) return;
 
   const offset = Math.round(emailIcon.getBoundingClientRect().left - dot.getBoundingClientRect().left);
   if (offset !== 0) {
@@ -67,6 +73,8 @@ function alignLandingBottomMetaWithTop() {
 
   if (bottomLeftItem) bottomLeftItem.style.transform = '';
   if (bottomRightItem) bottomRightItem.style.transform = '';
+
+  if (LANDING_META_MOBILE_MQ.matches) return;
 
   if (topLeftDot && bottomLeftDot && bottomLeftItem) {
     const offset = Math.round(topLeftDot.getBoundingClientRect().left - bottomLeftDot.getBoundingClientRect().left);
