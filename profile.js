@@ -206,21 +206,25 @@ function initProfileNameFit(scope = document) {
 }
 
 function bindProfileClose(layout, host, onClose) {
-  const closeButton = layout.querySelector('.profile-close');
-  if (!closeButton || closeButton.dataset.profileCloseBound === 'true') return;
+  const closeButtons = layout.querySelectorAll('.profile-close');
+  if (!closeButtons.length) return;
 
-  closeButton.dataset.profileCloseBound = 'true';
-  closeButton.addEventListener('click', async (event) => {
-    event.preventDefault();
-    if (profileOverlayBusy || host.classList.contains('is-profile-exiting')) return;
+  closeButtons.forEach((closeButton) => {
+    if (closeButton.dataset.profileCloseBound === 'true') return;
 
-    profileOverlayBusy = true;
-    try {
-      await playProfileExit(host, { resetPending: false });
-      onClose();
-    } finally {
-      profileOverlayBusy = false;
-    }
+    closeButton.dataset.profileCloseBound = 'true';
+    closeButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (profileOverlayBusy || host.classList.contains('is-profile-exiting')) return;
+
+      profileOverlayBusy = true;
+      try {
+        await playProfileExit(host, { resetPending: false });
+        onClose();
+      } finally {
+        profileOverlayBusy = false;
+      }
+    });
   });
 }
 

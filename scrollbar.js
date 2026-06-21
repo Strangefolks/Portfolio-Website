@@ -117,9 +117,17 @@ function bindCustomScrollbar(scrollable) {
 }
 
 function initCustomScrollbars(root = document) {
+  const skipAboutProfileOnMobile = window.matchMedia('(max-width: 560px)').matches;
+
   CUSTOM_SCROLLBAR_SELECTORS.forEach((selector) => {
     root.querySelectorAll(selector).forEach((element) => {
       if (element.classList.contains('custom-scrollbar-viewport')) return;
+      if (
+        skipAboutProfileOnMobile
+        && (element.classList.contains('about-panel-right') || element.classList.contains('profile-panel-right'))
+      ) {
+        return;
+      }
       bindCustomScrollbar(element);
     });
   });

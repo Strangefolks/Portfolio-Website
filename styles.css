@@ -8747,15 +8747,52 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
 
 /* Mobile about/profile — fixed close at viewport top-right (black panel is below blue stack) */
 @media (max-width: 560px) {
-  body.is-about-open .about-close.header-shade-close,
-  body.about-page .about-close.header-shade-close,
-  body.is-profile-open .profile-close.header-shade-close,
-  body.profile-page .profile-close.header-shade-close {
-    position: fixed !important;
+  /* Black-layer close: desktop placement; hidden on mobile stack (blue layer hosts close). */
+  .about-layer--black > .about-close.header-shade-close,
+  .profile-layer--black > .profile-close.header-shade-close {
+    display: none !important;
+  }
+
+  /* Blue-layer close: top-right of blue panel; scrolls with full-page layout. */
+  .about-layer--blue > .about-close.header-shade-close,
+  .profile-layer--blue > .profile-close.header-shade-close {
+    display: flex !important;
+    position: absolute !important;
     top: calc(12px + env(safe-area-inset-top, 0px)) !important;
     right: calc(12px + env(safe-area-inset-right, 0px)) !important;
     left: auto !important;
     bottom: auto !important;
-    z-index: 200 !important;
+    z-index: 140 !important;
+  }
+
+  /* Full-page scroll: layout scrolls stacked blue + black; black panel grows with content. */
+  .about-panel-right,
+  .profile-panel-right,
+  .about-panel-right.custom-scrollbar-viewport,
+  .profile-panel-right.custom-scrollbar-viewport {
+    flex: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  .about-layer--black > .custom-scrollbar-wrap,
+  .profile-layer--black > .custom-scrollbar-wrap {
+    flex: none !important;
+    min-height: auto !important;
+    overflow: visible !important;
+  }
+
+  .about-layer--black > .custom-scrollbar-wrap > .custom-scrollbar-rail,
+  .profile-layer--black > .custom-scrollbar-wrap > .custom-scrollbar-rail {
+    display: none !important;
+  }
+}
+
+@media (min-width: 561px) {
+  .about-layer--blue > .about-close.header-shade-close,
+  .profile-layer--blue > .profile-close.header-shade-close {
+    display: none !important;
   }
 }

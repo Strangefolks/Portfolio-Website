@@ -389,21 +389,25 @@ function initAboutStoryLayoutObservers(scope = document) {
 }
 
 function bindAboutClose(layout, host, onClose) {
-  const closeButton = layout.querySelector('.about-close');
-  if (!closeButton || closeButton.dataset.aboutCloseBound === 'true') return;
+  const closeButtons = layout.querySelectorAll('.about-close');
+  if (!closeButtons.length) return;
 
-  closeButton.dataset.aboutCloseBound = 'true';
-  closeButton.addEventListener('click', async (event) => {
-    event.preventDefault();
-    if (aboutOverlayBusy || host.classList.contains('is-about-exiting')) return;
+  closeButtons.forEach((closeButton) => {
+    if (closeButton.dataset.aboutCloseBound === 'true') return;
 
-    aboutOverlayBusy = true;
-    try {
-      await playAboutExit(host, { resetPending: false });
-      onClose();
-    } finally {
-      aboutOverlayBusy = false;
-    }
+    closeButton.dataset.aboutCloseBound = 'true';
+    closeButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      if (aboutOverlayBusy || host.classList.contains('is-about-exiting')) return;
+
+      aboutOverlayBusy = true;
+      try {
+        await playAboutExit(host, { resetPending: false });
+        onClose();
+      } finally {
+        aboutOverlayBusy = false;
+      }
+    });
   });
 }
 
