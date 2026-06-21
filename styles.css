@@ -96,7 +96,7 @@
   --project-item-text-default: #e4e8ec;
   --project-item-text-muted: #9ca5ae;
   --project-item-text-category: #727b85;
-  --project-item-divider: var(--divider-color);
+  --project-item-divider: #000000;
   --project-list-text-size: var(--text-size-list);
   --header-height: calc(52px * 1.125);
   --header-padding-inline: 20px;
@@ -191,7 +191,7 @@
   --project-item-text-default: #000000;
   --project-item-text-muted: #333333;
   --project-item-text-category: #555555;
-  --project-item-divider: var(--divider-color);
+  --project-item-divider: #000000;
   --project-list-text-size: var(--text-size-list);
   --project-list-fade-color: rgba(0, 0, 0, 0.1);
   --hero-placeholder-bg: var(--bg-sidebar);
