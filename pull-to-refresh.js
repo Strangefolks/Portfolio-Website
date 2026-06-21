@@ -109,12 +109,25 @@
     return root;
   }
 
+  function setBarHeight(distance, { animate = false } = {}) {
+    if (!bar) return;
+    bar.classList.toggle('pull-to-refresh-bar--snapping', animate);
+    if (distance > 0) {
+      bar.style.height = `${distance}px`;
+      bar.style.visibility = 'visible';
+    } else {
+      bar.style.height = '0px';
+      bar.style.visibility = 'hidden';
+    }
+  }
+
   function setPull(distance, { animate = false } = {}) {
     if (!shiftEl) shiftEl = getShiftTarget();
     if (!shiftEl) return;
 
     shiftEl.classList.toggle('pull-to-refresh-shift--snapping', animate);
     shiftEl.classList.toggle('pull-to-refresh-shift--ready', distance >= THRESHOLD);
+    setBarHeight(distance, { animate });
 
     if (distance > 0) {
       shiftEl.classList.add('pull-to-refresh-shift');
@@ -137,6 +150,11 @@
       if (shiftEl) {
         shiftEl.classList.remove('pull-to-refresh-shift', 'pull-to-refresh-shift--snapping', 'pull-to-refresh-shift--ready');
         shiftEl.style.transform = '';
+      }
+      if (bar) {
+        bar.classList.remove('pull-to-refresh-bar--snapping');
+        bar.style.height = '0px';
+        bar.style.visibility = 'hidden';
       }
       callback?.();
     }, SNAP_DURATION_MS);

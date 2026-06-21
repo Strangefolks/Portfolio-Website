@@ -8409,12 +8409,15 @@ body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.head
     top: 0;
     left: 0;
     width: 100%;
-    height: var(--header-height);
-    padding-top: env(safe-area-inset-top, 0px);
-    box-sizing: content-box;
+    height: 0;
+    visibility: hidden;
     background: var(--brand-blue);
     z-index: 1;
     pointer-events: none;
+  }
+
+  .pull-to-refresh-bar--snapping {
+    transition: height 0.32s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .page-wrapper.pull-to-refresh-shift {
