@@ -88,6 +88,7 @@
   --project-item-hover-bg: var(--brand-blue);
   --project-item-focus-outline: color-mix(in srgb, var(--brand-blue) 50%, white);
   --project-item-pressed-bg: #004bcc;
+  --project-item-active-highlight-gap: 4px;
   --red-close-btn-size: 28px;
   --red-close-btn-bg: #ff0000;
   --red-close-btn-hover-bg: color-mix(in srgb, #ffffff 16%, #ff0000);
@@ -1826,6 +1827,10 @@ body.is-resizing *::after {
   border-bottom: 1px solid var(--project-item-divider);
 }
 
+.project-item.active {
+  margin-top: -3px;
+}
+
 .project-item:focus {
   outline: none;
 }
@@ -1852,6 +1857,7 @@ body.is-resizing *::after {
 }
 
 .project-item.active::before {
+  inset: var(--project-item-active-highlight-gap) 0;
   box-shadow: inset 0 0 0 1px #000000;
 }
 
