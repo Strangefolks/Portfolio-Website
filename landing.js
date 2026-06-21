@@ -156,6 +156,8 @@ initEmailLink(refreshCursor);
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
+const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
+const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
 const LANDING_EXIT_MS = 520;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
@@ -164,22 +166,36 @@ function wait(ms) {
 }
 
 function prefetchPortfolio() {
-  if (document.querySelector('link[data-prefetch-portfolio]')) return;
+  if (!document.querySelector('link[data-prefetch-portfolio]')) {
+    const prefetchLink = document.createElement('link');
+    prefetchLink.rel = 'prefetch';
+    prefetchLink.href = 'home.html';
+    prefetchLink.setAttribute('data-prefetch-portfolio', '');
+    document.head.appendChild(prefetchLink);
+  }
 
-  const prefetchLink = document.createElement('link');
-  prefetchLink.rel = 'prefetch';
-  prefetchLink.href = 'home.html';
-  prefetchLink.setAttribute('data-prefetch-portfolio', '');
-  document.head.appendChild(prefetchLink);
+  if (!window.__portfolioHtmlPrefetched) {
+    window.__portfolioHtmlPrefetched = true;
+    fetch('home.html', { credentials: 'same-origin' }).catch(() => {});
+  }
 }
 
-function navigateToPortfolio(href, { burstReveal = false, burstScale = null } = {}) {
+function navigateToPortfolio(
+  href,
+  { burstReveal = false, burstScale = null, burstX = null, burstY = null } = {}
+) {
   try {
     sessionStorage.setItem(PORTFOLIO_ENTRY_KEY, '1');
     if (burstReveal) {
       sessionStorage.setItem(PORTFOLIO_BURST_REVEAL_KEY, '1');
       if (burstScale != null) {
         sessionStorage.setItem(PORTFOLIO_BURST_SCALE_KEY, String(burstScale));
+      }
+      if (burstX != null) {
+        sessionStorage.setItem(PORTFOLIO_BURST_X_KEY, String(burstX));
+      }
+      if (burstY != null) {
+        sessionStorage.setItem(PORTFOLIO_BURST_Y_KEY, String(burstY));
       }
     }
   } catch (_) {}
@@ -214,7 +230,21 @@ async function playLandingExit(href, link) {
 
   await wait(LANDING_EXIT_MS);
 
-  navigateToPortfolio(href, { burstReveal: true, burstScale: coverScale });
+  const stack = link.querySelector('.landing-starburst-stack');
+  const stackRect = stack?.getBoundingClientRect();
+  const burstCenterX = stackRect
+    ? stackRect.left + stackRect.width / 2
+    : window.innerWidth / 2;
+  const burstCenterY = stackRect
+    ? stackRect.top + stackRect.height / 2
+    : window.innerHeight / 2;
+
+  navigateToPortfolio(href, {
+    burstReveal: true,
+    burstScale: coverScale,
+    burstX: burstCenterX,
+    burstY: burstCenterY,
+  });
 }
 
 function parseSvgPath(pathData) {

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250620p" />
+    <link rel="stylesheet" href="styles.css?v=20250620q" />
     <script>
       (function () {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -22,9 +22,16 @@
       (function () {
         try {
           if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
-          document.documentElement.classList.add('is-portfolio-entry');
+          var root = document.documentElement;
+          root.classList.add('is-portfolio-entry');
           if (sessionStorage.getItem('portfolio-entry-burst-reveal') === '1') {
-            document.documentElement.classList.add('is-portfolio-burst-entry');
+            root.classList.add('is-portfolio-burst-entry');
+            var scale = sessionStorage.getItem('portfolio-entry-burst-scale');
+            var burstX = sessionStorage.getItem('portfolio-entry-burst-x');
+            var burstY = sessionStorage.getItem('portfolio-entry-burst-y');
+            if (scale) root.style.setProperty('--entry-burst-scale', scale);
+            if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
+            if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
           }
         } catch (e) {}
       })();

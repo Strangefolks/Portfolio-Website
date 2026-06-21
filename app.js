@@ -2591,6 +2591,8 @@ if (document.fonts?.ready) {
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
 const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
+const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
+const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
 const PORTFOLIO_ENTRY_MS = 920;
 const PORTFOLIO_BURST_ENTRY_MS = 520;
 
@@ -2600,12 +2602,18 @@ function initPortfolioEntryAnimation() {
 
   const burstReveal = root.classList.contains('is-portfolio-burst-entry');
   let burstScale = null;
+  let burstX = null;
+  let burstY = null;
 
   try {
     burstScale = parseFloat(sessionStorage.getItem(PORTFOLIO_BURST_SCALE_KEY));
+    burstX = parseFloat(sessionStorage.getItem(PORTFOLIO_BURST_X_KEY));
+    burstY = parseFloat(sessionStorage.getItem(PORTFOLIO_BURST_Y_KEY));
     sessionStorage.removeItem(PORTFOLIO_ENTRY_KEY);
     sessionStorage.removeItem(PORTFOLIO_BURST_REVEAL_KEY);
     sessionStorage.removeItem(PORTFOLIO_BURST_SCALE_KEY);
+    sessionStorage.removeItem(PORTFOLIO_BURST_X_KEY);
+    sessionStorage.removeItem(PORTFOLIO_BURST_Y_KEY);
   } catch (_) {}
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -2615,8 +2623,16 @@ function initPortfolioEntryAnimation() {
   }
 
   const revealBurst = document.querySelector('.portfolio-entry-reveal-burst');
-  if (burstReveal && revealBurst && Number.isFinite(burstScale) && burstScale > 0) {
-    revealBurst.style.setProperty('--entry-burst-scale', String(burstScale));
+  if (burstReveal && revealBurst) {
+    if (Number.isFinite(burstScale) && burstScale > 0) {
+      root.style.setProperty('--entry-burst-scale', String(burstScale));
+    }
+    if (Number.isFinite(burstX)) {
+      root.style.setProperty('--entry-burst-x', `${burstX}px`);
+    }
+    if (Number.isFinite(burstY)) {
+      root.style.setProperty('--entry-burst-y', `${burstY}px`);
+    }
   }
 
   const finish = () => {

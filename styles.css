@@ -7161,6 +7161,23 @@ body.landing-page .app {
   z-index: 1;
 }
 
+.landing-starburst-fill {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  height: 100%;
+  transform: translate(-50%, -50%);
+  background: var(--brand-blue);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+body.is-landing-exiting-burst .landing-starburst-fill {
+  opacity: 1;
+}
+
 body.landing-page .landing-starburst-stack {
   transition: transform calc(0.5s / 3) var(--ease-soft);
 }
@@ -7500,6 +7517,12 @@ body.is-landing-transitioning .cursor-dot {
   display: none;
 }
 
+html.is-portfolio-burst-entry {
+  --entry-burst-x: 50vw;
+  --entry-burst-y: 50vh;
+  --entry-burst-scale: 12;
+}
+
 html.is-portfolio-burst-entry .portfolio-entry-curtain {
   display: none !important;
 }
@@ -7525,15 +7548,18 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
 }
 
 .portfolio-entry-reveal-burst {
-  --entry-burst-scale: 12;
   position: fixed;
-  left: 50%;
-  top: 50%;
+  left: var(--entry-burst-x, 50%);
+  top: var(--entry-burst-y, 50%);
   width: 182px;
   height: 182px;
   transform: translate(-50%, -50%) scale(var(--entry-burst-scale));
   transform-origin: center center;
-  transition: transform var(--landing-exit-duration) var(--ease-soft);
+  transition: none;
+}
+
+html.is-portfolio-burst-entry:not(.is-portfolio-entry-animate) .portfolio-entry-reveal-burst {
+  transition: none;
 }
 
 .portfolio-entry-reveal-burst-path {
@@ -7542,6 +7568,7 @@ html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
 
 html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-burst {
   transform: translate(-50%, -50%) scale(0);
+  transition: transform var(--landing-exit-duration) var(--ease-soft);
 }
 
 html.is-portfolio-burst-entry.is-portfolio-entry-animate .portfolio-entry-reveal-fill {
@@ -8175,7 +8202,6 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
     transition: none !important;
   }
 
-  /* Close button: fixed while stacked/scrolling; absolute inside layer during slide so it exits with the panel */
   body.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
   body.is-about-entering .about-layer--black > .about-close.header-shade-close,
   body.is-about-exiting .about-layer--black > .about-close.header-shade-close,
@@ -8189,7 +8215,29 @@ html.is-portfolio-entry.is-portfolio-entry-animate .project-body {
   body.profile-page.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
   body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close {
     position: absolute !important;
-    top: 12px !important;
-    right: 12px !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    left: auto !important;
+    bottom: auto !important;
   }
+}
+
+/* Close buttons travel with panel during about/profile slide (all breakpoints) */
+body.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
+body.is-about-entering .about-layer--black > .about-close.header-shade-close,
+body.is-about-exiting .about-layer--black > .about-close.header-shade-close,
+body.about-page.is-about-enter-pending .about-layer--black > .about-close.header-shade-close,
+body.about-page.is-about-entering .about-layer--black > .about-close.header-shade-close,
+body.about-page.is-about-exiting .about-layer--black > .about-close.header-shade-close,
+body.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
+body.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
+body.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close,
+body.profile-page.is-profile-enter-pending .profile-layer--black > .profile-close.header-shade-close,
+body.profile-page.is-profile-entering .profile-layer--black > .profile-close.header-shade-close,
+body.profile-page.is-profile-exiting .profile-layer--black > .profile-close.header-shade-close {
+  position: absolute !important;
+  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+  left: auto !important;
+  bottom: auto !important;
 }
