@@ -33,7 +33,12 @@ function applyTheme(theme) {
 }
 
 function initTheme() {
-  applyTheme('dark');
+  let theme = 'light';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') theme = saved;
+  } catch (_) {}
+  applyTheme(theme);
 }
 
 if (themeToggle) {
@@ -169,7 +174,7 @@ function prefetchPortfolio() {
   if (!document.querySelector('link[data-preload-portfolio-app]')) {
     const preloadApp = document.createElement('link');
     preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250621sticky-pad-tab';
+    preloadApp.href = 'app.js?v=20250621light-default';
     preloadApp.as = 'script';
     preloadApp.setAttribute('data-preload-portfolio-app', '');
     document.head.appendChild(preloadApp);

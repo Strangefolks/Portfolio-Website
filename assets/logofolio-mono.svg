@@ -1,0 +1,15 @@
+<svg width="15" height="16" viewBox="0 0 15 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="mono-stripes-clip">
+      <rect x="1.5" y="2" width="12" height="12" rx="1.5"/>
+    </clipPath>
+  </defs>
+  <rect x="0.75" y="1.25" width="13.5" height="13.5" rx="2.25" stroke="white" stroke-width="1.2" fill="none"/>
+  <g clip-path="url(#mono-stripes-clip)">
+    <rect x="1.5" y="1.25" width="2.1" height="13.5" fill="white" opacity="1"/>
+    <rect x="3.85" y="1.25" width="2.1" height="13.5" fill="white" opacity="0.78"/>
+    <rect x="6.2" y="1.25" width="2.1" height="13.5" fill="white" opacity="0.56"/>
+    <rect x="8.55" y="1.25" width="2.1" height="13.5" fill="white" opacity="0.38"/>
+    <rect x="10.9" y="1.25" width="2.1" height="13.5" fill="white" opacity="0.2"/>
+  </g>
+</svg>

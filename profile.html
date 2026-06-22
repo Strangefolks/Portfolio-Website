@@ -10,11 +10,15 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250621sticky-pad-tab" />
+    <link rel="stylesheet" href="styles.css?v=20250621viewport-frame" />
     <script>
       (function () {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+        var theme = 'light';
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') theme = saved;
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
     <script src="entry-guard.js"></script>
@@ -49,18 +53,18 @@
         ></button>
         <div class="profile-layout profile-layout--from-right">
           <div class="profile-layer profile-layer--black">
-            <div class="profile-lockup profile-lockup--right">
-              <div class="meta-item">
-                <div class="meta-label-row">
-                  <span class="meta-dot"></span>
-                  <span class="text-label meta-label">About</span>
-                </div>
-                <span class="text-ui-sm meta-value">Principal UX/UI Designer</span>
-              </div>
-            </div>
-
             <main class="profile-panel-right" id="profile-panel-right-scroll">
               <div class="profile-content">
+                <div class="profile-lockup profile-lockup--right">
+                  <div class="meta-item">
+                    <div class="meta-label-row">
+                      <span class="meta-dot"></span>
+                      <span class="text-label meta-label">About</span>
+                    </div>
+                    <span class="text-ui-sm meta-value">Principal UX/UI Designer</span>
+                  </div>
+                </div>
+
                 <h1
                   class="text-title project-title profile-name"
                   data-title-source="Ted Pioli"

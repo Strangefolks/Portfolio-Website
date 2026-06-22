@@ -10,11 +10,15 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250621sticky-pad-tab" />
+    <link rel="stylesheet" href="styles.css?v=20250621landing-header-bg" />
     <script>
       (function () {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+        var theme = 'light';
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') theme = saved;
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
   </head>
@@ -23,7 +27,7 @@
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
     </div>
-    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to light mode</span>
+    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
     <div class="page-wrapper">
       <div class="top-banner-shell" id="top-banner-shell">
         <div class="top-banner-marquee" id="top-banner-marquee">
@@ -191,7 +195,7 @@
                   class="theme-toggle"
                   id="theme-toggle"
                   aria-describedby="theme-toggle-tooltip"
-                  aria-label="Switch to light mode"
+                  aria-label="Switch to dark mode"
                 >
                   <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
                     <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
@@ -248,7 +252,7 @@
     <script src="cursor.js"></script>
     <script src="email-copy.js?v=20250620profile-meta-contact"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="landing.js?v=20250620af"></script>
+    <script src="landing.js?v=20250621viewport-frame"></script>
     <script src="about.js?v=20250620about-title-fit"></script>
   </body>
 </html>

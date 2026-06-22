@@ -227,17 +227,18 @@ const projects = [
     category: 'Branding',
     tag: 'Graphic Design',
     filter: 'brand',
+    icon: 'logofolio',
     description:
-      'Operator dashboard for monitoring and controlling bipedal robot locomotion in industrial environments.',
+      'A catalog of logo and identity marks across med-tech, robotics, manufacturing, and consumer brands.',
     summary:
-      'Logofolio gives field operators a single dashboard for locomotion state, mission progress, and safety interlocks. Bipedal platforms introduce balance and terrain variables that traditional fleet UIs rarely surface well. Control affordances distinguish observation, assisted teleop, and autonomous modes with explicit state transitions. The dashboard reads as an industrial tool—dense when needed, quiet when the robot is stable.',
+      'Logofolio indexes identity work as a systematic grid—one mark per tile with company, service, and industry context beneath each square. The layout treats every logo as an archive record: numbered, labeled, and easy to scan. It mirrors how identity systems are documented in brand guidelines—modular, precise, and built for reference rather than narrative.',
     metadata: [
-      { label: 'Industry', value: 'Robotics' },
-      { label: 'Technology', value: 'Motion Control UI' },
-      { label: 'Current Company', value: 'Boston Dynamics' },
-      { label: 'Role', value: 'Senior UX Designer' },
-      { label: 'Platform', value: 'Operator Console' },
-      { label: 'Tools', value: 'Figma, ProtoPie' },
+      { label: 'Industry', value: 'Branding' },
+      { label: 'Technology', value: 'Identity Design' },
+      { label: 'Current Company', value: 'Personal Archive' },
+      { label: 'Role', value: 'Brand Designer' },
+      { label: 'Format', value: 'Logo Catalog' },
+      { label: 'Count', value: '60 Marks' },
     ],
   },
   {
@@ -413,6 +414,15 @@ const heroPlaceholderIcon = `<svg class="hero-placeholder-icon" viewBox="0 0 24 
   <rect x="3" y="3" width="18" height="18" rx="2"/>
   <circle cx="8.5" cy="8.5" r="1.5"/>
   <path d="M21 15l-5-5L5 21"/>
+</svg>`;
+
+const logofolioHeroPlaceholderIcon = `<svg class="hero-placeholder-icon logofolio-hero__icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+  <rect x="10" y="12" width="14" height="14" rx="2"/>
+  <rect x="28" y="12" width="14" height="14" rx="2"/>
+  <rect x="46" y="12" width="8" height="14" rx="2"/>
+  <rect x="10" y="34" width="14" height="14" rx="2"/>
+  <rect x="28" y="34" width="14" height="14" rx="2"/>
+  <rect x="46" y="34" width="8" height="14" rx="2"/>
 </svg>`;
 
 function renderHeroPanelContent(image, project, index, { revealOnScroll = false, eagerLoad = false } = {}) {
@@ -1229,15 +1239,37 @@ function initProjectIntroScroll() {
   syncProjectIntroStickyFromScroll();
 }
 
-function syncSketchbookProjectChrome(project) {
+function isSketchbookProject(project) {
+  return project?.icon === 'sketchbook' || project?.id === 'sketchbook';
+}
+
+function isLogofolioProject(project) {
+  return project?.icon === 'logofolio' || project?.id === 'atlas-robotics';
+}
+
+function isSpecialGalleryProject(project) {
+  return isSketchbookProject(project) || isLogofolioProject(project);
+}
+
+function syncSpecialGalleryChrome(project) {
   const sketchbook = isSketchbookProject(project);
+  const logofolio = isLogofolioProject(project);
 
   mainContentEl?.classList.toggle('is-sketchbook-project', sketchbook);
+  mainContentEl?.classList.toggle('is-logofolio-project', logofolio);
+  stickyHeaderEl?.classList.toggle('sticky-header--logofolio', logofolio);
 
   if (stickyHeaderHostEl) {
     stickyHeaderHostEl.hidden = sketchbook;
+
     if (sketchbook) {
       setProjectIntroStickyVisible(false, { instant: true });
+    } else if (logofolio) {
+      syncLogofolioColorModeChrome();
+      requestAnimationFrame(() => syncProjectIntroStickyFromScroll());
+    } else {
+      mainContentEl?.classList.remove('is-logofolio-mono', 'is-logofolio-color');
+      mainContentEl?.removeAttribute('data-logofolio-color-mode');
     }
   }
 }
@@ -1355,6 +1387,106 @@ function bindProjectListItems() {
         if (e.target.closest('.project-item-info')) return;
         selectProject(item.dataset.id);
       }
+    });
+  });
+
+  bindProjectNavHint();
+}
+
+const PROJECT_NAV_HINT_DELAY_MS = 2000;
+let projectNavHintEl;
+let projectNavHintTimer = 0;
+let projectNavHintAnchor = null;
+let projectNavHintBound = false;
+
+function canShowProjectNavHint() {
+  if (isTouchProjectListUi()) return false;
+  if (document.body.classList.contains('sidebar-collapsed')) return false;
+  if (
+    document.body.classList.contains('is-about-open')
+    || document.body.classList.contains('is-profile-open')
+  ) {
+    return false;
+  }
+  return true;
+}
+
+function ensureProjectNavHint() {
+  if (projectNavHintEl) return projectNavHintEl;
+
+  projectNavHintEl = document.createElement('p');
+  projectNavHintEl.id = 'project-nav-hint';
+  projectNavHintEl.className = 'tooltip tooltip--pill project-nav-hint';
+  projectNavHintEl.setAttribute('role', 'status');
+  projectNavHintEl.setAttribute('aria-live', 'polite');
+  projectNavHintEl.innerHTML =
+    'Use <span class="project-nav-hint__keys" aria-hidden="true">↑ ↓</span> to change projects';
+  document.body.appendChild(projectNavHintEl);
+  return projectNavHintEl;
+}
+
+function hideProjectNavHint() {
+  if (projectNavHintTimer) {
+    window.clearTimeout(projectNavHintTimer);
+    projectNavHintTimer = 0;
+  }
+  projectNavHintAnchor = null;
+  projectNavHintEl?.classList.remove('is-visible');
+}
+
+function positionProjectNavHint(item) {
+  const tooltip = ensureProjectNavHint();
+  const rect = item.getBoundingClientRect();
+  const margin = 8;
+
+  tooltip.style.left = `${rect.left + rect.width / 2}px`;
+  tooltip.style.top = `${rect.top - margin}px`;
+  tooltip.style.transform = 'translate(-50%, -100%)';
+}
+
+function showProjectNavHint(item) {
+  if (!canShowProjectNavHint()) return;
+  positionProjectNavHint(item);
+  ensureProjectNavHint().classList.add('is-visible');
+  projectNavHintAnchor = item;
+}
+
+function scheduleProjectNavHint(item) {
+  hideProjectNavHint();
+  if (!canShowProjectNavHint()) return;
+
+  projectNavHintAnchor = item;
+  projectNavHintTimer = window.setTimeout(() => {
+    projectNavHintTimer = 0;
+    if (projectNavHintAnchor === item) {
+      showProjectNavHint(item);
+    }
+  }, PROJECT_NAV_HINT_DELAY_MS);
+}
+
+function bindProjectNavHint() {
+  if (!projectNavHintBound) {
+    projectNavHintBound = true;
+
+    projectListEl.addEventListener('scroll', hideProjectNavHint, { passive: true });
+
+    projectListEl.addEventListener('mousemove', (event) => {
+      if (!projectNavHintEl?.classList.contains('is-visible')) return;
+      if (event.target.closest('.project-item-info')) return;
+      hideProjectNavHint();
+    });
+  }
+
+  projectListEl.querySelectorAll('.project-item').forEach((item) => {
+    if (item.dataset.navHintBound === 'true') return;
+    item.dataset.navHintBound = 'true';
+
+    item.addEventListener('mouseenter', () => {
+      scheduleProjectNavHint(item);
+    });
+
+    item.addEventListener('mouseleave', () => {
+      hideProjectNavHint();
     });
   });
 }
@@ -1644,7 +1776,7 @@ function updateProjectAccess(project) {
   if (unlocked) {
     projectLockErrorEl.classList.add('is-hidden');
     renderMetadata(project.metadata, project.summary ?? project.description);
-    if (isSketchbookProject(project)) {
+    if (isSpecialGalleryProject(project)) {
       setDetailView('images');
     } else {
     const showImages = viewBtnImage?.getAttribute('aria-pressed') === 'true';
@@ -1681,7 +1813,7 @@ function selectProject(id) {
   closeSketchbookLightbox();
   resetProjectIntroScroll();
   selectedId = id;
-  syncSketchbookProjectChrome(project);
+  syncSpecialGalleryChrome(project);
   syncProjectNumberDisplay(id);
   renderProjectTitle(projectTitleEl, project.name);
   renderProjectSubhead(projectDescEl, project.description);
@@ -1770,7 +1902,12 @@ function applyTheme(theme) {
 }
 
 function initTheme() {
-  applyTheme('dark');
+  let theme = 'light';
+  try {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'dark' || saved === 'light') theme = saved;
+  } catch (_) {}
+  applyTheme(theme);
 }
 
 themeToggle.addEventListener('click', () => {
@@ -2050,6 +2187,7 @@ function syncSidebarCollapseUi() {
 
   document.body.classList.toggle('sidebar-collapsed', collapsed);
   syncSidebarLayoutMode();
+  if (collapsed) hideProjectNavHint();
   sidebarCollapseBtn?.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
 
   if (sidebarCollapseBtn) {
@@ -2818,25 +2956,219 @@ window.addEventListener('resize', () => {
 
 populateFooterMarquee();
 
-const viewToggleEls = document.querySelectorAll('.view-toggle');
+const viewToggleEls = document.querySelectorAll('.view-toggle:not(.view-toggle--logofolio)');
 const viewBtnImage = document.getElementById('view-btn-image');
 const viewBtnList = document.getElementById('view-btn-list');
 const viewBtnImageSticky = document.getElementById('view-btn-image-sticky');
 const viewBtnListSticky = document.getElementById('view-btn-list-sticky');
+const logofolioToggleEls = document.querySelectorAll('.view-toggle--logofolio');
+const logofolioBtnMono = document.getElementById('logofolio-btn-mono');
+const logofolioBtnColor = document.getElementById('logofolio-btn-color');
+const logofolioBtnMonoSticky = document.getElementById('logofolio-btn-mono-sticky');
+const logofolioBtnColorSticky = document.getElementById('logofolio-btn-color-sticky');
 const projectGallery = document.getElementById('project-gallery');
 const projectText = document.getElementById('project-text');
+
+let logofolioColorMode = 'mono';
 
 const GALLERY_IMAGE_COUNT = 10;
 const SKETCHBOOK_GALLERY_IMAGE_COUNT = GALLERY_IMAGE_COUNT * 4;
 
 const SKETCHBOOK_PANEL_HEIGHTS = ['h-sm', 'h-md', 'h-lg', 'h-xl', 'h-md', 'h-lg', 'h-sm', 'h-xl', 'h-md', 'h-lg'];
 
-function isSketchbookProject(project) {
-  return project?.icon === 'sketchbook' || project?.id === 'sketchbook';
+const LOGOFOLIO_ITEM_COUNT = 60;
+const LOGOFOLIO_COLUMN_COUNT = 3;
+const LOGOFOLIO_ROW_COUNT = 20;
+
+const LOGOFOLIO_SUMMARY_PLACEHOLDER =
+  'This identity system centers on a modular wordmark built for clinical and digital touchpoints. Color, spacing, and secondary marks were defined to scale across product, packaging, and investor materials.';
+
+const LOGOFOLIO_SAMPLE_ENTRIES = [
+  { company: 'Medtronic', industry: 'Med-tech' },
+  { company: 'Altera', industry: 'Cardiovascular' },
+  { company: 'Formlabs', industry: 'Additive Manufacturing' },
+  { company: 'Brainlab', industry: 'Neurosurgery' },
+  { company: 'Prism Medical', industry: 'Electrophysiology' },
+  { company: 'Boston Dynamics', industry: 'Robotics' },
+  { company: 'Nothing', industry: 'Consumer Tech' },
+  { company: 'Stripe', industry: 'Fintech' },
+  { company: 'Aesop', industry: 'Retail' },
+  { company: 'Patagonia', industry: 'Apparel' },
+  { company: 'Sonos', industry: 'Audio' },
+  { company: 'WHOOP', industry: 'Wearables' },
+  { company: 'Rivian', industry: 'Automotive' },
+  { company: 'Oculus', industry: 'VR / AR' },
+  { company: 'Peloton', industry: 'Fitness' },
+  { company: 'Square', industry: 'Payments' },
+  { company: 'Allbirds', industry: 'Footwear' },
+  { company: 'Warby Parker', industry: 'Eyewear' },
+  { company: 'Casper', industry: 'Home' },
+  { company: 'Away', industry: 'Travel' },
+];
+
+const LOGOFOLIO_LOGO_MARKS = [
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3.5"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="18" y="18" width="28" height="28" rx="3" fill="currentColor" transform="rotate(45 32 32)"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="24" width="36" height="5" rx="1.5" fill="currentColor"/><rect x="14" y="34" width="28" height="5" rx="1.5" fill="currentColor"/><rect x="14" y="44" width="20" height="5" rx="1.5" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="24" cy="32" r="12" fill="currentColor"/><circle cx="40" cy="32" r="12" fill="none" stroke="currentColor" stroke-width="3.5"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 14L50 48H14L32 14Z" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 16V48M16 32H48" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3.5"/><circle cx="32" cy="32" r="5" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 42L32 18L46 42H18Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="16" width="14" height="14" rx="2" fill="currentColor"/><rect x="34" y="16" width="14" height="14" rx="2" fill="currentColor"/><rect x="16" y="34" width="14" height="14" rx="2" fill="currentColor"/><rect x="34" y="34" width="14" height="14" rx="2" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 12L52 22V42L32 52L12 42V22L32 12Z" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linejoin="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 40C24 24 40 24 50 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="20" width="36" height="24" rx="4" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M22 32H42" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 44L32 16L44 44H28L32 34L36 44H20Z" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="28" r="10" fill="currentColor"/><path d="M18 46C22 38 54 38 58 46" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M16 32H48M32 16V48" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><circle cx="32" cy="32" r="18" fill="none" stroke="currentColor" stroke-width="3.5"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M16 46L32 18L48 46Z" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M22 38H42" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="18" y="18" width="28" height="28" fill="none" stroke="currentColor" stroke-width="3.5"/><rect x="24" y="24" width="16" height="16" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 22H46V28H18V22ZM18 36H38V42H18V36Z" fill="currentColor"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 14A18 18 0 1 1 32 50A18 18 0 1 1 32 14Z" fill="none" stroke="currentColor" stroke-width="3.5"/><path d="M32 22V42" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+  '<svg class="logofolio-tile__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 32C14 22 22 16 32 16C42 16 50 22 50 32C50 42 42 48 32 48" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>',
+];
+
+function getLogofolioLogoMark(index) {
+  return LOGOFOLIO_LOGO_MARKS[index % LOGOFOLIO_LOGO_MARKS.length];
 }
 
 function getSketchbookPanelHeightClass(index) {
   return SKETCHBOOK_PANEL_HEIGHTS[index % SKETCHBOOK_PANEL_HEIGHTS.length];
+}
+
+function getLogofolioEntries(project) {
+  if (project?.logofolio?.length) return project.logofolio.slice(0, LOGOFOLIO_ITEM_COUNT);
+
+  return Array.from({ length: LOGOFOLIO_ITEM_COUNT }, (_, index) => {
+    const sample = LOGOFOLIO_SAMPLE_ENTRIES[index % LOGOFOLIO_SAMPLE_ENTRIES.length];
+    return { ...sample };
+  });
+}
+
+const LOGOFOLIO_VINTAGE_PALETTE = [
+  '#3D5244',
+  '#4A6350',
+  '#5C6B52',
+  '#9B4E3C',
+  '#A65D47',
+  '#7A4A3A',
+  '#C4A35A',
+  '#B8956B',
+  '#8B7355',
+  '#5A6B7D',
+  '#4E6070',
+  '#6B7F8C',
+  '#B07D7D',
+  '#A87B7B',
+  '#9E7373',
+  '#6D5A4E',
+  '#556B5E',
+  '#7D6B5A',
+  '#8C6B5C',
+  '#627A72',
+];
+
+function getLogofolioSwatchColors(tileIndex) {
+  const palette = LOGOFOLIO_VINTAGE_PALETTE;
+  const paletteLength = palette.length;
+
+  return Array.from({ length: 5 }, (_, swatchIndex) => {
+    const index = (tileIndex * 3 + swatchIndex * 7) % paletteLength;
+    return palette[index];
+  });
+}
+
+function renderLogofolioMetaRow(label, value) {
+  const summaryClass = label === 'Summary' ? ' logofolio-meta-row--summary' : '';
+  return `
+    <div class="logofolio-meta-row${summaryClass}">
+      <span class="text-label meta-label">${label}</span>
+      <span class="text-ui-sm meta-value">${value}</span>
+    </div>
+  `;
+}
+
+function renderLogofolioMetaSplitRow(leftLabel, leftValue, rightLabel, rightValue) {
+  return `
+    <div class="logofolio-meta-row logofolio-meta-row--split">
+      <div class="logofolio-meta-split__cell logofolio-meta-split__cell--start">
+        <span class="text-label meta-label">${leftLabel}</span>
+        <span class="text-ui-sm meta-value">${leftValue}</span>
+      </div>
+      <div class="logofolio-meta-split__cell logofolio-meta-split__cell--end">
+        <span class="text-label meta-label">${rightLabel}</span>
+        <span class="text-ui-sm meta-value">${rightValue}</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderLogofolioTileContent(entry, project, index) {
+  if (entry?.src) {
+    return `<img
+      class="logofolio-tile__image"
+      src="${entry.src}"
+      alt="${escapeHtml(entry.alt || `${entry.company} logo`)}"
+      loading="lazy"
+      decoding="async"
+    />`;
+  }
+
+  const label = escapeHtml(entry?.company || `${project.name} — logo ${index + 1}`);
+  return `<div class="logofolio-tile__placeholder" role="img" aria-label="${label}">${getLogofolioLogoMark(index)}</div>`;
+}
+
+function getLogofolioHeroImage(project) {
+  if (project?.logofolioHero?.src) return project.logofolioHero;
+  if (project?.gallery?.[0]?.src) return project.gallery[0];
+  return null;
+}
+
+function renderLogofolioHero(project, { eagerLoad = false } = {}) {
+  const heroImage = getLogofolioHeroImage(project);
+  const label = heroImage?.alt || `${project.name} — hero`;
+
+  const frameContent = heroImage?.src
+    ? `<img
+      src="${heroImage.src}"
+      alt="${escapeHtml(heroImage.alt || label)}"
+      loading="${eagerLoad ? 'eager' : 'lazy'}"
+      decoding="async"
+    />`
+    : `<div class="hero-placeholder is-scroll-reveal-pending" role="img" aria-label="${escapeHtml(label)}">${logofolioHeroPlaceholderIcon}</div>`;
+
+  return `
+    <div class="logofolio-hero">
+      <div class="logofolio-hero__frame hero-panel">
+        ${frameContent}
+      </div>
+    </div>
+  `;
+}
+
+function renderLogofolioGalleryItem(entry, project, index) {
+  const number = String(index + 1).padStart(2, '0');
+  const swatchColors = getLogofolioSwatchColors(index);
+  const frameBg = swatchColors[0];
+  const markColor = swatchColors[1];
+
+  return `
+    <article class="gallery-item gallery-item--logofolio">
+      <div class="logofolio-tile">
+        <span class="logofolio-tile__number text-label">${number}</span>
+        <div class="logofolio-tile__frame" style="--logofolio-frame-bg: ${frameBg}; --logofolio-mark-color: ${markColor};">
+          ${renderLogofolioTileContent(entry, project, index)}
+        </div>
+      </div>
+      <div class="logofolio-meta-box">
+        <div class="logofolio-meta">
+          ${renderLogofolioMetaSplitRow('Company', entry.company, 'Industry', entry.industry)}
+          ${renderLogofolioMetaRow('Summary', entry.summary || LOGOFOLIO_SUMMARY_PLACEHOLDER)}
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 const galleryImageCaptions = [
@@ -2900,19 +3232,37 @@ function initGalleryPlaceholderReveal() {
 function renderGallery(project = projects.find((p) => p.id === selectedId)) {
   if (!projectGallery || !project) return;
 
-  const images = getProjectGalleryImages(project);
   const sketchbookLayout = isSketchbookProject(project);
+  const logofolioLayout = isLogofolioProject(project);
   const eagerLoad = isPortfolioEntryFromLanding();
 
   projectGallery.classList.toggle('project-gallery--sketchbook', sketchbookLayout);
+  projectGallery.classList.toggle('project-gallery--logofolio', logofolioLayout);
 
-  projectGallery.innerHTML = images
-    .map((image, index) => {
-      const panelClasses = sketchbookLayout
-        ? `hero-panel hero-panel--sketchbook hero-panel--${getSketchbookPanelHeightClass(index)}`
-        : 'hero-panel';
+  if (logofolioLayout) {
+    const entries = getLogofolioEntries(project);
+    const gridItems = entries
+      .map((entry, index) => renderLogofolioGalleryItem(entry, project, index))
+      .join('');
 
-      return `
+    projectGallery.innerHTML = `
+      <div class="logofolio-gallery-layout">
+        ${renderLogofolioHero(project, { eagerLoad })}
+        <div class="logofolio-gallery-grid">
+          ${gridItems}
+        </div>
+      </div>
+    `;
+  } else {
+    const images = getProjectGalleryImages(project);
+
+    projectGallery.innerHTML = images
+      .map((image, index) => {
+        const panelClasses = sketchbookLayout
+          ? `hero-panel hero-panel--sketchbook hero-panel--${getSketchbookPanelHeightClass(index)}`
+          : 'hero-panel';
+
+        return `
     <div class="gallery-item${sketchbookLayout ? ' gallery-item--sketchbook' : ''}"${sketchbookLayout ? ` data-gallery-index="${index}"` : ''}>
       <div class="${panelClasses}">
         ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src, eagerLoad })}
@@ -2920,8 +3270,9 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
       ${image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
     </div>
   `;
-    })
-    .join('');
+      })
+      .join('');
+  }
 
   initGalleryPlaceholderReveal();
   refreshCustomScrollbar(mainContentEl);
@@ -3079,9 +3430,33 @@ function initSketchbookLightbox() {
   });
 }
 
+function setLogofolioColorMode(mode) {
+  if (mode !== 'mono' && mode !== 'color') return;
+
+  logofolioColorMode = mode;
+  const isColor = mode === 'color';
+  const project = projects.find((p) => p.id === selectedId);
+
+  if (isLogofolioProject(project)) {
+    mainContentEl?.classList.toggle('is-logofolio-mono', !isColor);
+    mainContentEl?.classList.toggle('is-logofolio-color', isColor);
+    mainContentEl?.setAttribute('data-logofolio-color-mode', mode);
+  }
+
+  logofolioToggleEls.forEach((toggle) => toggle.setAttribute('data-view', mode));
+  logofolioBtnMono?.setAttribute('aria-pressed', !isColor);
+  logofolioBtnColor?.setAttribute('aria-pressed', isColor);
+  logofolioBtnMonoSticky?.setAttribute('aria-pressed', !isColor);
+  logofolioBtnColorSticky?.setAttribute('aria-pressed', isColor);
+}
+
+function syncLogofolioColorModeChrome() {
+  setLogofolioColorMode(logofolioColorMode);
+}
+
 function setDetailView(mode) {
   const project = projects.find((p) => p.id === selectedId);
-  const showImages = isSketchbookProject(project) ? true : mode === 'images';
+  const showImages = isSpecialGalleryProject(project) ? true : mode === 'images';
 
   mainContentEl?.setAttribute('data-detail-view', mode);
 
@@ -3108,8 +3483,13 @@ viewBtnImage?.addEventListener('click', () => setDetailView('images'));
 viewBtnList?.addEventListener('click', () => setDetailView('text'));
 viewBtnImageSticky?.addEventListener('click', () => setDetailView('images'));
 viewBtnListSticky?.addEventListener('click', () => setDetailView('text'));
+logofolioBtnMono?.addEventListener('click', () => setLogofolioColorMode('mono'));
+logofolioBtnColor?.addEventListener('click', () => setLogofolioColorMode('color'));
+logofolioBtnMonoSticky?.addEventListener('click', () => setLogofolioColorMode('mono'));
+logofolioBtnColorSticky?.addEventListener('click', () => setLogofolioColorMode('color'));
 
 setDetailView('images');
+setLogofolioColorMode('mono');
 
 projectLockSubmitEl?.addEventListener('click', attemptProjectUnlock);
 projectLockPasswordEl?.addEventListener('keydown', (e) => {

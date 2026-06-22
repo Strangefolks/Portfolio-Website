@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250621sticky-pad-tab" />
-    <link rel="preload" href="app.js?v=20250621sticky-pad-tab" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20250621logofolio-grid-restore" />
+    <link rel="preload" href="app.js?v=20250621logofolio-grid-restore" as="script" />
     <style>
       html.is-portfolio-burst-entry .portfolio-entry-reveal {
         background: transparent;
@@ -54,8 +54,12 @@
     </style>
     <script>
       (function () {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        try { localStorage.setItem('theme', 'dark'); } catch (e) {}
+        var theme = 'light';
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') theme = saved;
+        } catch (e) {}
+        document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
     <script src="entry-guard.js"></script>
@@ -111,7 +115,7 @@
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
     </div>
-    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to light mode</span>
+    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
     <div class="page-wrapper">
       <div class="top-banner-shell" id="top-banner-shell">
         <div class="top-banner-marquee" id="top-banner-marquee">
@@ -237,9 +241,6 @@
 
             <div class="project-list-viewport">
               <nav class="project-list" id="project-list"></nav>
-              <p class="project-nav-hint tooltip tooltip--pill" id="project-nav-hint" role="status" aria-live="polite">
-                Use <span class="project-nav-hint__keys" aria-hidden="true">↑ ↓</span> to change projects
-              </p>
             </div>
             </div>
           </aside>
@@ -295,6 +296,17 @@
                       <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
                     </button>
                   </div>
+                  <div class="view-toggle view-toggle--logofolio" role="group" aria-label="Logofolio color mode" data-view="mono">
+                    <span class="view-toggle-indicator" aria-hidden="true"></span>
+                    <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-mono" aria-label="Monochrome logos" aria-pressed="true">
+                      <img class="view-toggle-icon" src="assets/logofolio-mono.svg?v=20250621logofolio-icons" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                      <span class="view-toggle-label">Monochrome</span>
+                    </button>
+                    <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-color" aria-label="Color logos" aria-pressed="false">
+                      <img class="view-toggle-icon" src="assets/logofolio-color.svg?v=20250621logofolio-color-icon" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                      <span class="view-toggle-label">Color</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -319,6 +331,17 @@
                       </button>
                       <button type="button" class="view-toggle-btn" id="view-btn-list-sticky" aria-label="Show text" aria-pressed="false">
                         <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                      </button>
+                    </div>
+                    <div class="view-toggle view-toggle--logofolio" role="group" aria-label="Logofolio color mode" data-view="mono">
+                      <span class="view-toggle-indicator" aria-hidden="true"></span>
+                      <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-mono-sticky" aria-label="Monochrome logos" aria-pressed="true">
+                        <img class="view-toggle-icon" src="assets/logofolio-mono.svg?v=20250621logofolio-icons" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                        <span class="view-toggle-label">Monochrome</span>
+                      </button>
+                      <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-color-sticky" aria-label="Color logos" aria-pressed="false">
+                        <img class="view-toggle-icon" src="assets/logofolio-color.svg?v=20250621logofolio-color-icon" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
+                        <span class="view-toggle-label">Color</span>
                       </button>
                     </div>
                   </div>
@@ -441,7 +464,7 @@
                 class="theme-toggle"
                 id="theme-toggle"
                 aria-describedby="theme-toggle-tooltip"
-                aria-label="Switch to light mode"
+                aria-label="Switch to dark mode"
               >
                 <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
                   <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
@@ -572,6 +595,6 @@
     <script src="profile.js?v=20250620profile-meta-contact"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
     <script src="email-copy.js?v=20250620profile-meta-contact"></script>
-    <script src="app.js?v=20250621sticky-pad-tab"></script>
+    <script src="app.js?v=20250621logofolio-grid-restore"></script>
   </body>
 </html>
