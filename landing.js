@@ -41,8 +41,9 @@ function initTheme() {
   applyTheme(theme);
 }
 
+initTheme();
+
 if (themeToggle) {
-  initTheme();
   themeToggle.addEventListener('click', () => {
     applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
   });
@@ -52,11 +53,12 @@ const LANDING_META_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
 
 function alignLandingLocationWithEmail() {
   const emailIcon = document.querySelector('#email-link .email-link-icon');
-  const locationItem = document.querySelector('.landing-meta--top .landing-meta-item--right');
+  const rightColumn = document.querySelector('.landing-meta-column--right');
+  const locationItem = document.querySelector('.landing-meta-item--location');
   const dot = locationItem?.querySelector('.meta-dot');
-  if (!locationItem || !dot) return;
+  if (!rightColumn || !dot) return;
 
-  locationItem.style.transform = '';
+  rightColumn.style.transform = '';
 
   if (LANDING_META_MOBILE_MQ.matches) return;
 
@@ -64,46 +66,17 @@ function alignLandingLocationWithEmail() {
 
   const offset = Math.round(emailIcon.getBoundingClientRect().left - dot.getBoundingClientRect().left);
   if (offset !== 0) {
-    locationItem.style.transform = `translateX(${offset}px)`;
-  }
-}
-
-function alignLandingBottomMetaWithTop() {
-  const topLeftDot = document.querySelector('.landing-meta--top .landing-meta-item--left .meta-dot');
-  const bottomLeftItem = document.querySelector('.landing-meta--bottom .landing-meta-item--left');
-  const bottomLeftDot = bottomLeftItem?.querySelector('.meta-dot');
-  const topRightDot = document.querySelector('.landing-meta--top .landing-meta-item--right .meta-dot');
-  const bottomRightItem = document.querySelector('.landing-meta--bottom .landing-meta-item--right');
-  const bottomRightDot = bottomRightItem?.querySelector('.meta-dot');
-
-  if (bottomLeftItem) bottomLeftItem.style.transform = '';
-  if (bottomRightItem) bottomRightItem.style.transform = '';
-
-  if (LANDING_META_MOBILE_MQ.matches) return;
-
-  if (topLeftDot && bottomLeftDot && bottomLeftItem) {
-    const offset = Math.round(topLeftDot.getBoundingClientRect().left - bottomLeftDot.getBoundingClientRect().left);
-    if (offset !== 0) {
-      bottomLeftItem.style.transform = `translateX(${offset}px)`;
-    }
-  }
-
-  if (topRightDot && bottomRightDot && bottomRightItem) {
-    const offset = Math.round(topRightDot.getBoundingClientRect().left - bottomRightDot.getBoundingClientRect().left);
-    if (offset !== 0) {
-      bottomRightItem.style.transform = `translateX(${offset}px)`;
-    }
+    rightColumn.style.transform = `translateX(${offset}px)`;
   }
 }
 
 function syncLandingMetaAlign() {
   alignLandingLocationWithEmail();
-  alignLandingBottomMetaWithTop();
 }
 
 function initLandingMetaAlign() {
   const emailLink = document.getElementById('email-link');
-  if (!emailLink || !document.querySelector('.landing-meta--top .landing-meta-item--right')) return;
+  if (!emailLink || !document.querySelector('.landing-meta-column--right')) return;
 
   const sync = () => requestAnimationFrame(syncLandingMetaAlign);
 
@@ -207,22 +180,25 @@ function prefetchPortfolio() {
 
 function waitForLandingBurstExpand(link) {
   const stack = link.querySelector('.landing-starburst-stack');
-  if (!stack) return wait(LANDING_EXIT_MS);
+  const starburst = link.querySelector('.landing-starburst');
+  const target = starburst || stack;
+  if (!target) return wait(LANDING_EXIT_MS);
 
   return new Promise((resolve) => {
     let settled = false;
     const finish = () => {
       if (settled) return;
       settled = true;
-      stack.removeEventListener('transitionend', onTransitionEnd);
+      target.removeEventListener('transitionend', onTransitionEnd);
       resolve();
     };
     const onTransitionEnd = (event) => {
-      if (event.target !== stack || event.propertyName !== 'transform') return;
+      if (event.target !== target) return;
+      if (event.propertyName !== 'transform' && event.propertyName !== 'width') return;
       finish();
     };
 
-    stack.addEventListener('transitionend', onTransitionEnd);
+    target.addEventListener('transitionend', onTransitionEnd);
     window.setTimeout(finish, LANDING_EXIT_MS + 80);
   });
 }
@@ -266,6 +242,7 @@ async function playLandingExit(href, link) {
   const coverScale = (Math.hypot(window.innerWidth, window.innerHeight) / size) * 1.35;
 
   link.style.setProperty('--landing-cover-scale', String(coverScale));
+  link.style.setProperty('--burst-cover-size', `${Math.ceil(size * coverScale)}px`);
   launchBtn?.classList.add('is-label-exiting', 'is-cursor-exiting');
   document.body.classList.add('is-landing-launching', 'is-landing-exiting-burst');
 
@@ -484,11 +461,13 @@ function updateLandingBurstAnchor(link) {
   );
   const scale = (maxDist * 3.479) / size;
 
+  const expandedSize = Math.ceil(size * scale);
+
   link.style.setProperty('--burst-anchor-x', `${Math.round(cx)}px`);
   link.style.setProperty('--burst-anchor-y', `${Math.round(cy)}px`);
   link.style.setProperty('--burst-rest-size', `${Math.round(rect.width)}px`);
   link.style.setProperty('--burst-hover-scale', String(scale));
-  link.style.setProperty('--burst-expanded-size', `${Math.ceil(size * scale)}px`);
+  link.style.setProperty('--burst-expanded-size', `${expandedSize}px`);
 }
 
 function initLandingBurstAnchor(link) {

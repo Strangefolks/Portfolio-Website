@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250622dark-site-border-all" />
+    <link rel="stylesheet" href="styles.css?v=20250622landing-meta-top-stack" />
     <script>
       (function () {
         var theme = 'light';
@@ -91,24 +91,42 @@
 
         <main class="landing" aria-label="Enter portfolio">
           <div class="landing-meta landing-meta--top">
-            <div class="meta-item landing-meta-item landing-meta-item--left">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Site</span>
+            <div class="landing-meta-column landing-meta-column--left">
+              <div class="meta-item landing-meta-item landing-meta-item--left">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Site</span>
+                </div>
+                <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
               </div>
-              <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
+              <div class="meta-item landing-meta-item landing-meta-item--left">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Current company</span>
+                </div>
+                <span class="text-caption meta-value">Medtronic</span>
+              </div>
             </div>
-            <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Location</span>
+            <div class="landing-meta-column landing-meta-column--right">
+              <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Location</span>
+                </div>
+                <span class="landing-meta-location-icon" aria-hidden="true">
+                  <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
+                    <path fill="currentColor" d="M6 0C2.69 0 0 2.69 0 6c0 4.2 6 8 6 8s6-3.8 6-8c0-3.31-2.69-6-6-6zm0 8.25a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/>
+                  </svg>
+                </span>
+                <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
               </div>
-              <span class="landing-meta-location-icon" aria-hidden="true">
-                <svg width="10" height="12" viewBox="0 0 12 14" aria-hidden="true">
-                  <path fill="currentColor" d="M6 0C2.69 0 0 2.69 0 6c0 4.2 6 8 6 8s6-3.8 6-8c0-3.31-2.69-6-6-6zm0 8.25a2.25 2.25 0 1 1 0-4.5 2.25 2.25 0 0 1 0 4.5z"/>
-                </svg>
-              </span>
-              <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
+              <div class="meta-item landing-meta-item landing-meta-item--right">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Current role</span>
+                </div>
+                <span class="text-caption meta-value">Principal UX / UI Designer</span>
+              </div>
             </div>
           </div>
 
@@ -162,23 +180,26 @@
             </a>
           </div>
 
-          <div class="landing-meta landing-meta--bottom">
-            <div class="meta-item landing-meta-item landing-meta-item--left">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Current company</span>
-              </div>
-              <span class="text-caption meta-value">Medtronic</span>
-            </div>
-            <div class="meta-item landing-meta-item landing-meta-item--right">
-              <div class="meta-label-row">
-                <span class="meta-dot"></span>
-                <span class="text-label meta-label">Current role</span>
-              </div>
-              <span class="text-caption meta-value">Principal UX / UI Designer</span>
-            </div>
-          </div>
         </main>
+
+        <div class="landing-footer-theme">
+          <div class="theme-toggle-wrap">
+            <button
+              type="button"
+              class="theme-toggle"
+              id="theme-toggle"
+              aria-describedby="theme-toggle-tooltip"
+              aria-label="Switch to dark mode"
+            >
+              <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
+                <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
+              </span>
+              <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
+                <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
+              </span>
+            </button>
+          </div>
+        </div>
 
         <div class="footer-shell" id="footer-shell">
           <footer class="footer">
@@ -188,22 +209,6 @@
                   <img src="assets/copyright.svg" alt="" class="footer-copyright-btn-icon" width="15" height="15" decoding="async" aria-hidden="true" />
                 </button>
                 <span class="text-caption text-display footer-year">2026</span>
-              </div>
-              <div class="theme-toggle-wrap">
-                <button
-                  type="button"
-                  class="theme-toggle"
-                  id="theme-toggle"
-                  aria-describedby="theme-toggle-tooltip"
-                  aria-label="Switch to dark mode"
-                >
-                  <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
-                    <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
-                  </span>
-                  <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
-                    <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
-                  </span>
-                </button>
               </div>
             </div>
             <div class="footer-right">
@@ -252,7 +257,7 @@
     <script src="cursor.js"></script>
     <script src="email-copy.js?v=20250620profile-meta-contact"></script>
     <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="landing.js?v=20250621viewport-frame"></script>
+    <script src="landing.js?v=20250622landing-meta-top-stack"></script>
     <script src="about.js?v=20250620about-title-fit"></script>
   </body>
 </html>

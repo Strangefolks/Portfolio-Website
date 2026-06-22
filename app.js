@@ -3503,7 +3503,7 @@ initTheme();
 const refreshCursor = initCustomCursor();
 
 function initMobileBrowserUiInset() {
-  if (!window.matchMedia('(max-width: 560px)').matches) return;
+  if (!window.matchMedia('(max-width: 900px)').matches) return;
 
   const sync = () => {
     const viewport = window.visualViewport;
