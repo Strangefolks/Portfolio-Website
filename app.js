@@ -1412,7 +1412,6 @@ function renderShowreelListItem(project, isActive) {
           </span>
           <span class="showreel-list-meta">
             ${yearMarkup}
-            <span class="project-item-info" data-project-id="${project.id}" aria-label="Project info">${infoIcon}</span>
           </span>
         </div>
         <div class="showreel-list-preview" aria-hidden="true">
@@ -3528,7 +3527,7 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
       <div class="${panelClasses}">
         ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src, eagerLoad })}
       </div>
-      ${image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
+      ${!sketchbookLayout && image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
     </div>
   `;
         })

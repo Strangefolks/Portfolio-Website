@@ -491,9 +491,9 @@ async function openAboutOverlay() {
 
     lockAboutOverlayScroll();
     initCustomScrollbars(stage);
+    revealAboutStoryLayout();
     await playAboutEnter(document.body);
     applyAboutStoryLayout(stage, { force: true });
-    revealAboutStoryLayout();
   } finally {
     revealAboutStoryLayout();
     aboutOverlayBusy = false;
@@ -513,9 +513,9 @@ function initAboutPage() {
       await prepareAboutStoryLayout(document);
       initAboutStoryLayoutObservers(document);
       initCustomScrollbars();
+      revealAboutStoryLayout();
       await playAboutEnter(document.body);
       applyAboutStoryLayout(document, { force: true });
-      revealAboutStoryLayout();
     } finally {
       revealAboutStoryLayout();
     }
