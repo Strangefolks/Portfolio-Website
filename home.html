@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250622footer-double-stroke" />
-    <link rel="preload" href="app.js?v=20250622ipad-footer-viewport" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20250630info-panel-slide" />
+    <link rel="preload" href="app.js?v=20250630theme-cards-mono" as="script" />
     <style>
       html.is-portfolio-burst-entry .portfolio-entry-reveal {
         background: transparent;
@@ -117,9 +117,17 @@
     </div>
     <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
     <div class="page-wrapper">
-      <div class="top-banner-shell" id="top-banner-shell">
-        <div class="top-banner-marquee" id="top-banner-marquee">
-          <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+      <div class="top-banner-shell">
+        <div
+          class="top-banner-reveal"
+          id="top-banner-shell"
+          role="button"
+          tabindex="0"
+          aria-label="Hide announcement banner"
+        >
+          <div class="top-banner-marquee" id="top-banner-marquee">
+            <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+          </div>
         </div>
       </div>
       <div class="app">
@@ -133,6 +141,23 @@
         <!-- Header -->
         <div class="header-shell" id="header-shell">
           <header class="header">
+          <div class="header-leading">
+          <button
+            type="button"
+            class="sidebar-reopen-tab sidebar-reopen-tab--header"
+            id="sidebar-reopen-tab-header"
+            aria-label="Open projects panel"
+            hidden
+          >
+            <svg class="sidebar-reopen-tab-icon sidebar-panel-toggle-icon" width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <g transform="translate(7 7)">
+                <g class="sidebar-panel-toggle-burst">
+                  <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--top" d="M-5 -2.5H5" stroke-linecap="round" />
+                  <path class="sidebar-panel-toggle-line sidebar-panel-toggle-line--bottom" d="M-5 2.5H5" stroke-linecap="round" />
+                </g>
+              </g>
+            </svg>
+          </button>
           <a href="about.html" class="logo" aria-label="About the logo">
             <span class="logo-stack" aria-hidden="true">
               <span class="logo-icon-wrap">
@@ -156,7 +181,9 @@
               />
             </span>
           </a>
+          </div>
           <div class="header-right">
+            <a href="profile.html" class="header-pill-btn text-ui-sm">What its like to work with me</a>
             <a
               href="#"
               class="email-link"
@@ -272,7 +299,7 @@
           </button>
 
           <!-- Main -->
-          <main class="main" id="main-content" data-detail-view="images">
+          <main class="main" id="main-content">
             <h2 class="text-overline">Project Details</h2>
 
             <div class="project-intro">
@@ -287,23 +314,26 @@
                   </div>
                 </div>
                 <div class="detail-actions">
-                  <div class="view-toggle" role="group" aria-label="View mode" data-view="images">
-                    <span class="view-toggle-indicator" aria-hidden="true"></span>
-                    <button type="button" class="view-toggle-btn" id="view-btn-image" aria-label="Show images" aria-pressed="true">
-                      <img class="view-toggle-icon" src="assets/image.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
-                    </button>
-                    <button type="button" class="view-toggle-btn" id="view-btn-list" aria-label="Show text" aria-pressed="false">
-                      <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    class="project-info-btn"
+                    id="project-info-btn"
+                    aria-label="Project info"
+                    aria-expanded="false"
+                    aria-controls="project-info-panel"
+                  >
+                    <svg class="project-info-btn__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                      <circle cx="10" cy="10" r="8.25" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M10 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      <circle cx="10" cy="6.25" r="0.9" fill="currentColor"/>
+                    </svg>
+                  </button>
                   <div class="view-toggle view-toggle--logofolio" role="group" aria-label="Logofolio color mode" data-view="mono">
                     <span class="view-toggle-indicator" aria-hidden="true"></span>
                     <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-mono" aria-label="Monochrome logos" aria-pressed="true">
-                      <img class="view-toggle-icon" src="assets/logofolio-mono.svg?v=20250621logofolio-icons" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
                       <span class="view-toggle-label">Monochrome</span>
                     </button>
                     <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-color" aria-label="Color logos" aria-pressed="false">
-                      <img class="view-toggle-icon" src="assets/logofolio-color.svg?v=20250621logofolio-color-icon" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
                       <span class="view-toggle-label">Color</span>
                     </button>
                   </div>
@@ -324,23 +354,26 @@
                     <h1 class="text-title project-title" id="project-title-sticky">Affera</h1>
                   </div>
                   <div class="sticky-header__actions">
-                    <div class="view-toggle" role="group" aria-label="View mode" data-view="images">
-                      <span class="view-toggle-indicator" aria-hidden="true"></span>
-                      <button type="button" class="view-toggle-btn" id="view-btn-image-sticky" aria-label="Show images" aria-pressed="true">
-                        <img class="view-toggle-icon" src="assets/image.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
-                      </button>
-                      <button type="button" class="view-toggle-btn" id="view-btn-list-sticky" aria-label="Show text" aria-pressed="false">
-                        <img class="view-toggle-icon" src="assets/text.svg" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      class="project-info-btn"
+                      id="project-info-btn-sticky"
+                      aria-label="Project info"
+                      aria-expanded="false"
+                      aria-controls="project-info-panel"
+                    >
+                      <svg class="project-info-btn__icon" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <circle cx="10" cy="10" r="8.25" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M10 9v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="10" cy="6.25" r="0.9" fill="currentColor"/>
+                      </svg>
+                    </button>
                     <div class="view-toggle view-toggle--logofolio" role="group" aria-label="Logofolio color mode" data-view="mono">
                       <span class="view-toggle-indicator" aria-hidden="true"></span>
                       <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-mono-sticky" aria-label="Monochrome logos" aria-pressed="true">
-                        <img class="view-toggle-icon" src="assets/logofolio-mono.svg?v=20250621logofolio-icons" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
                         <span class="view-toggle-label">Monochrome</span>
                       </button>
                       <button type="button" class="view-toggle-btn view-toggle-btn--text" id="logofolio-btn-color-sticky" aria-label="Color logos" aria-pressed="false">
-                        <img class="view-toggle-icon" src="assets/logofolio-color.svg?v=20250621logofolio-color-icon" alt="" width="15" height="16" decoding="async" aria-hidden="true" />
                         <span class="view-toggle-label">Color</span>
                       </button>
                     </div>
@@ -415,6 +448,47 @@
                 </button>
               </div>
             </div>
+
+            <aside
+              class="project-info-panel"
+              id="project-info-panel"
+              hidden
+              aria-hidden="true"
+              aria-label="Project info"
+            >
+              <div class="project-info-panel__card">
+                <button
+                  type="button"
+                  class="project-info-panel__close header-shade-close"
+                  id="project-info-panel-close"
+                  aria-label="Close project info"
+                >
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+                  </svg>
+                </button>
+                <div class="project-info-panel__scroll">
+                  <div class="project-info-panel__body" id="project-info-panel-body">
+                    <div class="project-info-panel__image" id="project-info-panel-image"></div>
+                    <div class="project-info-panel__copy">
+                      <span class="text-summary summary-label">Summary:</span>
+                      <p class="text-summary summary-body" id="project-info-panel-summary"></p>
+                    </div>
+                    <div class="project-info-panel__prose" id="project-info-panel-prose"></div>
+                    <div class="project-info-panel__meta-grid">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Teammates</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">—</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Time spent</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">—</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </aside>
           </main>
         </div>
 
@@ -585,16 +659,58 @@
       </div>
     </div>
 
+    <div
+      class="showreel-lightbox"
+      id="showreel-lightbox"
+      hidden
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Showreel video player"
+    >
+      <div class="showreel-lightbox__backdrop" id="showreel-lightbox-backdrop"></div>
+      <div class="showreel-lightbox__stage">
+        <figure class="showreel-lightbox__figure">
+          <div class="showreel-lightbox__media">
+            <header class="showreel-lightbox__header">
+              <h2 class="showreel-lightbox__title text-ui-sm" id="showreel-lightbox-title">Showreel</h2>
+              <button
+                type="button"
+                class="header-shade-close showreel-lightbox__close"
+                id="showreel-lightbox-close"
+                aria-label="Close showreel player"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </header>
+            <div class="showreel-lightbox__content" id="showreel-lightbox-content"></div>
+            <footer class="showreel-lightbox__footer">
+              <div class="showreel-lightbox__footer-center">
+                <p
+                  class="showreel-lightbox__caption text-caption"
+                  id="showreel-lightbox-caption"
+                ></p>
+              </div>
+            </footer>
+          </div>
+        </figure>
+      </div>
+    </div>
+
     <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
     <div class="profile-stage" id="profile-stage" hidden aria-hidden="true"></div>
+    <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
 
-    <script src="cursor.js"></script>
+    <script src="cursor.js?v=20250630info-panel-fix"></script>
     <script src="marquee.js"></script>
     <script src="scrollbar.js"></script>
-    <script src="about.js?v=20250620about-title-fit"></script>
-    <script src="profile.js?v=20250620profile-meta-contact"></script>
-    <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="email-copy.js?v=20250620profile-meta-contact"></script>
-    <script src="app.js?v=20250622ipad-footer-viewport"></script>
+    <script src="about.js?v=20250630batch-v1"></script>
+    <script src="profile.js?v=20250630batch-v1"></script>
+    <script src="copyright.js?v=20250630batch-v1"></script>
+    <script src="pull-to-refresh.js?v=20250630info-panel-slide"></script>
+    <script src="email-copy.js?v=20250630batch-v1"></script>
+    <script src="app.js?v=20250630info-panel-slide"></script>
   </body>
 </html>

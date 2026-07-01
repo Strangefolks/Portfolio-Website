@@ -1,5 +1,27 @@
 const projects = [
   {
+    id: 'showreel',
+    name: 'Showreel',
+    tag: '2026',
+    icon: 'showreel',
+    category: 'Portfolio',
+    description:
+      'A sampling of different projects I\'ve created or had a hand in creating — both art and design.',
+    summary:
+      'Showreel gathers highlights from product, brand, and creative work into a single reel. Clips span med-tech interfaces, identity systems, and personal art — chosen to show range without flattening context. Each segment is a doorway into a fuller case study elsewhere in the portfolio. The reel is meant as orientation, not replacement, for the projects below.',
+    metadata: [
+      { label: 'Format', value: 'Video Reel' },
+      { label: 'Scope', value: 'Product & Brand' },
+      { label: 'Current Company', value: 'Personal' },
+      { label: 'Role', value: 'Designer' },
+      { label: 'Timeline', value: '2026' },
+      { label: 'Duration', value: '3:24' },
+    ],
+    videoCaption:
+      'Description: A curated sampling of product, brand, and art work from recent engagements.',
+    videoUrl: 'assets/showreel.mp4',
+  },
+  {
     id: 'affera',
     number: '01',
     name: 'Affera',
@@ -400,8 +422,9 @@ const projects = [
   },
 ];
 
-const lockIcon = `<svg class="project-item-lock-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-  <path d="M8.5 2C6.71 2 5.25 3.45 5.25 5.25V7.25H4.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h9c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25h-.75V5.25C11.75 3.45 10.29 2 8.5 2zm0 1.5c.97 0 1.75.78 1.75 1.75v2H6.75V5.25c0-.97.78-1.75 1.75-1.75z"/>
+const lockIcon = `<svg class="project-item-lock-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+  <rect x="3.75" y="7" width="8.5" height="6.25" rx="1"/>
+  <path d="M5.5 7V5.25a3 3 0 0 1 6 0V7" stroke-linecap="round"/>
 </svg>`;
 
 const infoIcon = `<svg class="project-item-info-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
@@ -493,8 +516,21 @@ const sketchbookIcons = {
   open: `<img class="project-item-icon icon-open" src="assets/sketchbook.svg" alt="" width="26" height="26" decoding="async" aria-hidden="true" />`,
 };
 
+const showreelMovieIcon = `<svg class="project-item-icon showreel-item-icon" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
+  <rect x="1" y="3.5" width="14.5" height="11" rx="1.75"/>
+  <path d="M15.5 7.25L22.25 4.25V14.75L15.5 11.75V7.25Z" stroke-linejoin="round"/>
+</svg>`;
+
+const showreelIcons = {
+  outline: showreelMovieIcon,
+  closed: showreelMovieIcon,
+  open: showreelMovieIcon,
+};
+
 function getProjectIcons(project) {
-  return project.icon === 'sketchbook' ? sketchbookIcons : folderIcons;
+  if (project.icon === 'sketchbook') return sketchbookIcons;
+  if (project.icon === 'showreel') return showreelIcons;
+  return folderIcons;
 }
 
 const PROJECT_LOCK_PASSWORD = 'tedp';
@@ -1053,6 +1089,10 @@ function measureSidebarHeaderSourceHeight() {
   if (!sidebarEl) return null;
 
   if (isSidebarMobileDropdown() && sidebarHeader) {
+    if (isSidebarCollapsed()) {
+      return 0;
+    }
+
     const height = Math.round(sidebarHeader.getBoundingClientRect().height);
     return height > 0 ? height : null;
   }
@@ -1208,7 +1248,6 @@ function setProjectIntroStickyVisible(isVisible, { instant = false } = {}) {
     requestAnimationFrame(() => {
       stickyHeaderEl?.classList.remove('sticky-header--instant');
     });
-    return;
   }
 }
 
@@ -1247,8 +1286,16 @@ function isLogofolioProject(project) {
   return project?.icon === 'logofolio' || project?.id === 'atlas-robotics';
 }
 
+function isShowreelProject(project) {
+  return project?.icon === 'showreel' || project?.id === 'showreel';
+}
+
 function isSpecialGalleryProject(project) {
   return isSketchbookProject(project) || isLogofolioProject(project);
+}
+
+function shouldShowThemeCards(project) {
+  return !isSketchbookProject(project) && !isLogofolioProject(project) && !isShowreelProject(project);
 }
 
 function syncSpecialGalleryChrome(project) {
@@ -1257,6 +1304,7 @@ function syncSpecialGalleryChrome(project) {
 
   mainContentEl?.classList.toggle('is-sketchbook-project', sketchbook);
   mainContentEl?.classList.toggle('is-logofolio-project', logofolio);
+  mainContentEl?.classList.remove('is-showreel-project');
   stickyHeaderEl?.classList.toggle('sticky-header--logofolio', logofolio);
 
   if (stickyHeaderHostEl) {
@@ -1287,6 +1335,9 @@ function sortProjectsAlphabetically(list) {
 }
 
 function projectMatchesFilter(project, filter) {
+  if (isShowreelProject(project)) {
+    return filter === 'all';
+  }
   if (filter === 'product') {
     return project.category === 'Med-Tech' || project.category === 'Cloud Software';
   }
@@ -1305,7 +1356,17 @@ function getFilteredProjects() {
       ? projects
       : projects.filter((project) => projectMatchesFilter(project, activeFilter));
 
-  return sortProjectsAlphabetically(filtered);
+  const sorted = sortProjectsAlphabetically(filtered);
+
+  if (activeFilter === 'all') {
+    const showreelIndex = sorted.findIndex((project) => project.id === 'showreel');
+    if (showreelIndex > 0) {
+      const [showreelProject] = sorted.splice(showreelIndex, 1);
+      sorted.unshift(showreelProject);
+    }
+  }
+
+  return sorted;
 }
 
 function formatProjectDisplayNumber(index) {
@@ -1332,15 +1393,49 @@ function isTouchProjectListUi() {
   return window.matchMedia('(hover: none), (pointer: coarse)').matches;
 }
 
+const showreelListPlayIcon = `<svg class="showreel-list-preview__play-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+  <path d="M8 5V19L19 12L8 5Z" fill="currentColor"/>
+</svg>`;
+
+function renderShowreelListItem(project, isActive) {
+  const yearMarkup = isActive
+    ? '<img class="project-item-starburst showreel-list-starburst" src="assets/sunburst.svg" alt="" width="19" height="19" decoding="async" aria-hidden="true" />'
+    : `<span class="text-list project-item-category showreel-list-year">${getProjectListLabel(project)}</span>`;
+
+  return `
+    <div class="project-item project-item--showreel${isActive ? ' active' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
+      <div class="showreel-list-card">
+        <div class="showreel-list-head">
+          <span class="showreel-list-title">
+            ${showreelMovieIcon}
+            <span class="text-list project-item-name">${project.name}</span>
+          </span>
+          <span class="showreel-list-meta">
+            ${yearMarkup}
+            <span class="project-item-info" data-project-id="${project.id}" aria-label="Project info">${infoIcon}</span>
+          </span>
+        </div>
+        <div class="showreel-list-preview" aria-hidden="true">
+          ${showreelListPlayIcon}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function renderProjectListItem(project) {
-  const icons = getProjectIcons(project);
   const isActive = project.id === selectedId;
+  if (project.icon === 'showreel') {
+    return renderShowreelListItem(project, isActive);
+  }
+
+  const icons = getProjectIcons(project);
   const categoryMarkup = isActive
     ? '<img class="project-item-starburst" src="assets/sunburst.svg" alt="" width="19" height="19" decoding="async" aria-hidden="true" />'
     : `<span class="text-list project-item-category">${getProjectListLabel(project)}</span>`;
 
   return `
-    <div class="project-item${isActive ? ' active' : ''}${project.icon === 'sketchbook' ? ' project-item--sketchbook' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
+    <div class="project-item${isActive ? ' active' : ''}${project.icon === 'sketchbook' ? ' project-item--sketchbook' : ''}${project.icon === 'showreel' ? ' project-item--showreel' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
       <span class="project-item-label">
         <span class="project-item-icons" aria-hidden="true">
           ${icons.outline}
@@ -1361,6 +1456,22 @@ function renderProjectListItem(project) {
   `;
 }
 
+function getNavigableProjects() {
+  return getFilteredProjects().filter((project) => !isShowreelProject(project));
+}
+
+function activateProjectListItem(projectId, triggerEl = null) {
+  const project = projects.find((p) => p.id === projectId);
+  if (!project) return;
+
+  if (isShowreelProject(project)) {
+    openShowreelLightbox(triggerEl);
+    return;
+  }
+
+  selectProject(projectId);
+}
+
 function bindProjectListItems() {
   const touchUi = isTouchProjectListUi();
 
@@ -1371,7 +1482,7 @@ function bindProjectListItems() {
         (e) => {
           if (e.target.closest('.project-item-info')) return;
           e.preventDefault();
-          selectProject(item.dataset.id);
+          activateProjectListItem(item.dataset.id, item);
         },
         { passive: false }
       );
@@ -1379,13 +1490,13 @@ function bindProjectListItems() {
 
     item.addEventListener('click', (e) => {
       if (e.target.closest('.project-item-info')) return;
-      selectProject(item.dataset.id);
+      activateProjectListItem(item.dataset.id, item);
     });
     item.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
         if (e.target.closest('.project-item-info')) return;
-        selectProject(item.dataset.id);
+        activateProjectListItem(item.dataset.id, item);
       }
     });
   });
@@ -1405,6 +1516,7 @@ function canShowProjectNavHint() {
   if (
     document.body.classList.contains('is-about-open')
     || document.body.classList.contains('is-profile-open')
+    || document.body.classList.contains('is-copyright-open')
   ) {
     return false;
   }
@@ -1439,15 +1551,35 @@ function positionProjectNavHint(item) {
   const rect = item.getBoundingClientRect();
   const margin = 8;
 
-  tooltip.style.left = `${rect.left + rect.width / 2}px`;
-  tooltip.style.top = `${rect.top - margin}px`;
-  tooltip.style.transform = 'translate(-50%, -100%)';
+  tooltip.style.bottom = 'auto';
+  tooltip.style.right = 'auto';
+
+  const centerX = rect.left + rect.width / 2;
+  const tooltipWidth = tooltip.offsetWidth || 0;
+  const tooltipHeight = tooltip.offsetHeight || 0;
+  const clampedX = Math.max(
+    margin + tooltipWidth / 2,
+    Math.min(centerX, window.innerWidth - margin - tooltipWidth / 2)
+  );
+
+  let top = rect.top - margin;
+  let transform = 'translate(-50%, -100%)';
+
+  if (top - tooltipHeight < margin) {
+    top = rect.bottom + margin;
+    transform = 'translate(-50%, 0)';
+  }
+
+  tooltip.style.left = `${clampedX}px`;
+  tooltip.style.top = `${top}px`;
+  tooltip.style.transform = transform;
 }
 
 function showProjectNavHint(item) {
   if (!canShowProjectNavHint()) return;
+  const tooltip = ensureProjectNavHint();
+  tooltip.classList.add('is-visible');
   positionProjectNavHint(item);
-  ensureProjectNavHint().classList.add('is-visible');
   projectNavHintAnchor = item;
 }
 
@@ -1469,6 +1601,8 @@ function bindProjectNavHint() {
     projectNavHintBound = true;
 
     projectListEl.addEventListener('scroll', hideProjectNavHint, { passive: true });
+
+    projectListEl.addEventListener('mouseleave', hideProjectNavHint);
 
     projectListEl.addEventListener('mousemove', (event) => {
       if (!projectNavHintEl?.classList.contains('is-visible')) return;
@@ -1506,6 +1640,7 @@ function renderProjectList() {
 function shouldSkipProjectListKeyboardNav(event) {
   const target = event.target;
   if (!(target instanceof Element)) return true;
+  if (isShowreelLightboxOpen() || isSketchbookLightboxOpen()) return true;
   if (target.closest('.sidebar-resizer, .sidebar-collapse-btn, .sidebar-reopen-tab')) return true;
 
   const tag = target.tagName;
@@ -1528,7 +1663,7 @@ function setProjectListKeyboardNav(isNavigating) {
 }
 
 function navigateFilteredProject(direction) {
-  const filtered = getFilteredProjects();
+  const filtered = getNavigableProjects();
   if (filtered.length === 0) return false;
 
   const currentIndex = filtered.findIndex((p) => p.id === selectedId);
@@ -1546,7 +1681,7 @@ function navigateFilteredProject(direction) {
 }
 
 function getNextFilteredProject() {
-  const filtered = getFilteredProjects();
+  const filtered = getNavigableProjects();
   if (filtered.length <= 1) return null;
 
   const currentIndex = filtered.findIndex((p) => p.id === selectedId);
@@ -1776,12 +1911,7 @@ function updateProjectAccess(project) {
   if (unlocked) {
     projectLockErrorEl.classList.add('is-hidden');
     renderMetadata(project.metadata, project.summary ?? project.description);
-    if (isSpecialGalleryProject(project)) {
-      setDetailView('images');
-    } else {
-    const showImages = viewBtnImage?.getAttribute('aria-pressed') === 'true';
-    setDetailView(showImages ? 'images' : 'text');
-    }
+    showProjectGallery();
     requestAnimationFrame(() => syncProjectIntroStickyFromScroll());
   } else {
     projectGallery.classList.add('is-hidden');
@@ -1811,6 +1941,8 @@ function selectProject(id) {
   if (!project) return;
 
   closeSketchbookLightbox();
+  closeShowreelLightbox();
+  closeProjectInfoPanel();
   resetProjectIntroScroll();
   selectedId = id;
   syncSpecialGalleryChrome(project);
@@ -1922,7 +2054,7 @@ const sidebarProjectCountPill = document.getElementById('sidebar-project-count-p
 const headerShellEl = document.getElementById('header-shell');
 const topBannerShellEl = document.getElementById('top-banner-shell');
 const sidebarMobilePanelContentEl = document.getElementById('sidebar-mobile-panel-content');
-const sidebarReopenTab = document.getElementById('sidebar-reopen-tab');
+const sidebarReopenTabs = document.querySelectorAll('.sidebar-reopen-tab');
 const bodyEl = document.querySelector('.body');
 const SIDEBAR_MIN = 220;
 const SIDEBAR_MAX_RATIO = 0.5;
@@ -1932,7 +2064,7 @@ const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 const SIDEBAR_COLLAPSE_MQ = window.matchMedia('(min-width: 901px)');
 const SIDEBAR_OVERLAY_MQ = window.matchMedia('(max-width: 900px)');
 const SIDEBAR_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
-const SIDEBAR_MOBILE_PANEL_MS = 1000;
+const SIDEBAR_MOBILE_PANEL_MS = 400;
 const PROJECT_LABEL_COLLISION_THRESHOLD = 2;
 
 let previousSidebarWidth = null;
@@ -2150,24 +2282,8 @@ function shouldSidebarStartCollapsed() {
 function syncMobileProjectTabLabel() {
   if (!sidebarHeaderLabel) return;
 
-  if (!isSidebarMobileDropdown()) {
-    sidebarHeaderLabel.textContent = 'Projects';
-    sidebarProjectCountPill?.setAttribute('hidden', '');
-    return;
-  }
-
-  sidebarHeaderLabel.textContent = 'View all projects';
-
-  if (!sidebarProjectCountPill) return;
-
-  const count = getFilteredProjects().length;
-  sidebarProjectCountPill.textContent = `${count} Project${count === 1 ? '' : 's'}`;
-
-  if (isSidebarCollapsed()) {
-    sidebarProjectCountPill.removeAttribute('hidden');
-  } else {
-    sidebarProjectCountPill.setAttribute('hidden', '');
-  }
+  sidebarHeaderLabel.textContent = 'Projects';
+  sidebarProjectCountPill?.setAttribute('hidden', '');
 }
 
 function setSidebarPanelToggleX(isX) {
@@ -2203,10 +2319,13 @@ function syncSidebarCollapseUi() {
     );
   }
 
-  if (sidebarReopenTab) {
-    sidebarReopenTab.hidden = isSidebarMobileDropdown() || !collapsed;
-    sidebarReopenTab.setAttribute('aria-hidden', sidebarReopenTab.hidden ? 'true' : 'false');
-    sidebarReopenTab.setAttribute('aria-label', 'Open projects panel');
+  if (sidebarReopenTabs.length) {
+    const showReopen = collapsed && isSidebarCollapseEnabled();
+    sidebarReopenTabs.forEach((tab) => {
+      tab.hidden = !showReopen;
+      tab.setAttribute('aria-hidden', tab.hidden ? 'true' : 'false');
+      tab.setAttribute('aria-label', 'Open projects panel');
+    });
   }
 
   if (sidebarResizer) {
@@ -2219,41 +2338,11 @@ function syncSidebarCollapseUi() {
 }
 
 function waitForMobilePanelTransition() {
-  return new Promise((resolve) => {
-    const targets = [headerShellEl, topBannerShellEl, sidebarEl, sidebarHeader, sidebarMobilePanelContentEl, mainContentEl].filter(Boolean);
-    if (!targets.length) {
-      resolve();
-      return;
-    }
+  return waitForElementPropertyTransition(sidebarEl, 'transform', SIDEBAR_MOBILE_PANEL_MS + 80);
+}
 
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      targets.forEach((target) => target.removeEventListener('transitionend', onEnd));
-      resolve();
-    };
-
-    const onEnd = (event) => {
-      if (!targets.includes(event.target)) return;
-      if (
-        event.propertyName !== 'transform'
-        && event.propertyName !== 'opacity'
-        && event.propertyName !== 'max-height'
-        && event.propertyName !== 'top'
-        && event.propertyName !== 'height'
-        && event.propertyName !== 'padding-top'
-        && event.propertyName !== 'clip-path'
-        && event.propertyName !== '-webkit-clip-path'
-      ) {
-        return;
-      }
-      finish();
-    };
-
-    targets.forEach((target) => target.addEventListener('transitionend', onEnd));
-    window.setTimeout(finish, SIDEBAR_MOBILE_PANEL_MS + 80);
-  });
+function waitForMobilePanelCloseTransitions() {
+  return waitForMobilePanelTransition();
 }
 
 function waitForElementPropertyTransition(element, propertyName, fallbackMs = SIDEBAR_MOBILE_PANEL_MS + 80) {
@@ -2282,36 +2371,6 @@ function waitForElementPropertyTransition(element, propertyName, fallbackMs = SI
   });
 }
 
-function waitForMobilePanelCloseTransitions() {
-  return Promise.all([
-    waitForMobilePanelTransition(),
-    waitForElementPropertyTransition(mainContentEl, 'transform'),
-    waitForElementPropertyTransition(sidebarHeader, 'padding-top'),
-  ]);
-}
-
-function waitForMobilePanelLayoutSettle() {
-  return new Promise((resolve) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(resolve);
-    });
-  });
-}
-
-function measureMobileSidebarRowHeight() {
-  if (!sidebarHeader) return 64;
-
-  const height = Math.round(sidebarHeader.getBoundingClientRect().height);
-  return height > 0 ? height : 64;
-}
-
-function syncMobileSidebarRowHeight() {
-  document.documentElement.style.setProperty(
-    '--sidebar-mobile-row-height',
-    `${measureMobileSidebarRowHeight()}px`
-  );
-}
-
 function endMobilePanelPhase(phaseClass) {
   document.body.classList.remove(phaseClass, `${phaseClass}-active`);
 }
@@ -2322,8 +2381,7 @@ function clearMobilePanelAnimationState() {
     'sidebar-mobile-panel-opening-active',
     'sidebar-mobile-panel-closing',
     'sidebar-mobile-panel-closing-active',
-    'sidebar-mobile-panel-expanded',
-    'sidebar-mobile-panel-handoff'
+    'sidebar-mobile-panel-expanded'
   );
 }
 
@@ -2369,20 +2427,9 @@ async function collapseSidebarMobileAnimated() {
 
   await waitForMobilePanelCloseTransitions();
 
-  syncMobileSidebarRowHeight();
-
-  document.body.classList.add('sidebar-mobile-panel-handoff');
-  document.body.classList.add('sidebar-collapsed');
   endMobilePanelPhase('sidebar-mobile-panel-closing');
+  document.body.classList.add('sidebar-collapsed');
   localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
-
-  const inflowHeight = sidebarEl ? sidebarEl.offsetHeight : measureMobileSidebarRowHeight();
-  document.documentElement.style.setProperty('--sidebar-mobile-inflow-offset', `${inflowHeight}px`);
-
-  await waitForMobilePanelLayoutSettle();
-
-  document.body.classList.remove('sidebar-mobile-panel-handoff');
-  document.documentElement.style.removeProperty('--sidebar-mobile-inflow-offset');
   sidebarMobilePanelAnimating = false;
   syncSidebarCollapseUi();
   syncStickyHeaderAlignHeight();
@@ -2576,12 +2623,7 @@ function initSidebarCollapse() {
     collapseSidebar();
   });
 
-  sidebarHeader?.addEventListener('click', () => {
-    if (!isSidebarMobileDropdown()) return;
-    toggleSidebarMobileDropdown();
-  });
-
-  sidebarReopenTab?.addEventListener('click', expandSidebar);
+  sidebarReopenTabs.forEach((tab) => tab.addEventListener('click', expandSidebar));
 
   const handleSidebarLayoutMqChange = () => {
     document.body.classList.remove(
@@ -2956,11 +2998,120 @@ window.addEventListener('resize', () => {
 
 populateFooterMarquee();
 
-const viewToggleEls = document.querySelectorAll('.view-toggle:not(.view-toggle--logofolio)');
-const viewBtnImage = document.getElementById('view-btn-image');
-const viewBtnList = document.getElementById('view-btn-list');
-const viewBtnImageSticky = document.getElementById('view-btn-image-sticky');
-const viewBtnListSticky = document.getElementById('view-btn-list-sticky');
+const projectInfoBtnEl = document.getElementById('project-info-btn');
+const projectInfoBtnStickyEl = document.getElementById('project-info-btn-sticky');
+const projectInfoPanelEl = document.getElementById('project-info-panel');
+const projectInfoPanelCloseEl = document.getElementById('project-info-panel-close');
+const projectInfoPanelImageEl = document.getElementById('project-info-panel-image');
+const projectInfoPanelSummaryEl = document.getElementById('project-info-panel-summary');
+const projectInfoPanelProseEl = document.getElementById('project-info-panel-prose');
+
+let projectInfoPanelOpen = false;
+let projectInfoPanelScrollTop = 0;
+
+function isProjectInfoPanelOpen() {
+  return projectInfoPanelOpen;
+}
+
+function getProjectInfoParagraphs(project) {
+  const name = project.name;
+  return [
+    `Discovery for ${name} started with stakeholder interviews, workflow shadowing, and a review of existing artifacts to understand where teams felt friction versus confidence.`,
+    `Concept exploration moved quickly from sketches into clickable prototypes so we could test navigation, terminology, and information hierarchy before committing to visual polish.`,
+    `Usability sessions surfaced patterns in how expert users scan dense interfaces—what they need at a glance versus what belongs in secondary panels or progressive disclosure.`,
+    `Visual design balanced credibility in clinical or enterprise contexts with enough warmth that the product felt approachable during long sessions of use.`,
+    `Component specs documented default, hover, focus, empty, and error states so engineering could implement consistently across breakpoints and input modalities.`,
+    `Developer handoff included annotated flows, spacing tokens, and acceptance notes tied to research findings so implementation decisions stayed traceable.`,
+    `After launch, feedback from telemetry and follow-up interviews informed refinements to layout density, copy, and the moments where users needed clearer system status.`,
+  ];
+}
+
+function renderProjectInfoPanelProse(project) {
+  return getProjectInfoParagraphs(project)
+    .map((paragraph) => `<p class="text-summary summary-body project-info-panel__paragraph">${escapeHtml(paragraph)}</p>`)
+    .join('');
+}
+
+function updateProjectInfoPanelContent(project) {
+  if (!projectInfoPanelEl || !project) return;
+
+  if (projectInfoPanelImageEl) {
+    projectInfoPanelImageEl.innerHTML = renderHeroPanelContent(getProjectInfoImage(project), project, 0);
+  }
+  if (projectInfoPanelSummaryEl) {
+    projectInfoPanelSummaryEl.innerHTML = formatProjectSummaryLead(getProjectInfoText(project));
+  }
+  if (projectInfoPanelProseEl) {
+    projectInfoPanelProseEl.innerHTML = renderProjectInfoPanelProse(project);
+  }
+}
+
+function setProjectInfoPanelExpanded(isExpanded) {
+  projectInfoBtnEl?.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+  projectInfoBtnStickyEl?.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+}
+
+function openProjectInfoPanel() {
+  const project = projects.find((p) => p.id === selectedId);
+  if (!project || !isProjectUnlocked(project) || !projectInfoPanelEl) return;
+
+  updateProjectInfoPanelContent(project);
+
+  if (mainContentEl) {
+    projectInfoPanelScrollTop = mainContentEl.scrollTop;
+  }
+
+  projectInfoPanelOpen = true;
+  projectInfoPanelEl.hidden = false;
+  projectInfoPanelEl.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('is-project-info-panel-open');
+  setProjectInfoPanelExpanded(true);
+
+  requestAnimationFrame(() => {
+    projectInfoPanelEl.classList.add('is-visible');
+  });
+}
+
+function closeProjectInfoPanel() {
+  if (!projectInfoPanelEl || !projectInfoPanelOpen) return;
+
+  projectInfoPanelOpen = false;
+  projectInfoPanelEl.classList.remove('is-visible');
+  document.body.classList.remove('is-project-info-panel-open');
+  setProjectInfoPanelExpanded(false);
+
+  window.setTimeout(() => {
+    if (projectInfoPanelOpen || !projectInfoPanelEl) return;
+    projectInfoPanelEl.hidden = true;
+    projectInfoPanelEl.setAttribute('aria-hidden', 'true');
+    if (mainContentEl) {
+      mainContentEl.scrollTop = projectInfoPanelScrollTop;
+    }
+  }, 560);
+}
+
+function toggleProjectInfoPanel() {
+  if (isProjectInfoPanelOpen()) {
+    closeProjectInfoPanel();
+  } else {
+    openProjectInfoPanel();
+  }
+}
+
+function initProjectInfoPanel() {
+  if (!projectInfoPanelEl) return;
+
+  projectInfoBtnEl?.addEventListener('click', toggleProjectInfoPanel);
+  projectInfoBtnStickyEl?.addEventListener('click', toggleProjectInfoPanel);
+  projectInfoPanelCloseEl?.addEventListener('click', closeProjectInfoPanel);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isProjectInfoPanelOpen()) {
+      closeProjectInfoPanel();
+    }
+  });
+}
+
 const logofolioToggleEls = document.querySelectorAll('.view-toggle--logofolio');
 const logofolioBtnMono = document.getElementById('logofolio-btn-mono');
 const logofolioBtnColor = document.getElementById('logofolio-btn-color');
@@ -2973,6 +3124,20 @@ let logofolioColorMode = 'mono';
 
 const GALLERY_IMAGE_COUNT = 10;
 const SKETCHBOOK_GALLERY_IMAGE_COUNT = GALLERY_IMAGE_COUNT * 4;
+
+const PROJECT_THEME_CARDS = [
+  { title: 'Design Strategy', summary: 'Problem framing, research synthesis, and direction-setting before pixels.' },
+  { title: 'User Testing', summary: 'Prototype validation with target users in realistic task scenarios.' },
+  { title: 'Rapid Prototyping', summary: 'High-fidelity flows and interaction models built for fast iteration.' },
+  { title: 'Developer Handoff', summary: 'Specs, component notes, and QA support for clean implementation.' },
+];
+
+const THEME_CARD_MARKS = [
+  '<svg class="theme-card__mark" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="21" fill="none" stroke="currentColor" stroke-width="3.5"/></svg>',
+  '<svg class="theme-card__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="14" y="24" width="36" height="5" rx="1.5" fill="currentColor"/><rect x="14" y="34" width="28" height="5" rx="1.5" fill="currentColor"/><rect x="14" y="44" width="20" height="5" rx="1.5" fill="currentColor"/></svg>',
+  '<svg class="theme-card__mark" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 16V48M16 32H48" stroke="currentColor" stroke-width="4.5" stroke-linecap="square"/></svg>',
+  '<svg class="theme-card__mark" viewBox="0 0 64 64" aria-hidden="true"><rect x="16" y="16" width="14" height="14" rx="2" fill="currentColor"/><rect x="34" y="16" width="14" height="14" rx="2" fill="currentColor"/><rect x="16" y="34" width="14" height="14" rx="2" fill="currentColor"/><rect x="34" y="34" width="14" height="14" rx="2" fill="currentColor"/></svg>',
+];
 
 const SKETCHBOOK_PANEL_HEIGHTS = ['h-sm', 'h-md', 'h-lg', 'h-xl', 'h-md', 'h-lg', 'h-sm', 'h-xl', 'h-md', 'h-lg'];
 
@@ -3185,6 +3350,7 @@ const galleryImageCaptions = [
 ];
 
 function getProjectGalleryImages(project) {
+  if (isShowreelProject(project)) return [];
   if (project.gallery?.length) return project.gallery;
 
   const count = isSketchbookProject(project) ? SKETCHBOOK_GALLERY_IMAGE_COUNT : GALLERY_IMAGE_COUNT;
@@ -3193,6 +3359,101 @@ function getProjectGalleryImages(project) {
     alt: `${project.name} — gallery image ${index + 1}`,
     caption: galleryImageCaptions[index % galleryImageCaptions.length],
   }));
+}
+
+function renderThemeCardsRow() {
+  const cards = PROJECT_THEME_CARDS.map((theme, index) => `
+      <article class="theme-card">
+        <div class="theme-card__frame">
+          <div class="theme-card__placeholder" aria-hidden="true">
+            ${THEME_CARD_MARKS[index % THEME_CARD_MARKS.length]}
+          </div>
+        </div>
+        <div class="theme-card__meta-box">
+          <div class="theme-card__meta">
+            <div class="theme-card__title text-ui-sm">${escapeHtml(theme.title)}</div>
+            <p class="text-caption theme-card__summary">${escapeHtml(theme.summary)}</p>
+          </div>
+        </div>
+      </article>
+    `).join('');
+
+  return `<div class="theme-cards-row">${cards}</div>`;
+}
+
+function renderGalleryMediaFooter(caption, copyUrl) {
+  const safeCaption = escapeHtml(caption || '');
+  const safeCopyUrl = escapeHtml(copyUrl || '');
+
+  return `
+    <footer class="gallery-media-footer">
+      <button type="button" class="gallery-copy-link text-ui-sm" data-copy-url="${safeCopyUrl}" aria-label="Copy link">
+        <span class="gallery-copy-link__label">Copy link</span>
+      </button>
+      ${safeCaption ? `<p class="text-caption gallery-caption">${safeCaption}</p>` : ''}
+    </footer>
+  `;
+}
+
+function copyGalleryLink(text) {
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard.writeText(text).catch(() => copyTextFallback(text));
+  }
+
+  return Promise.resolve(copyTextFallback(text));
+}
+
+function copyTextFallback(text) {
+  const textarea = document.createElement('textarea');
+  textarea.value = text;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.left = '-9999px';
+  textarea.style.top = '0';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, text.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch {
+    copied = false;
+  }
+
+  document.body.removeChild(textarea);
+  return copied;
+}
+
+function bindGalleryCopyLinks(root = projectGallery) {
+  if (!root) return;
+
+  root.querySelectorAll('.gallery-copy-link:not([data-copy-bound])').forEach((button) => {
+    button.dataset.copyBound = 'true';
+    const labelEl = button.querySelector('.gallery-copy-link__label');
+    const defaultLabel = labelEl?.textContent?.trim() || 'Copy link';
+    let copiedTimeout;
+
+    const showCopiedState = () => {
+      button.classList.add('is-copied');
+      if (labelEl) labelEl.textContent = 'Copied';
+      clearTimeout(copiedTimeout);
+      copiedTimeout = window.setTimeout(() => {
+        button.classList.remove('is-copied');
+        if (labelEl) labelEl.textContent = defaultLabel;
+      }, 1000);
+    };
+
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (button.classList.contains('is-copied')) return;
+      const url = button.dataset.copyUrl || window.location.href;
+      showCopiedState();
+      void copyGalleryLink(url);
+    });
+  });
 }
 
 let galleryPlaceholderRevealObserver;
@@ -3238,6 +3499,7 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
 
   projectGallery.classList.toggle('project-gallery--sketchbook', sketchbookLayout);
   projectGallery.classList.toggle('project-gallery--logofolio', logofolioLayout);
+  projectGallery.classList.remove('project-gallery--showreel');
 
   if (logofolioLayout) {
     const entries = getLogofolioEntries(project);
@@ -3255,14 +3517,17 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
     `;
   } else {
     const images = getProjectGalleryImages(project);
+    const themeCards = shouldShowThemeCards(project) ? renderThemeCardsRow() : '';
 
-    projectGallery.innerHTML = images
-      .map((image, index) => {
-        const panelClasses = sketchbookLayout
-          ? `hero-panel hero-panel--sketchbook hero-panel--${getSketchbookPanelHeightClass(index)}`
-          : 'hero-panel';
+    projectGallery.innerHTML =
+      themeCards +
+      images
+        .map((image, index) => {
+          const panelClasses = sketchbookLayout
+            ? `hero-panel hero-panel--sketchbook hero-panel--${getSketchbookPanelHeightClass(index)}`
+            : 'hero-panel';
 
-        return `
+          return `
     <div class="gallery-item${sketchbookLayout ? ' gallery-item--sketchbook' : ''}"${sketchbookLayout ? ` data-gallery-index="${index}"` : ''}>
       <div class="${panelClasses}">
         ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src, eagerLoad })}
@@ -3270,10 +3535,11 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
       ${image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
     </div>
   `;
-      })
-      .join('');
+        })
+        .join('');
   }
 
+  bindGalleryCopyLinks(projectGallery);
   initGalleryPlaceholderReveal();
   refreshCustomScrollbar(mainContentEl);
 }
@@ -3430,6 +3696,133 @@ function initSketchbookLightbox() {
   });
 }
 
+const showreelLightboxEl = document.getElementById('showreel-lightbox');
+const showreelLightboxBackdropEl = document.getElementById('showreel-lightbox-backdrop');
+const showreelLightboxCloseEl = document.getElementById('showreel-lightbox-close');
+const showreelLightboxContentEl = document.getElementById('showreel-lightbox-content');
+const showreelLightboxCaptionEl = document.getElementById('showreel-lightbox-caption');
+const showreelLightboxTitleEl = document.getElementById('showreel-lightbox-title');
+
+let showreelLightboxScrollTop = 0;
+let showreelLightboxTriggerEl = null;
+let showreelLightboxVideoEl = null;
+
+function getShowreelProject() {
+  return projects.find((project) => isShowreelProject(project));
+}
+
+function isShowreelLightboxOpen() {
+  return Boolean(showreelLightboxEl && !showreelLightboxEl.hidden);
+}
+
+function renderShowreelLightboxVideo(project) {
+  if (!showreelLightboxContentEl) return;
+
+  if (project?.videoUrl) {
+    showreelLightboxContentEl.innerHTML = `<video
+      class="showreel-lightbox__video"
+      src="${escapeHtml(project.videoUrl)}"
+      controls
+      playsinline
+      preload="metadata"
+      aria-label="${escapeHtml(project.name)} video"
+    ></video>`;
+    showreelLightboxVideoEl = showreelLightboxContentEl.querySelector('.showreel-lightbox__video');
+    return;
+  }
+
+  showreelLightboxVideoEl = null;
+  const label = escapeHtml(`${project?.name || 'Showreel'} video`);
+  showreelLightboxContentEl.innerHTML = `<div class="showreel-lightbox__placeholder hero-placeholder is-revealed" role="img" aria-label="${label}">${heroPlaceholderIcon}</div>`;
+}
+
+function lockShowreelLightboxScroll() {
+  if (!mainContentEl) return;
+  showreelLightboxScrollTop = mainContentEl.scrollTop;
+  document.body.classList.add('is-showreel-lightbox-open');
+}
+
+function unlockShowreelLightboxScroll() {
+  document.body.classList.remove('is-showreel-lightbox-open');
+  if (mainContentEl) {
+    mainContentEl.scrollTop = showreelLightboxScrollTop;
+  }
+}
+
+function pauseShowreelLightboxVideo() {
+  if (!(showreelLightboxVideoEl instanceof HTMLVideoElement)) return;
+  showreelLightboxVideoEl.pause();
+  showreelLightboxVideoEl.currentTime = 0;
+}
+
+function openShowreelLightbox(triggerEl = null) {
+  if (!showreelLightboxEl) return;
+
+  const project = getShowreelProject();
+  if (!project) return;
+
+  closeSketchbookLightbox();
+  showreelLightboxTriggerEl = triggerEl;
+  renderShowreelLightboxVideo(project);
+
+  if (showreelLightboxTitleEl) {
+    showreelLightboxTitleEl.textContent = project.name;
+  }
+
+  if (showreelLightboxCaptionEl) {
+    showreelLightboxCaptionEl.textContent = project.videoCaption || '';
+  }
+
+  lockShowreelLightboxScroll();
+  showreelLightboxEl.hidden = false;
+  showreelLightboxEl.setAttribute('aria-hidden', 'false');
+  showreelLightboxCloseEl?.focus();
+}
+
+function closeShowreelLightbox() {
+  if (!showreelLightboxEl || showreelLightboxEl.hidden) return;
+
+  pauseShowreelLightboxVideo();
+  showreelLightboxEl.hidden = true;
+  showreelLightboxEl.setAttribute('aria-hidden', 'true');
+  unlockShowreelLightboxScroll();
+
+  if (showreelLightboxContentEl) {
+    showreelLightboxContentEl.innerHTML = '';
+  }
+  showreelLightboxVideoEl = null;
+
+  if (showreelLightboxTriggerEl instanceof HTMLElement) {
+    showreelLightboxTriggerEl.focus({ preventScroll: true });
+  }
+  showreelLightboxTriggerEl = null;
+}
+
+function initShowreelLightbox() {
+  if (!showreelLightboxEl) return;
+
+  showreelLightboxBackdropEl?.addEventListener('click', closeShowreelLightbox);
+  showreelLightboxCloseEl?.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeShowreelLightbox();
+  });
+
+  showreelLightboxEl.addEventListener('click', (event) => {
+    if (event.target === showreelLightboxEl) {
+      closeShowreelLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!isShowreelLightboxOpen()) return;
+
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeShowreelLightbox();
+    }
+  });
+}
+
 function setLogofolioColorMode(mode) {
   if (mode !== 'mono' && mode !== 'color') return;
 
@@ -3454,42 +3847,23 @@ function syncLogofolioColorModeChrome() {
   setLogofolioColorMode(logofolioColorMode);
 }
 
-function setDetailView(mode) {
-  const project = projects.find((p) => p.id === selectedId);
-  const showImages = isSpecialGalleryProject(project) ? true : mode === 'images';
-
-  mainContentEl?.setAttribute('data-detail-view', mode);
-
-  projectGallery.classList.toggle('is-hidden', !showImages);
-  projectGallery.hidden = !showImages;
-
-  projectText.classList.toggle('is-hidden', showImages);
-  projectText.hidden = showImages;
-
-  viewToggleEls.forEach((toggle) => toggle.setAttribute('data-view', mode));
-  viewBtnImage?.setAttribute('aria-pressed', showImages);
-  viewBtnList?.setAttribute('aria-pressed', !showImages);
-  viewBtnImageSticky?.setAttribute('aria-pressed', showImages);
-  viewBtnListSticky?.setAttribute('aria-pressed', !showImages);
-
-  if (showImages) {
-    requestAnimationFrame(() => initGalleryPlaceholderReveal());
-  }
-
+function showProjectGallery() {
+  projectGallery.classList.remove('is-hidden');
+  projectGallery.hidden = false;
+  projectText.classList.add('is-hidden');
+  projectText.hidden = true;
+  requestAnimationFrame(() => initGalleryPlaceholderReveal());
   syncStickyHeaderAlignHeight();
 }
 
-viewBtnImage?.addEventListener('click', () => setDetailView('images'));
-viewBtnList?.addEventListener('click', () => setDetailView('text'));
-viewBtnImageSticky?.addEventListener('click', () => setDetailView('images'));
-viewBtnListSticky?.addEventListener('click', () => setDetailView('text'));
 logofolioBtnMono?.addEventListener('click', () => setLogofolioColorMode('mono'));
 logofolioBtnColor?.addEventListener('click', () => setLogofolioColorMode('color'));
 logofolioBtnMonoSticky?.addEventListener('click', () => setLogofolioColorMode('mono'));
 logofolioBtnColorSticky?.addEventListener('click', () => setLogofolioColorMode('color'));
 
-setDetailView('images');
+showProjectGallery();
 setLogofolioColorMode('mono');
+initProjectInfoPanel();
 
 projectLockSubmitEl?.addEventListener('click', attemptProjectUnlock);
 projectLockPasswordEl?.addEventListener('keydown', (e) => {
@@ -3531,4 +3905,5 @@ initProjectListLabelCollisionSync();
 initProjectTitleFit();
 initCustomScrollbars();
 initSketchbookLightbox();
+initShowreelLightbox();
 void initPortfolioEntryAnimation();

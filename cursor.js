@@ -1,17 +1,18 @@
+function isFinePointerUi() {
+  return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
+
 function initCustomCursor() {
   const dot = document.getElementById('cursor-dot');
   if (!dot) return () => {};
 
-  const prefersTouchUi =
-    window.matchMedia('(hover: none), (pointer: coarse)').matches
-    || window.matchMedia('(max-width: 560px)').matches;
-  if (prefersTouchUi) {
+  if (!isFinePointerUi()) {
     dot.style.display = 'none';
     return () => {};
   }
 
   const INTERACTIVE_SELECTOR =
-    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .profile-meta-link, .avatar, .profile-avatar-trigger, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .profile-close, .landing-starburst-link';
+    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .gallery-copy-link, .profile-meta-link, .avatar, .profile-avatar-trigger, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .profile-close, .copyright-close, .project-info-btn, .landing-starburst-link';
 
   const RESIZE_SELECTOR = '.sidebar-resizer';
 
@@ -22,6 +23,7 @@ function initCustomCursor() {
   let isOverLandingLaunch = false;
   let isOverAboutBlue = false;
   let isOverAboutLogo = false;
+  let isOverInfoBlue = false;
   let isPressed = false;
   let lastPointerX = 0;
   let lastPointerY = 0;
@@ -40,8 +42,9 @@ function initCustomCursor() {
     );
     dot.classList.toggle('is-landing-launch', isOverLandingLaunch);
     dot.classList.toggle('is-active', isPressed);
-    dot.classList.toggle('is-about-blue', isOverAboutBlue && !isOverAboutLogo && !isPressed && !isOverPill);
+    dot.classList.toggle('is-about-blue', isOverAboutBlue && !isOverAboutLogo && !isPressed && !isOverPill && !isOverInfoBlue);
     dot.classList.toggle('is-about-logo', isOverAboutLogo && !isPressed && !isOverPill);
+    dot.classList.toggle('is-info-blue', isOverInfoBlue && !isPressed && !isOverPill);
   }
 
   function renderCursorPosition() {
@@ -138,6 +141,10 @@ function initCustomCursor() {
       isOverAboutBlue = false;
     }
 
+    isOverInfoBlue = Boolean(
+      target?.closest('.project-info-panel__card, .project-info-panel, .project-info-btn')
+    );
+
     updateCursorState();
   }
 
@@ -173,11 +180,10 @@ function initCustomCursor() {
 }
 
 function initTouchHoverFix() {
-  const touchUiMq = window.matchMedia('(hover: none), (pointer: coarse)');
-  if (!touchUiMq.matches) return;
+  if (isFinePointerUi()) return;
 
   const BLUR_SELECTOR =
-    '.theme-toggle, .footer-link, .footer-copyright-btn, .filter-pill, .view-toggle-btn, .sidebar-collapse-btn, .sidebar-reopen-tab, .email-link, .mobile-project-nav-btn, .logo';
+    '.theme-toggle, .footer-link, .footer-copyright-btn, .filter-pill, .view-toggle-btn, .sidebar-collapse-btn, .sidebar-reopen-tab, .email-link, .mobile-project-nav-btn, .logo, .copyright-view-btn, .copyright-social-btn';
 
   document.addEventListener(
     'click',

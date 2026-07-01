@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250622footer-double-stroke" />
+    <link rel="stylesheet" href="styles.css?v=20250630top-banner-border" />
     <script>
       (function () {
         var theme = 'light';
@@ -38,9 +38,17 @@
       <span class="cursor-dot-label text-label">Copy</span>
     </div>
     <div class="page-wrapper">
-      <div class="top-banner-shell" id="top-banner-shell">
-        <div class="top-banner-marquee" id="top-banner-marquee">
-          <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+      <div class="top-banner-shell">
+        <div
+          class="top-banner-reveal"
+          id="top-banner-shell"
+          role="button"
+          tabindex="0"
+          aria-label="Hide announcement banner"
+        >
+          <div class="top-banner-marquee" id="top-banner-marquee">
+            <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+          </div>
         </div>
       </div>
       <div class="app app--profile">
@@ -359,13 +367,29 @@
           </div>
         </div>
       </div>
+
+      <div class="footer-shell" id="footer-shell">
+        <footer class="footer">
+          <div class="footer-left">
+            <div class="footer-copyright-group">
+              <button type="button" class="footer-copyright-btn" aria-label="Copyright">
+                <img src="assets/copyright.svg" alt="" class="footer-copyright-btn-icon" width="15" height="15" decoding="async" aria-hidden="true" />
+              </button>
+              <span class="text-caption text-display footer-year">2026</span>
+            </div>
+          </div>
+        </footer>
+      </div>
     </div>
 
-    <script src="cursor.js"></script>
-    <script src="email-copy.js?v=20250620profile-meta-contact"></script>
+    <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
+
+    <script src="cursor.js?v=20250630batch-v1"></script>
+    <script src="email-copy.js?v=20250630batch-v1"></script>
     <script src="marquee.js"></script>
     <script src="scrollbar.js"></script>
-    <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="profile.js?v=20250620profile-meta-contact"></script>
+    <script src="pull-to-refresh.js?v=20250630batch-v1"></script>
+    <script src="profile.js?v=20250630batch-v1"></script>
+    <script src="copyright.js?v=20250630batch-v1"></script>
   </body>
 </html>

@@ -66,6 +66,10 @@
       return document.querySelector('.profile-stage .profile-layout');
     }
 
+    if (document.body.classList.contains('is-copyright-open')) {
+      return document.querySelector('.copyright-stage .copyright-layout');
+    }
+
     return main;
   }
 
@@ -75,6 +79,9 @@
     }
     if (document.body.classList.contains('is-profile-open')) {
       return document.querySelector('.profile-stage');
+    }
+    if (document.body.classList.contains('is-copyright-open')) {
+      return document.querySelector('.copyright-stage');
     }
     return document.querySelector('.page-wrapper');
   }
@@ -87,7 +94,9 @@
   function shouldIgnoreTouch(target) {
     if (!(target instanceof Element)) return true;
     if (document.body.classList.contains('is-sketchbook-lightbox-open')) return true;
-    if (target.closest('.sketchbook-lightbox, .project-info-tooltip')) return true;
+    if (document.body.classList.contains('is-showreel-lightbox-open')) return true;
+    if (document.body.classList.contains('is-project-info-panel-open')) return true;
+    if (target.closest('.sketchbook-lightbox, .showreel-lightbox, .project-info-panel, .project-info-tooltip')) return true;
     if (target.closest('input, textarea, select, [contenteditable="true"]')) return true;
     return false;
   }

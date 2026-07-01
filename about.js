@@ -461,7 +461,9 @@ async function openAboutOverlay() {
     document.body.classList.contains('is-about-open') ||
     document.body.classList.contains('is-about-exiting') ||
     document.body.classList.contains('is-profile-open') ||
-    document.body.classList.contains('is-profile-exiting')
+    document.body.classList.contains('is-profile-exiting') ||
+    document.body.classList.contains('is-copyright-open') ||
+    document.body.classList.contains('is-copyright-exiting')
   ) {
     return;
   }

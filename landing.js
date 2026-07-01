@@ -1,77 +1,39 @@
-const themeToggle = document.getElementById('theme-toggle');
-const themeToggleTooltip = document.getElementById('theme-toggle-tooltip');
-
-function getTheme() {
-  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-}
-
-function applyTheme(theme) {
-  const root = document.documentElement;
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  const commitTheme = () => {
-    root.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-    themeToggle?.setAttribute('aria-label', label);
-    if (themeToggleTooltip) themeToggleTooltip.textContent = label;
-  };
-
-  if (prefersReducedMotion) {
-    commitTheme();
-    return;
-  }
-
-  if (typeof document.startViewTransition === 'function') {
-    document.startViewTransition(commitTheme);
-    return;
-  }
-
-  root.classList.add('is-theme-transitioning');
-  commitTheme();
-  window.setTimeout(() => root.classList.remove('is-theme-transitioning'), 520);
-}
-
 function initTheme() {
   let theme = 'light';
   try {
     const saved = localStorage.getItem('theme');
     if (saved === 'dark' || saved === 'light') theme = saved;
   } catch (_) {}
-  applyTheme(theme);
+  document.documentElement.setAttribute('data-theme', theme);
 }
 
 initTheme();
 
-if (themeToggle) {
-  themeToggle.addEventListener('click', () => {
-    applyTheme(getTheme() === 'dark' ? 'light' : 'dark');
+const LANDING_META_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
+
+function alignLandingMetaColumnsWithEmail() {
+  const emailIcon = document.querySelector('#email-link .email-link-icon');
+  const rightColumns = document.querySelectorAll('.landing-meta-column--right');
+
+  rightColumns.forEach((column) => {
+    column.style.transform = '';
+  });
+
+  if (LANDING_META_MOBILE_MQ.matches || !emailIcon || !rightColumns.length) return;
+
+  rightColumns.forEach((column) => {
+    const dot = column.querySelector('.meta-dot');
+    if (!dot) return;
+
+    const offset = Math.round(emailIcon.getBoundingClientRect().left - dot.getBoundingClientRect().left);
+    if (offset !== 0) {
+      column.style.transform = `translateX(${offset}px)`;
+    }
   });
 }
 
-const LANDING_META_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
-
-function alignLandingLocationWithEmail() {
-  const emailIcon = document.querySelector('#email-link .email-link-icon');
-  const rightColumn = document.querySelector('.landing-meta-column--right');
-  const locationItem = document.querySelector('.landing-meta-item--location');
-  const dot = locationItem?.querySelector('.meta-dot');
-  if (!rightColumn || !dot) return;
-
-  rightColumn.style.transform = '';
-
-  if (LANDING_META_MOBILE_MQ.matches) return;
-
-  if (!emailIcon) return;
-
-  const offset = Math.round(emailIcon.getBoundingClientRect().left - dot.getBoundingClientRect().left);
-  if (offset !== 0) {
-    rightColumn.style.transform = `translateX(${offset}px)`;
-  }
-}
-
 function syncLandingMetaAlign() {
-  alignLandingLocationWithEmail();
+  alignLandingMetaColumnsWithEmail();
 }
 
 function initLandingMetaAlign() {
@@ -147,7 +109,7 @@ function prefetchPortfolio() {
   if (!document.querySelector('link[data-preload-portfolio-app]')) {
     const preloadApp = document.createElement('link');
     preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250621light-default';
+    preloadApp.href = 'app.js?v=20250630batch-v1';
     preloadApp.as = 'script';
     preloadApp.setAttribute('data-preload-portfolio-app', '');
     document.head.appendChild(preloadApp);
@@ -528,21 +490,38 @@ function setLandingLaunchReady(enabled) {
   document.body.classList.toggle('is-landing-launch-ready', enabled);
 }
 
+function collapseLandingFromBackground(link, event) {
+  if (!document.body.classList.contains('is-landing-expanded')) return;
+  if (
+    document.body.classList.contains('is-landing-launching')
+    || document.body.classList.contains('is-landing-transitioning')
+  ) {
+    return;
+  }
+  if (link.contains(event.target)) return;
+  setLandingExpanded(link, false);
+}
+
+function initLandingBackgroundCollapse(link) {
+  const landing = link.closest('.landing');
+  if (!landing) return;
+
+  landing.addEventListener('click', (event) => {
+    collapseLandingFromBackground(link, event);
+  });
+}
+
 function initLandingHero() {
   const link = document.getElementById('landing-starburst-link');
   if (!link) return;
 
   initLandingBurstAnchor(link);
+  initLandingBackgroundCollapse(link);
 
   if (isTouchLandingUi()) return;
 
   link.addEventListener('mouseenter', () => setLandingExpanded(link, true));
-  link.addEventListener('mouseleave', () => setLandingExpanded(link, false));
   link.addEventListener('focusin', () => setLandingExpanded(link, true));
-  link.addEventListener('focusout', (event) => {
-    if (link.contains(event.relatedTarget)) return;
-    setLandingExpanded(link, false);
-  });
 }
 
 function initLandingTransition() {
@@ -655,7 +634,6 @@ function initLandingOrbitTextFit() {
     const midRadius = (outerR + innerR) / 2;
     const glyphCenterOffset = measureGlyphCenterOffset();
     const radius = midRadius + glyphCenterOffset;
-
     path.setAttribute('d', buildCirclePath(radius));
     textPath.removeAttribute('dy');
 

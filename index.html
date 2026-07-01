@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250622landing-meta-top-stack" />
+    <link rel="stylesheet" href="styles.css?v=20250630top-banner-border" />
     <script>
       (function () {
         var theme = 'light';
@@ -27,11 +27,19 @@
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
     </div>
-    <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
+
     <div class="page-wrapper">
-      <div class="top-banner-shell" id="top-banner-shell">
-        <div class="top-banner-marquee" id="top-banner-marquee">
-          <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+      <div class="top-banner-shell">
+        <div
+          class="top-banner-reveal"
+          id="top-banner-shell"
+          role="button"
+          tabindex="0"
+          aria-label="Hide announcement banner"
+        >
+          <div class="top-banner-marquee" id="top-banner-marquee">
+            <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
+          </div>
         </div>
       </div>
       <div class="app">
@@ -99,13 +107,6 @@
                 </div>
                 <span class="text-caption meta-value">Design Portfolio of Ted Pioli</span>
               </div>
-              <div class="meta-item landing-meta-item landing-meta-item--left">
-                <div class="meta-label-row">
-                  <span class="meta-dot"></span>
-                  <span class="text-label meta-label">Current company</span>
-                </div>
-                <span class="text-caption meta-value">Medtronic</span>
-              </div>
             </div>
             <div class="landing-meta-column landing-meta-column--right">
               <div class="meta-item landing-meta-item landing-meta-item--right landing-meta-item--location">
@@ -119,13 +120,6 @@
                   </svg>
                 </span>
                 <span class="text-caption meta-value landing-meta-value--location">Boston, Massachusetts</span>
-              </div>
-              <div class="meta-item landing-meta-item landing-meta-item--right">
-                <div class="meta-label-row">
-                  <span class="meta-dot"></span>
-                  <span class="text-label meta-label">Current role</span>
-                </div>
-                <span class="text-caption meta-value">Principal UX / UI Designer</span>
               </div>
             </div>
           </div>
@@ -180,26 +174,28 @@
             </a>
           </div>
 
-        </main>
-
-        <div class="landing-footer-theme">
-          <div class="theme-toggle-wrap">
-            <button
-              type="button"
-              class="theme-toggle"
-              id="theme-toggle"
-              aria-describedby="theme-toggle-tooltip"
-              aria-label="Switch to dark mode"
-            >
-              <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
-                <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
-              </span>
-              <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
-                <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
-              </span>
-            </button>
+          <div class="landing-meta landing-meta--bottom">
+            <div class="landing-meta-column landing-meta-column--left">
+              <div class="meta-item landing-meta-item landing-meta-item--left">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Current company</span>
+                </div>
+                <span class="text-caption meta-value">Medtronic</span>
+              </div>
+            </div>
+            <div class="landing-meta-column landing-meta-column--right">
+              <div class="meta-item landing-meta-item landing-meta-item--right">
+                <div class="meta-label-row">
+                  <span class="meta-dot"></span>
+                  <span class="text-label meta-label">Current role</span>
+                </div>
+                <span class="text-caption meta-value">Principal UX / UI Designer</span>
+              </div>
+            </div>
           </div>
-        </div>
+
+        </main>
 
         <div class="footer-shell" id="footer-shell">
           <footer class="footer">
@@ -253,11 +249,13 @@
     </div>
 
     <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
+    <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
 
-    <script src="cursor.js"></script>
-    <script src="email-copy.js?v=20250620profile-meta-contact"></script>
-    <script src="pull-to-refresh.js?v=20250620v"></script>
-    <script src="landing.js?v=20250622landing-meta-top-stack"></script>
-    <script src="about.js?v=20250620about-title-fit"></script>
+    <script src="cursor.js?v=20250630batch-v1"></script>
+    <script src="email-copy.js?v=20250630batch-v1"></script>
+    <script src="pull-to-refresh.js?v=20250630batch-v1"></script>
+    <script src="landing.js?v=20250630batch-v1"></script>
+    <script src="about.js?v=20250630batch-v1"></script>
+    <script src="copyright.js?v=20250630batch-v1"></script>
   </body>
 </html>
