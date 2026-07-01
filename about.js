@@ -107,8 +107,10 @@ async function playAboutExit(host, { resetPending = true } = {}) {
   });
 
   await wait(ABOUT_SLIDE_DURATION_MS + 40);
-  host.classList.remove('is-about-exiting');
-  if (resetPending) setAboutEnterPending(host);
+  if (resetPending) {
+    host.classList.remove('is-about-exiting');
+    setAboutEnterPending(host);
+  }
 }
 
 function getAboutScrollContainer() {
@@ -435,6 +437,7 @@ async function mountAboutLayout(stage) {
 function hideAboutOverlay(stage) {
   stage.hidden = true;
   stage.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('is-about-exiting', 'is-about-entering');
   setAboutEnterPending(document.body);
   unlockAboutOverlayScroll();
 }
@@ -521,13 +524,15 @@ function initAboutPage() {
 
 async function initAboutOverlay() {
   const stage = document.getElementById('about-stage');
-  const logoLink = document.querySelector('a.logo[href="about.html"]');
-  if (!stage || !logoLink) return;
+  if (!stage) return;
 
-  logoLink.addEventListener('click', (event) => {
-    event.preventDefault();
-    void openAboutOverlay();
-  });
+  const logoLink = document.querySelector('a.logo[href="about.html"]');
+  if (logoLink) {
+    logoLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      void openAboutOverlay();
+    });
+  }
 
   await ensureAboutMounted(stage);
 }

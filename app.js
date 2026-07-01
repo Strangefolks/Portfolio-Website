@@ -2052,7 +2052,6 @@ const sidebarHeader = document.getElementById('sidebar-header');
 const sidebarHeaderLabel = document.getElementById('sidebar-header-label');
 const sidebarProjectCountPill = document.getElementById('sidebar-project-count-pill');
 const headerShellEl = document.getElementById('header-shell');
-const topBannerShellEl = document.getElementById('top-banner-shell');
 const sidebarMobilePanelContentEl = document.getElementById('sidebar-mobile-panel-content');
 const sidebarReopenTabs = document.querySelectorAll('.sidebar-reopen-tab');
 const bodyEl = document.querySelector('.body');
@@ -2989,9 +2988,6 @@ window.addEventListener('resize', () => {
   window.clearTimeout(footerMarqueeResizeTimer);
   footerMarqueeResizeTimer = window.setTimeout(() => {
     populateFooterMarquee();
-    if (typeof populateTopBannerMarquee === 'function') {
-      populateTopBannerMarquee();
-    }
     syncStickyHeaderAlignHeight();
   }, 120);
 });

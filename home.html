@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250630info-panel-slide" />
+    <link rel="stylesheet" href="styles.css?v=20250630overlay-polish" />
     <link rel="preload" href="app.js?v=20250630theme-cards-mono" as="script" />
     <style>
       html.is-portfolio-burst-entry .portfolio-entry-reveal {
@@ -22,7 +22,6 @@
       }
       html.is-portfolio-burst-entry .page-wrapper,
       html.is-portfolio-burst-entry .app,
-      html.is-portfolio-burst-entry .top-banner-shell,
       html.is-portfolio-burst-entry .header-shell,
       html.is-portfolio-burst-entry .footer-shell,
       html.is-portfolio-burst-entry .sidebar,
@@ -117,27 +116,8 @@
     </div>
     <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
     <div class="page-wrapper">
-      <div class="top-banner-shell">
-        <div
-          class="top-banner-reveal"
-          id="top-banner-shell"
-          role="button"
-          tabindex="0"
-          aria-label="Hide announcement banner"
-        >
-          <div class="top-banner-marquee" id="top-banner-marquee">
-            <div class="top-banner-marquee-track" id="top-banner-marquee-track" aria-hidden="true"></div>
-          </div>
-        </div>
-      </div>
       <div class="app">
-        <button
-          type="button"
-          class="top-banner-reveal-edge"
-          id="top-banner-reveal-edge"
-          hidden
-          aria-label="Show announcement banner"
-        ></button>
+        <div class="app-chrome">
         <!-- Header -->
         <div class="header-shell" id="header-shell">
           <header class="header">
@@ -183,7 +163,6 @@
           </a>
           </div>
           <div class="header-right">
-            <a href="profile.html" class="header-pill-btn text-ui-sm">What its like to work with me</a>
             <a
               href="#"
               class="email-link"
@@ -598,6 +577,11 @@
             aria-label="Show services banner"
           ></button>
         </div>
+        </div>
+
+        <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
+        <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
+        <div class="profile-stage" id="profile-stage" hidden aria-hidden="true"></div>
       </div>
     </div>
 
@@ -687,28 +671,22 @@
             </header>
             <div class="showreel-lightbox__content" id="showreel-lightbox-content"></div>
             <footer class="showreel-lightbox__footer">
-              <div class="showreel-lightbox__footer-center">
-                <p
-                  class="showreel-lightbox__caption text-caption"
-                  id="showreel-lightbox-caption"
-                ></p>
-              </div>
+              <p
+                class="showreel-lightbox__caption text-caption"
+                id="showreel-lightbox-caption"
+              ></p>
             </footer>
           </div>
         </figure>
       </div>
     </div>
 
-    <div class="about-stage" id="about-stage" hidden aria-hidden="true"></div>
-    <div class="profile-stage" id="profile-stage" hidden aria-hidden="true"></div>
-    <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
-
     <script src="cursor.js?v=20250630info-panel-fix"></script>
     <script src="marquee.js"></script>
     <script src="scrollbar.js"></script>
-    <script src="about.js?v=20250630batch-v1"></script>
-    <script src="profile.js?v=20250630batch-v1"></script>
-    <script src="copyright.js?v=20250630batch-v1"></script>
+    <script src="about.js?v=20250630overlay-frame"></script>
+    <script src="profile.js?v=20250630overlay-polish"></script>
+    <script src="copyright.js?v=20250630overlay-polish"></script>
     <script src="pull-to-refresh.js?v=20250630info-panel-slide"></script>
     <script src="email-copy.js?v=20250630batch-v1"></script>
     <script src="app.js?v=20250630info-panel-slide"></script>

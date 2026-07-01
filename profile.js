@@ -87,9 +87,11 @@ async function playProfileExit(host, { resetPending = true } = {}) {
     });
   });
 
-  await wait(PROFILE_SLIDE_DURATION_MS + PROFILE_SLIDE_STAGGER_MS + 40);
-  host.classList.remove('is-profile-exiting');
-  if (resetPending) setProfileEnterPending(host);
+  await wait(PROFILE_SLIDE_DURATION_MS + 40);
+  if (resetPending) {
+    host.classList.remove('is-profile-exiting');
+    setProfileEnterPending(host);
+  }
 }
 
 function getProfileScrollContainer() {
@@ -250,6 +252,7 @@ async function mountProfileLayout(stage) {
 function hideProfileOverlay(stage) {
   stage.hidden = true;
   stage.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('is-profile-exiting', 'is-profile-entering');
   setProfileEnterPending(document.body);
   unlockProfileOverlayScroll();
 }

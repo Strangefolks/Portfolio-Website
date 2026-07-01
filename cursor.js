@@ -12,7 +12,7 @@ function initCustomCursor() {
   }
 
   const INTERACTIVE_SELECTOR =
-    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .gallery-copy-link, .profile-meta-link, .avatar, .profile-avatar-trigger, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .profile-close, .copyright-close, .project-info-btn, .landing-starburst-link';
+    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .gallery-copy-link, .avatar, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .copyright-close, .project-info-btn, .landing-starburst-link';
 
   const RESIZE_SELECTOR = '.sidebar-resizer';
 
@@ -129,13 +129,11 @@ function initCustomCursor() {
 
     const isAboutContext =
       document.body.classList.contains('about-page') ||
-      document.body.classList.contains('is-about-open') ||
-      document.body.classList.contains('profile-page') ||
-      document.body.classList.contains('is-profile-open');
+      document.body.classList.contains('is-about-open');
 
     if (isAboutContext) {
-      isOverAboutLogo = Boolean(target?.closest('.about-logo-mark, .profile-portrait-photo'));
-      isOverAboutBlue = Boolean(target?.closest('.about-layer--blue, .profile-layer--blue'));
+      isOverAboutLogo = Boolean(target?.closest('.about-logo-mark'));
+      isOverAboutBlue = Boolean(target?.closest('.about-layer--blue'));
     } else {
       isOverAboutLogo = false;
       isOverAboutBlue = false;

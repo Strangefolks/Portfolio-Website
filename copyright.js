@@ -31,6 +31,10 @@ function isCopyrightOverlayBlocked() {
   );
 }
 
+function isCopyrightStandalonePage() {
+  return document.body.classList.contains('copyright-page');
+}
+
 function setCopyrightEnterPending(host) {
   host.classList.remove('is-copyright-exiting', 'is-copyright-entering', 'is-copyright-chrome-hidden');
   host.classList.add('is-copyright-enter-pending');
@@ -44,6 +48,8 @@ function setCopyrightLayoutEnterPending(layout) {
 
 function clearInlineCopyrightTransforms(layout) {
   if (!layout) return;
+  layout.style.removeProperty('transform');
+  layout.style.removeProperty('transition');
   layout.querySelectorAll('.copyright-curtain, .copyright-frame').forEach((node) => {
     node.style.removeProperty('transform');
     node.style.removeProperty('transition');
@@ -58,7 +64,9 @@ async function playCopyrightEnter(host, layout) {
     host.classList.remove('is-copyright-exiting', 'is-copyright-enter-pending', 'is-copyright-entering');
     layout?.classList.remove('is-copyright-exiting', 'is-copyright-enter-pending', 'is-copyright-entering');
     layout?.classList.add('is-copyright-revealed');
-    host.classList.add('is-copyright-chrome-hidden');
+    if (isCopyrightStandalonePage()) {
+      host.classList.add('is-copyright-chrome-hidden');
+    }
     return;
   }
 
@@ -80,7 +88,9 @@ async function playCopyrightEnter(host, layout) {
 
   await wait(COPYRIGHT_SLIDE_DURATION_MS + 40);
   host.classList.remove('is-copyright-entering');
-  host.classList.add('is-copyright-chrome-hidden');
+  if (isCopyrightStandalonePage()) {
+    host.classList.add('is-copyright-chrome-hidden');
+  }
   layout?.classList.remove('is-copyright-entering');
   layout?.classList.add('is-copyright-revealed');
 }
@@ -113,9 +123,9 @@ async function playCopyrightExit(host, layout, { resetPending = true } = {}) {
   });
 
   await wait(COPYRIGHT_SLIDE_DURATION_MS + 40);
-  host.classList.remove('is-copyright-exiting');
-  layout?.classList.remove('is-copyright-exiting');
   if (resetPending) {
+    host.classList.remove('is-copyright-exiting');
+    layout?.classList.remove('is-copyright-exiting');
     setCopyrightEnterPending(host);
     setCopyrightLayoutEnterPending(layout);
   }
@@ -185,9 +195,13 @@ async function mountCopyrightLayout(stage) {
 }
 
 function hideCopyrightOverlay(stage) {
+  const layout = stage.querySelector('.copyright-layout');
   stage.hidden = true;
   stage.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('is-copyright-exiting', 'is-copyright-entering', 'is-copyright-chrome-hidden');
   setCopyrightEnterPending(document.body);
+  setCopyrightLayoutEnterPending(layout);
+  clearInlineCopyrightTransforms(layout);
   unlockCopyrightOverlayScroll();
 }
 
@@ -214,6 +228,11 @@ async function openCopyrightOverlay() {
   try {
     const layout = await ensureCopyrightMounted(stage);
     if (!layout) return;
+
+    setCopyrightEnterPending(document.body);
+    setCopyrightLayoutEnterPending(layout);
+    clearInlineCopyrightTransforms(layout);
+    flushLayout(stage);
 
     stage.hidden = false;
     stage.setAttribute('aria-hidden', 'false');
