@@ -2,6 +2,7 @@ const CUSTOM_SCROLLBAR_SELECTORS = [
   '.project-list',
   '.main',
   '.project-info-tooltip-copy',
+  '.project-info-panel__body',
   '.about-panel-right',
   '.profile-panel-right',
 ];

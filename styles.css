@@ -2681,7 +2681,7 @@ body.is-about-open .project-nav-hint {
 
 .sticky-header-host {
   position: sticky;
-  top: -20px;
+  top: var(--sticky-header-host-stuck-top);
   z-index: 3;
   height: 0;
   margin: 0;
@@ -3325,17 +3325,17 @@ body.is-about-open .project-nav-hint {
 
 .project-info-panel {
   --project-info-panel-width: min(560px, 50%);
-  --project-info-panel-inset: 12px;
+  --project-info-panel-edge-inset: 2px;
   --project-info-panel-duration: 0.56s;
   --project-info-panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --scrollbar-thumb: #000000;
   position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
+  top: var(--project-info-panel-edge-inset);
+  right: var(--project-info-panel-edge-inset);
+  bottom: var(--project-info-panel-edge-inset);
   z-index: 25;
   width: var(--project-info-panel-width);
   box-sizing: border-box;
-  padding: var(--project-info-panel-inset);
   pointer-events: none;
   transform: translateX(100%);
   transition: transform var(--project-info-panel-duration) var(--project-info-panel-ease);
@@ -3396,29 +3396,23 @@ body.is-project-info-panel-open .main {
   flex-direction: column;
 }
 
-.project-info-panel__body {
+.project-info-panel__scroll > .custom-scrollbar-wrap {
   flex: 1;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-info-panel__body.custom-scrollbar-viewport {
+  flex: 1;
+  min-height: 0;
+}
+
+.project-info-panel__body {
   overflow-y: auto;
   padding-top: 28px;
-  padding-right: 8px;
   word-wrap: break-word;
   overflow-wrap: anywhere;
-  scrollbar-width: thin;
-  scrollbar-color: #000000 transparent;
-}
-
-.project-info-panel__body::-webkit-scrollbar {
-  width: 6px;
-}
-
-.project-info-panel__body::-webkit-scrollbar-thumb {
-  background: #000000;
-  border-radius: 999px;
-}
-
-.project-info-panel__body::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 .project-info-panel__image {
@@ -3489,12 +3483,23 @@ body.is-project-info-panel-open .main {
 
 @media (max-width: 900px) {
   .project-info-panel {
-    --project-info-panel-inset: 8px;
     --project-info-panel-width: min(560px, 88%);
   }
 
   .project-info-panel__card {
     border-radius: calc(var(--content-radius) - 2px);
+  }
+}
+
+@media (max-width: 560px) {
+  .project-info-panel {
+    --project-info-panel-edge-inset: 0;
+    left: var(--project-info-panel-edge-inset);
+    width: auto;
+  }
+
+  .project-info-panel .custom-scrollbar-rail {
+    top: calc(12px + var(--header-shade-close-size) + 8px);
   }
 }
 
@@ -4704,20 +4709,20 @@ html:not([data-theme]) .logofolio-tile__frame {
   border: var(--detail-border-width) solid #000000;
   box-sizing: border-box;
   outline: none;
+  box-shadow: none;
   transition:
-    transform var(--duration-fast) var(--ease-smooth),
-    border-color var(--duration-fast) var(--ease-smooth);
+    border-color var(--duration-fast) var(--ease-smooth),
+    box-shadow var(--duration-fast) var(--ease-smooth);
 }
 
-.project-gallery--sketchbook .hero-panel:has(.hero-placeholder):hover,
-.project-gallery--sketchbook .hero-panel:has(.hero-placeholder):focus-visible {
-  border-color: #000000;
+.main .project-gallery--sketchbook .hero-panel:has(img) {
+  border-color: var(--detail-line);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .project-gallery--sketchbook .hero-panel:hover {
-    transform: scale(1.03);
-  }
+.main .project-gallery--sketchbook .hero-panel:hover,
+.main .project-gallery--sketchbook .hero-panel:focus-visible {
+  border-color: var(--brand-blue);
+  box-shadow: inset 0 0 0 1px var(--brand-blue);
 }
 
 body.is-sketchbook-lightbox-open .main {
@@ -4727,7 +4732,7 @@ body.is-sketchbook-lightbox-open .main {
 .sketchbook-lightbox {
   --sketchbook-lightbox-inset-block: 72px;
   --sketchbook-lightbox-inset-inline: 24px;
-  --sketchbook-lightbox-media-width: 50vw;
+  --sketchbook-lightbox-media-width: 60vw;
   --sketchbook-lightbox-media-height: min(80dvh, calc(100dvh - (var(--sketchbook-lightbox-inset-block) * 2)));
   --sketchbook-lightbox-surface: #000000;
   --sketchbook-lightbox-ink: #ffffff;
@@ -4889,7 +4894,7 @@ body.is-sketchbook-lightbox-open .main {
   border-radius: 0;
 }
 
-.sketchbook-lightbox__nav-btn {
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
   pointer-events: auto;
   flex-shrink: 0;
   display: flex;
@@ -4898,10 +4903,10 @@ body.is-sketchbook-lightbox-open .main {
   width: 44px;
   height: 44px;
   padding: 0;
-  border: 0.5px solid var(--brand-blue);
+  border: 1px solid #ffffff;
   border-radius: 50%;
-  background: var(--sketchbook-lightbox-surface);
-  color: var(--brand-blue);
+  background: transparent;
+  color: #ffffff;
   box-shadow: none;
   transition:
     background-color var(--duration-fast) var(--ease-smooth),
@@ -4910,44 +4915,65 @@ body.is-sketchbook-lightbox-open .main {
     transform var(--duration-fast) var(--ease-smooth);
 }
 
-.sketchbook-lightbox__nav-btn:hover,
-.sketchbook-lightbox__nav-btn:focus-visible {
-  background: var(--sketchbook-lightbox-surface);
-  border-color: color-mix(in srgb, var(--brand-blue) 82%, white);
-  color: color-mix(in srgb, var(--brand-blue) 82%, white);
-  outline: none;
-}
-
-.sketchbook-lightbox__nav-btn:active {
-  transform: scale(0.96);
-  background: var(--sketchbook-lightbox-surface);
-  border-color: var(--project-item-pressed-bg);
-  color: var(--project-item-pressed-bg);
-}
-
-.sketchbook-lightbox__nav-btn svg {
-  display: block;
-  flex-shrink: 0;
-}
-
-[data-theme='light'] .sketchbook-lightbox__nav-btn {
-  background: #000000;
-  border: none;
+[data-theme='dark'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
+  border: 1px solid #ffffff;
+  background: transparent;
   color: #ffffff;
   box-shadow: none;
 }
 
-[data-theme='light'] .sketchbook-lightbox__nav-btn:hover,
-[data-theme='light'] .sketchbook-lightbox__nav-btn:focus-visible {
-  background: #000000;
-  border: none;
+[data-theme='dark'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+[data-theme='dark'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
   color: #ffffff;
   outline: none;
 }
 
-[data-theme='light'] .sketchbook-lightbox__nav-btn:active {
-  background: color-mix(in srgb, #000000 88%, #ffffff);
-  border: none;
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #ffffff;
+  outline: none;
+}
+
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn:active {
+  transform: scale(0.96);
+  background: var(--project-item-pressed-bg);
+  border-color: var(--project-item-pressed-bg);
+  color: #ffffff;
+}
+
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn svg {
+  display: block;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover svg,
+.mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible svg {
+  color: #ffffff;
+}
+
+[data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
+  border: 1px solid #000000;
+  background: transparent;
+  color: #000000;
+  box-shadow: none;
+}
+
+[data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+[data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible {
+  background: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #ffffff;
+  outline: none;
+}
+
+[data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:active {
+  background: var(--project-item-pressed-bg);
+  border-color: var(--project-item-pressed-bg);
   color: #ffffff;
 }
 
@@ -5038,7 +5064,7 @@ body.is-sketchbook-lightbox-open .main {
     padding-bottom: max(10px, env(safe-area-inset-bottom, 0px));
   }
 
-  .sketchbook-lightbox__nav-btn {
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
     width: 40px;
     height: 40px;
   }
@@ -6214,18 +6240,30 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
 
   .sticky-header-host,
   body.sidebar-collapsed .sticky-header-host {
-    top: 0;
+    top: var(--sticky-header-host-stuck-top);
   }
 
   .sticky-header {
     --sticky-title-size: 13px;
     --sticky-header-line: var(--border);
+    height: var(--sticky-header-fixed-height);
+    min-height: var(--sticky-header-fixed-height);
+    max-height: var(--sticky-header-fixed-height);
+    justify-content: center;
+    padding-block: 0;
+    gap: 0;
   }
 
   .sticky-header__main {
+    flex: 1 1 auto;
+    align-self: stretch;
+    width: 100%;
     align-items: center;
     gap: 10px;
     min-height: 0;
+    max-height: 100%;
+    padding-top: var(--sticky-header-chrome-pad-top);
+    padding-bottom: var(--sticky-header-chrome-pad-bottom);
   }
 
   .sticky-header__info {
@@ -6783,14 +6821,14 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
       box-shadow var(--duration-fast) var(--ease-smooth);
   }
 
-  .mobile-project-nav-btn:hover,
-  .mobile-project-nav-btn:focus-visible {
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):hover,
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):focus-visible {
     background: color-mix(in srgb, var(--brand-blue) 90%, white);
     color: #ffffff;
     outline: none;
   }
 
-  .mobile-project-nav-btn:active {
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):active {
     transform: scale(0.96);
     background: var(--project-item-pressed-bg);
     box-shadow: 0 2px 10px rgba(0, 75, 204, 0.32);
@@ -6799,6 +6837,18 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
   .mobile-project-nav-btn svg {
     display: block;
     flex-shrink: 0;
+  }
+
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
+    border: 1px solid #ffffff;
+    background: transparent;
+    color: #ffffff;
+    box-shadow: none;
+  }
+
+  [data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn {
+    border: 1px solid #000000;
+    color: #000000;
   }
 }
 
@@ -9354,8 +9404,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   .theme-toggle:focus-visible,
   .view-toggle-btn:hover,
   .view-toggle-btn:focus-visible,
-  .mobile-project-nav-btn:hover,
-  .mobile-project-nav-btn:focus-visible,
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):hover,
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):focus-visible,
   .sidebar-reopen-tab:hover,
   .sidebar-reopen-tab:focus-visible,
   body.sidebar-collapsed .sidebar-collapse-btn:hover,
@@ -9442,6 +9492,24 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
     color: #ffffff;
     box-shadow: var(--red-close-btn-outer-border);
     outline: none;
+  }
+
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible,
+  [data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+  [data-theme='light'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible,
+  [data-theme='dark'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover,
+  [data-theme='dark'] .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible {
+    background: var(--brand-blue);
+    border-color: var(--brand-blue);
+    color: #ffffff;
+    box-shadow: none;
+    outline: none;
+  }
+
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:hover svg,
+  .mobile-project-nav-btn.sketchbook-lightbox__nav-btn:focus-visible svg {
+    color: #ffffff;
   }
 
   .landing-launch-btn:active {

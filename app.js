@@ -1121,10 +1121,23 @@ function applyStickyHeaderAlignHeight(sourceHeight) {
   );
 }
 
+function getStickyHeaderFixedHeight() {
+  return (
+    getComputedStyle(document.documentElement).getPropertyValue('--sticky-header-fixed-height').trim()
+    || '54px'
+  );
+}
+
 function syncStickyHeaderAlignHeight() {
   if (!sidebarEl) return;
 
   if (isSidebarMobileDropdown()) {
+    /* Collapsed mobile project view: use fixed single-row chrome (sidebar header is hidden) */
+    if (isSidebarCollapsed()) {
+      document.documentElement.style.setProperty('--sticky-header-align-height', getStickyHeaderFixedHeight());
+      return;
+    }
+
     if (sidebarHeader) {
       const height = measureSidebarHeaderSourceHeight();
       if (height != null) {
@@ -1135,11 +1148,7 @@ function syncStickyHeaderAlignHeight() {
   }
 
   /* Desktop/tablet: fixed height from CSS — do not mirror sidebar filter height */
-  document.documentElement.style.setProperty(
-    '--sticky-header-align-height',
-    getComputedStyle(document.documentElement).getPropertyValue('--sticky-header-fixed-height').trim()
-      || '54px'
-  );
+  document.documentElement.style.setProperty('--sticky-header-align-height', getStickyHeaderFixedHeight());
 }
 
 function initStickyHeaderAlignHeightSync() {
@@ -3036,6 +3045,7 @@ const projectInfoPanelCloseEl = document.getElementById('project-info-panel-clos
 const projectInfoPanelImageEl = document.getElementById('project-info-panel-image');
 const projectInfoPanelSummaryEl = document.getElementById('project-info-panel-summary');
 const projectInfoPanelProseEl = document.getElementById('project-info-panel-prose');
+const projectInfoPanelBodyEl = document.getElementById('project-info-panel-body');
 
 let projectInfoPanelOpen = false;
 let projectInfoPanelScrollTop = 0;
@@ -3075,6 +3085,7 @@ function updateProjectInfoPanelContent(project) {
   if (projectInfoPanelProseEl) {
     projectInfoPanelProseEl.innerHTML = renderProjectInfoPanelProse(project);
   }
+  refreshCustomScrollbar(projectInfoPanelBodyEl);
 }
 
 function setProjectInfoPanelExpanded(isExpanded) {
@@ -3100,6 +3111,7 @@ function openProjectInfoPanel() {
 
   requestAnimationFrame(() => {
     projectInfoPanelEl.classList.add('is-visible');
+    refreshCustomScrollbar(projectInfoPanelBodyEl);
   });
 }
 
@@ -3566,7 +3578,7 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
 
           return `
     <div class="gallery-item${sketchbookLayout ? ' gallery-item--sketchbook' : ''}"${sketchbookLayout ? ` data-gallery-index="${index}"` : ''}>
-      <div class="${panelClasses}">
+      <div class="${panelClasses}"${sketchbookLayout ? ' role="button" tabindex="0"' : ''}>
         ${renderHeroPanelContent(image, project, index, { revealOnScroll: !image?.src, eagerLoad })}
       </div>
       ${!sketchbookLayout && image.caption ? `<p class="text-caption gallery-caption">${image.caption}</p>` : ''}
