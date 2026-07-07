@@ -139,7 +139,7 @@
   --project-list-fade-color: rgba(0, 0, 0, 0.1);
   --filter-pill-gap: calc(6px * 1.25);
   --filter-pill-padding-inline: calc(18px * 1.25);
-  --sketchbook-column-gap: 2px;
+  --sketchbook-gap: 8px;
   --logofolio-column-gap: 10px;
   --logofolio-row-gap: 14px;
   --logofolio-card-radius: 10px;
@@ -3325,7 +3325,8 @@ body.is-about-open .project-nav-hint {
 
 .project-info-panel {
   --project-info-panel-width: min(560px, 50%);
-  --project-info-panel-edge-inset: 2px;
+  --project-info-panel-edge-inset: 4px;
+  --project-info-panel-scrollbar-inset-right: 2px;
   --project-info-panel-duration: 0.56s;
   --project-info-panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --scrollbar-thumb: #000000;
@@ -3342,22 +3343,27 @@ body.is-about-open .project-nav-hint {
   will-change: transform;
 }
 
-body.is-project-info-panel-open .main {
-  overflow: hidden;
-}
-
 .project-info-panel.is-visible {
   pointer-events: auto;
   transform: translateX(0);
 }
 
 .project-info-panel__card {
+  --project-info-panel-padding: 20px;
+  --project-info-panel-close-top: 12px;
+  --project-info-panel-close-size: 32px;
+  --project-info-panel-scrollbar-gap: 8px;
+  --project-info-panel-content-top: calc(
+    var(--project-info-panel-close-top)
+    + var(--project-info-panel-close-size)
+    + var(--project-info-panel-scrollbar-gap)
+  );
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
   box-sizing: border-box;
-  padding: 20px;
+  padding: var(--project-info-panel-padding);
   border-radius: var(--content-radius);
   background: var(--brand-blue);
   color: #000000;
@@ -3410,9 +3416,17 @@ body.is-project-info-panel-open .main {
 
 .project-info-panel__body {
   overflow-y: auto;
-  padding-top: 28px;
+  overscroll-behavior: contain;
+  padding-top: var(--project-info-panel-content-top);
   word-wrap: break-word;
   overflow-wrap: anywhere;
+}
+
+.project-info-panel .custom-scrollbar-rail {
+  top: var(--project-info-panel-content-top);
+  right: calc(
+    -1 * (var(--project-info-panel-padding) - var(--project-info-panel-scrollbar-inset-right))
+  );
 }
 
 .project-info-panel__image {
@@ -3493,13 +3507,9 @@ body.is-project-info-panel-open .main {
 
 @media (max-width: 560px) {
   .project-info-panel {
-    --project-info-panel-edge-inset: 0;
+    --project-info-panel-edge-inset: 2px;
     left: var(--project-info-panel-edge-inset);
     width: auto;
-  }
-
-  .project-info-panel .custom-scrollbar-rail {
-    top: calc(12px + var(--header-shade-close-size) + 8px);
   }
 }
 
@@ -4125,8 +4135,7 @@ body.is-project-info-panel-open .main {
   margin-inline: calc(-1 * var(--main-inline-padding));
   padding-inline: var(--main-inline-padding);
   columns: 3;
-  column-gap: var(--sketchbook-column-gap);
-  gap: 0;
+  column-gap: 0;
 }
 
 .project-gallery .gallery-item:not(.gallery-item--logofolio) {
@@ -4139,8 +4148,8 @@ body.is-project-info-panel-open .main {
 .project-gallery--sketchbook .gallery-item--sketchbook {
   break-inside: avoid;
   box-sizing: border-box;
-  margin-bottom: 2px;
-  padding-inline: 0;
+  margin-bottom: 0;
+  padding: calc(var(--sketchbook-gap) / 2);
 }
 
 .gallery-caption {
@@ -9381,7 +9390,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry).is-portfolio-entry-animat
   }
 
   .project-gallery--sketchbook .gallery-item--sketchbook {
-    margin-bottom: 2px !important;
+    margin-bottom: 0 !important;
+    padding: calc(var(--sketchbook-gap) / 2) !important;
   }
 }
 

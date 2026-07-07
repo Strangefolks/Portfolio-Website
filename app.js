@@ -3048,7 +3048,6 @@ const projectInfoPanelProseEl = document.getElementById('project-info-panel-pros
 const projectInfoPanelBodyEl = document.getElementById('project-info-panel-body');
 
 let projectInfoPanelOpen = false;
-let projectInfoPanelScrollTop = 0;
 
 function isProjectInfoPanelOpen() {
   return projectInfoPanelOpen;
@@ -3099,10 +3098,6 @@ function openProjectInfoPanel() {
 
   updateProjectInfoPanelContent(project);
 
-  if (mainContentEl) {
-    projectInfoPanelScrollTop = mainContentEl.scrollTop;
-  }
-
   projectInfoPanelOpen = true;
   projectInfoPanelEl.hidden = false;
   projectInfoPanelEl.setAttribute('aria-hidden', 'false');
@@ -3127,9 +3122,6 @@ function closeProjectInfoPanel() {
     if (projectInfoPanelOpen || !projectInfoPanelEl) return;
     projectInfoPanelEl.hidden = true;
     projectInfoPanelEl.setAttribute('aria-hidden', 'true');
-    if (mainContentEl) {
-      mainContentEl.scrollTop = projectInfoPanelScrollTop;
-    }
   }, 560);
 }
 
