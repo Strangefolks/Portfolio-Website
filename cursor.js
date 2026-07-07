@@ -12,7 +12,7 @@ function initCustomCursor() {
   }
 
   const INTERACTIVE_SELECTOR =
-    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .gallery-copy-link, .avatar, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .copyright-close, .project-info-btn, .landing-starburst-link';
+    'a, button, [role="button"], .project-item, .project-item-info, .filter-pill, .theme-toggle, .view-toggle-btn, .mobile-project-nav-btn, .logo, .footer-link, .email-link, .gallery-copy-link, .avatar, .project-lock-gate-submit, .project-lock-gate-input, .header-shade-close, .about-close, .copyright-close, .project-info-btn, .landing-starburst-link, .landing-starburst-close';
 
   const RESIZE_SELECTOR = '.sidebar-resizer';
 

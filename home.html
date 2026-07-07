@@ -10,47 +10,11 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250630overlay-polish" />
-    <link rel="preload" href="app.js?v=20250630theme-cards-mono" as="script" />
-    <style>
-      html.is-portfolio-burst-entry .portfolio-entry-reveal {
-        background: transparent;
-      }
-      html.is-portfolio-burst-entry .portfolio-entry-curtain,
-      html.is-portfolio-burst-entry .portfolio-entry-reveal-fill {
-        display: none !important;
-      }
-      html.is-portfolio-burst-entry .page-wrapper,
-      html.is-portfolio-burst-entry .app,
-      html.is-portfolio-burst-entry .header-shell,
-      html.is-portfolio-burst-entry .footer-shell,
-      html.is-portfolio-burst-entry .sidebar,
-      html.is-portfolio-burst-entry .sidebar-resizer,
-      html.is-portfolio-burst-entry .main,
-      html.is-portfolio-burst-entry .main > .text-overline,
-      html.is-portfolio-burst-entry .project-intro,
-      html.is-portfolio-burst-entry .project-body,
-      html.is-portfolio-burst-entry .project-list,
-      html.is-portfolio-burst-entry .project-list-viewport,
-      html.is-portfolio-burst-entry .body,
-      html.is-portfolio-burst-entry .filters,
-      html.is-portfolio-burst-entry .project-item,
-      html.is-portfolio-burst-entry .detail-header,
-      html.is-portfolio-burst-entry .metadata-area,
-      html.is-portfolio-burst-entry .project-gallery,
-      html.is-portfolio-burst-entry .gallery-item,
-      html.is-portfolio-burst-entry .hero-panel {
-        opacity: 1 !important;
-        transform: none !important;
-        transition: none !important;
-        visibility: visible !important;
-      }
-      @media (min-width: 901px) {
-        html.is-portfolio-burst-entry .sidebar {
-          transform: translateX(0) !important;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css?v=20250707home-load-entry" />
+    <link rel="preload" href="app.js?v=20250707home-load-entry" as="script" />
+    <script>
+      document.documentElement.classList.add('is-portfolio-load-entry');
+    </script>
     <script>
       (function () {
         var theme = 'light';
@@ -67,17 +31,9 @@
         try {
           if (sessionStorage.getItem('portfolio-entry-from-landing') !== '1') return;
           var root = document.documentElement;
-          var burstReveal = sessionStorage.getItem('portfolio-entry-burst-reveal') === '1';
-          if (burstReveal) {
-            root.classList.add('is-portfolio-burst-entry');
-            var scale = sessionStorage.getItem('portfolio-entry-burst-scale');
-            var burstX = sessionStorage.getItem('portfolio-entry-burst-x');
-            var burstY = sessionStorage.getItem('portfolio-entry-burst-y');
-            if (scale) root.style.setProperty('--entry-burst-scale', scale);
-            if (burstX) root.style.setProperty('--entry-burst-x', burstX + 'px');
-            if (burstY) root.style.setProperty('--entry-burst-y', burstY + 'px');
-          } else {
-            root.classList.add('is-portfolio-entry');
+          root.classList.add('is-portfolio-entry');
+          if (sessionStorage.getItem('portfolio-entry-white') === '1') {
+            root.classList.add('is-portfolio-white-entry');
           }
         } catch (e) {}
       })();
@@ -93,7 +49,6 @@
         } catch (e) {}
       })();
     </script>
-    <div class="portfolio-entry-curtain" aria-hidden="true"></div>
     <div class="portfolio-entry-reveal" aria-hidden="true">
       <svg
         class="portfolio-entry-reveal-burst"
@@ -117,6 +72,7 @@
     <span class="tooltip tooltip--pill tooltip--theme" id="theme-toggle-tooltip" role="tooltip">Switch to dark mode</span>
     <div class="page-wrapper">
       <div class="app">
+        <div class="portfolio-entry-curtain" aria-hidden="true"></div>
         <div class="app-chrome">
         <!-- Header -->
         <div class="header-shell" id="header-shell">
@@ -427,48 +383,101 @@
                 </button>
               </div>
             </div>
+          </main>
 
+          <div
+            class="project-info-panel-host"
+            id="project-info-panel-host"
+            hidden
+            aria-hidden="true"
+          >
             <aside
               class="project-info-panel"
               id="project-info-panel"
-              hidden
-              aria-hidden="true"
               aria-label="Project info"
             >
-              <div class="project-info-panel__card">
-                <button
-                  type="button"
-                  class="project-info-panel__close header-shade-close"
-                  id="project-info-panel-close"
-                  aria-label="Close project info"
-                >
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
-                  </svg>
-                </button>
-                <div class="project-info-panel__scroll">
-                  <div class="project-info-panel__body" id="project-info-panel-body">
-                    <div class="project-info-panel__image" id="project-info-panel-image"></div>
-                    <div class="project-info-panel__copy">
-                      <span class="text-summary summary-label">Summary:</span>
-                      <p class="text-summary summary-body" id="project-info-panel-summary"></p>
+            <div class="project-info-panel__card">
+              <button
+                type="button"
+                class="project-info-panel__close header-shade-close"
+                id="project-info-panel-close"
+                aria-label="Close project info"
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                  <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round"/>
+                </svg>
+              </button>
+              <div class="project-info-panel__scroll">
+                <div class="project-info-panel__body" id="project-info-panel-body">
+                  <div class="project-info-panel__image" id="project-info-panel-image"></div>
+                  <div class="project-info-panel__copy">
+                    <span class="text-summary summary-label">Summary:</span>
+                    <p class="text-summary summary-body" id="project-info-panel-summary"></p>
+                  </div>
+                  <div class="project-info-panel__prose" id="project-info-panel-prose"></div>
+                  <div class="project-info-panel__meta-grid">
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Teammates</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Sarah Chen<br />James O'Brien<br />Priya Nair<br />Marcus Webb</span>
                     </div>
-                    <div class="project-info-panel__prose" id="project-info-panel-prose"></div>
-                    <div class="project-info-panel__meta-grid">
-                      <div class="project-info-panel__meta-cell">
-                        <span class="text-label project-info-panel__meta-label">Teammates</span>
-                        <span class="text-ui-sm project-info-panel__meta-value">—</span>
-                      </div>
-                      <div class="project-info-panel__meta-cell">
-                        <span class="text-label project-info-panel__meta-label">Time spent</span>
-                        <span class="text-ui-sm project-info-panel__meta-value">—</span>
-                      </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Time spent</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">18 months</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">My role</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Lead UX/UI designer</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Team size</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">9 cross-functional partners</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Research</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">22 interviews, 6 shadow sessions</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Validation</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">4 usability rounds</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Deliverables</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Wireframes, UI kit, redlines</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Prototypes</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">40+ interactive flows</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Tools</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Figma, FigJam, Principle</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Methods</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Workshops, concept testing</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Platform</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Desktop + iPad clinical app</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Status</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Shipped to pilot sites</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Company</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Medtronic Diabetes</span>
+                    </div>
+                    <div class="project-info-panel__meta-cell">
+                      <span class="text-label project-info-panel__meta-label">Timeline</span>
+                      <span class="text-ui-sm project-info-panel__meta-value">Mar 2023 – Sep 2024</span>
                     </div>
                   </div>
                 </div>
               </div>
-            </aside>
-          </main>
+            </div>
+          </aside>
+          </div>
         </div>
 
         <!-- Footer -->
@@ -689,6 +698,6 @@
     <script src="copyright.js?v=20250630overlay-polish"></script>
     <script src="pull-to-refresh.js?v=20250630info-panel-slide"></script>
     <script src="email-copy.js?v=20250630batch-v1"></script>
-    <script src="app.js?v=20250630info-panel-slide"></script>
+    <script src="app.js?v=20250707home-load-entry"></script>
   </body>
 </html>

@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@800&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250630top-banner-border" />
+    <link rel="stylesheet" href="styles.css?v=20250707landing-app-radius" />
     <script>
       (function () {
         var theme = 'light';
@@ -23,6 +23,10 @@
     </script>
   </head>
   <body class="landing-page is-bottom-banner-hidden">
+    <script>
+      document.documentElement.classList.add('is-landing-intro-pending');
+      document.body.classList.add('is-landing-intro-pending');
+    </script>
     <div class="site-grain" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
@@ -30,6 +34,19 @@
 
     <div class="page-wrapper">
       <div class="app">
+        <button
+          type="button"
+          class="landing-starburst-close header-shade-close"
+          id="landing-starburst-close"
+          hidden
+          aria-hidden="true"
+          aria-label="Close sunburst"
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <path d="M2 2l10 10M12 2L2 12" stroke-linecap="round" />
+          </svg>
+        </button>
+
         <div class="header-shell" id="header-shell">
           <header class="header">
             <span class="landing-logo" aria-hidden="true">
@@ -232,6 +249,8 @@
             </div>
           </footer>
         </div>
+
+        <div class="landing-exit-curtain" id="landing-exit-curtain" hidden aria-hidden="true"></div>
       </div>
     </div>
 
@@ -241,7 +260,7 @@
     <script src="cursor.js?v=20250630batch-v1"></script>
     <script src="email-copy.js?v=20250630batch-v1"></script>
     <script src="pull-to-refresh.js?v=20250630batch-v1"></script>
-    <script src="landing.js?v=20250630batch-v1"></script>
+    <script src="landing.js?v=20250707landing-intro"></script>
     <script src="about.js?v=20250630batch-v1"></script>
     <script src="copyright.js?v=20250630batch-v1"></script>
   </body>

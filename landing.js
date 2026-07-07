@@ -63,188 +63,49 @@ const refreshCursor = typeof initCustomCursor === 'function' ? initCustomCursor(
 initEmailLink(refreshCursor);
 
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
-const PORTFOLIO_BURST_REVEAL_KEY = 'portfolio-entry-burst-reveal';
-const PORTFOLIO_BURST_SCALE_KEY = 'portfolio-entry-burst-scale';
-const PORTFOLIO_BURST_X_KEY = 'portfolio-entry-burst-x';
-const PORTFOLIO_BURST_Y_KEY = 'portfolio-entry-burst-y';
-const LANDING_EXIT_MS = 520;
-const LANDING_BURST_PEAK_HOLD_MS = 100;
+const PORTFOLIO_WHITE_ENTRY_KEY = 'portfolio-entry-white';
+const LANDING_EXIT_BLUE_MS = 180;
+const LANDING_EXIT_WHITE_MS = 480;
 const LANDING_STARBURST_CENTER = { x: 91, y: 91 };
 
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
 }
 
-function waitForPortfolioPrefetchReady() {
-  const iframe = document.getElementById('portfolio-prefetch-frame');
-  if (!iframe) return Promise.resolve();
-
-  return new Promise((resolve) => {
-    const cap = window.setTimeout(resolve, 3500);
-    const done = () => {
-      window.clearTimeout(cap);
-      window.setTimeout(resolve, 80);
-    };
-
-    try {
-      if (iframe.contentDocument?.readyState === 'complete') {
-        done();
-        return;
-      }
-    } catch (_) {}
-
-    iframe.addEventListener('load', done, { once: true });
-  });
-}
-
-function prefetchPortfolio() {
-  if (!document.querySelector('link[data-prefetch-portfolio]')) {
-    const prefetchLink = document.createElement('link');
-    prefetchLink.rel = 'prefetch';
-    prefetchLink.href = 'home.html';
-    prefetchLink.setAttribute('data-prefetch-portfolio', '');
-    document.head.appendChild(prefetchLink);
-  }
-
-  if (!document.querySelector('link[data-preload-portfolio-app]')) {
-    const preloadApp = document.createElement('link');
-    preloadApp.rel = 'preload';
-    preloadApp.href = 'app.js?v=20250630batch-v1';
-    preloadApp.as = 'script';
-    preloadApp.setAttribute('data-preload-portfolio-app', '');
-    document.head.appendChild(preloadApp);
-  }
-
-  if (!window.__portfolioHtmlPrefetched) {
-    window.__portfolioHtmlPrefetched = true;
-    fetch('home.html', { credentials: 'same-origin' }).catch(() => {});
-  }
-
-  if (!document.getElementById('portfolio-prefetch-frame')) {
-    const iframe = document.createElement('iframe');
-    iframe.id = 'portfolio-prefetch-frame';
-    iframe.src = 'home.html';
-    iframe.hidden = true;
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.setAttribute('tabindex', '-1');
-    iframe.setAttribute('title', '');
-    Object.assign(iframe.style, {
-      position: 'absolute',
-      width: '0',
-      height: '0',
-      border: '0',
-      opacity: '0',
-      pointerEvents: 'none',
-    });
-    document.body.appendChild(iframe);
-  }
-}
-
-function waitForLandingBurstExpand(link) {
-  const stack = link.querySelector('.landing-starburst-stack');
-  const starburst = link.querySelector('.landing-starburst');
-  const target = starburst || stack;
-  if (!target) return wait(LANDING_EXIT_MS);
-
-  return new Promise((resolve) => {
-    let settled = false;
-    const finish = () => {
-      if (settled) return;
-      settled = true;
-      target.removeEventListener('transitionend', onTransitionEnd);
-      resolve();
-    };
-    const onTransitionEnd = (event) => {
-      if (event.target !== target) return;
-      if (event.propertyName !== 'transform' && event.propertyName !== 'width') return;
-      finish();
-    };
-
-    target.addEventListener('transitionend', onTransitionEnd);
-    window.setTimeout(finish, LANDING_EXIT_MS + 80);
-  });
-}
-
-function navigateToPortfolio(
-  href,
-  { burstReveal = false, burstScale = null, burstX = null, burstY = null } = {}
-) {
+function navigateToPortfolio(href, { whiteEntry = false } = {}) {
   try {
     sessionStorage.setItem(PORTFOLIO_ENTRY_KEY, '1');
-    if (burstReveal) {
-      sessionStorage.setItem(PORTFOLIO_BURST_REVEAL_KEY, '1');
-      if (burstScale != null) {
-        sessionStorage.setItem(PORTFOLIO_BURST_SCALE_KEY, String(burstScale));
-      }
-      if (burstX != null) {
-        sessionStorage.setItem(PORTFOLIO_BURST_X_KEY, String(burstX));
-      }
-      if (burstY != null) {
-        sessionStorage.setItem(PORTFOLIO_BURST_Y_KEY, String(burstY));
-      }
+    if (whiteEntry) {
+      sessionStorage.setItem(PORTFOLIO_WHITE_ENTRY_KEY, '1');
     }
   } catch (_) {}
   window.location.href = href;
 }
 
-async function playLandingExit(href, link) {
-  const launchBtn = link.querySelector('.landing-launch-btn');
-  const starburst = link.querySelector('.landing-starburst');
-  if (!starburst) {
-    navigateToPortfolio(href);
+async function playLandingExit(href) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    navigateToPortfolio(href, { whiteEntry: true });
     return;
   }
 
-  setLandingExpanded(link, true);
-  updateLandingBurstAnchor(link);
-  document.body.classList.add('is-landing-transitioning');
+  const curtain = document.getElementById('landing-exit-curtain');
+  document.body.classList.add('is-landing-launching');
 
-  const rect = starburst.getBoundingClientRect();
-  const size = Math.max(rect.width, rect.height, 1);
-  const coverScale = (Math.hypot(window.innerWidth, window.innerHeight) / size) * 1.35;
-
-  link.style.setProperty('--landing-cover-scale', String(coverScale));
-  link.style.setProperty('--burst-cover-size', `${Math.ceil(size * coverScale)}px`);
-  launchBtn?.classList.add('is-label-exiting', 'is-cursor-exiting');
-  document.body.classList.add('is-landing-launching', 'is-landing-exiting-burst');
-
-  await new Promise((resolve) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(resolve);
-    });
-  });
-
-  await waitForLandingBurstExpand(link);
-  await wait(LANDING_BURST_PEAK_HOLD_MS);
-
-  const fill = link.querySelector('.landing-starburst-fill');
-  if (fill) {
-    fill.style.opacity = '0';
+  if (curtain) {
+    curtain.hidden = false;
+    curtain.setAttribute('aria-hidden', 'false');
+    curtain.classList.remove('is-white');
+    curtain.classList.add('is-visible');
   }
 
-  await new Promise((resolve) => {
-    requestAnimationFrame(() => {
-      requestAnimationFrame(resolve);
-    });
-  });
+  await wait(LANDING_EXIT_BLUE_MS);
 
-  await waitForPortfolioPrefetchReady();
+  if (curtain) {
+    curtain.classList.add('is-white');
+  }
 
-  const stack = link.querySelector('.landing-starburst-stack');
-  const stackRect = stack?.getBoundingClientRect();
-  const burstCenterX = stackRect
-    ? stackRect.left + stackRect.width / 2
-    : window.innerWidth / 2;
-  const burstCenterY = stackRect
-    ? stackRect.top + stackRect.height / 2
-    : window.innerHeight / 2;
-
-  navigateToPortfolio(href, {
-    burstReveal: true,
-    burstScale: coverScale,
-    burstX: burstCenterX,
-    burstY: burstCenterY,
-  });
+  await wait(LANDING_EXIT_WHITE_MS);
+  navigateToPortfolio(href, { whiteEntry: true });
 }
 
 function parseSvgPath(pathData) {
@@ -335,31 +196,35 @@ function buildMorphedStarburstPath(segments, warpTime, center, rotationTime = wa
   return d;
 }
 
+let syncLandingStarburstMorph = () => {};
+
 function initLandingStarburstMorph() {
   const pathEl = document.querySelector('.landing-starburst-path');
-  if (!pathEl) return;
+  const link = document.getElementById('landing-starburst-link');
+  if (!pathEl || !link) return;
 
   const basePath = pathEl.getAttribute('d') || '';
   const segments = parseSvgPath(basePath);
   if (!segments.length) return;
 
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (prefersReducedMotion) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   let rafId = 0;
+  let running = false;
   let isPaused = false;
   let warpPhase = 0;
   let rotationPhase = 0;
   let lastTick = 0;
   let motionSpeed = 1;
   let warpSpeed = 1;
-  const MOTION_SPEED_EXPANDED = 4;
-  const WARP_SPEED_EXPANDED = 36;
+  const MOTION_SPEED_EXPANDED = 3;
+  const WARP_SPEED_EXPANDED = 18;
   const SPEED_RAMP_RATE = 6;
 
   const tick = (now) => {
-    if (!isPaused) {
+    rafId = 0;
+
+    if (running && !isPaused) {
       const dt = lastTick ? Math.min(0.05, (now - lastTick) / 1000) : 0;
       lastTick = now;
 
@@ -373,32 +238,49 @@ function initLandingStarburstMorph() {
       warpPhase += dt * warpSpeed;
       rotationPhase += dt * motionSpeed;
 
-      const morphedPath = buildMorphedStarburstPath(
-        segments,
-        warpPhase,
-        LANDING_STARBURST_CENTER,
-        rotationPhase
+      pathEl.setAttribute(
+        'd',
+        buildMorphedStarburstPath(segments, warpPhase, LANDING_STARBURST_CENTER, rotationPhase)
       );
-      pathEl.setAttribute('d', morphedPath);
     }
+
+    if (running) {
+      rafId = requestAnimationFrame(tick);
+    }
+  };
+
+  const start = () => {
+    if (running) return;
+    running = true;
+    lastTick = 0;
     rafId = requestAnimationFrame(tick);
   };
 
-  const handleVisibility = () => {
-    isPaused = document.visibilityState !== 'visible';
-  };
-
-  document.addEventListener('visibilitychange', handleVisibility);
-  rafId = requestAnimationFrame(tick);
-
-  return () => {
-    cancelAnimationFrame(rafId);
-    document.removeEventListener('visibilitychange', handleVisibility);
+  const stop = () => {
+    running = false;
+    if (rafId) {
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+    motionSpeed = 1;
+    warpSpeed = 1;
     pathEl.setAttribute('d', basePath);
   };
+
+  syncLandingStarburstMorph = () => {
+    if (document.body.classList.contains('is-landing-expanded')) {
+      start();
+      return;
+    }
+    stop();
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    isPaused = document.visibilityState !== 'visible';
+  });
 }
 
-function updateLandingBurstAnchor(link) {
+function updateLandingBurstAnchor(link, { expandedLayout = false } = {}) {
   const starburst = link.querySelector('.landing-starburst');
   const landing = link.closest('.landing');
   if (!starburst || !landing) return;
@@ -406,15 +288,33 @@ function updateLandingBurstAnchor(link) {
   const rect = link.getBoundingClientRect();
   const landingRect = landing.getBoundingClientRect();
   const useViewportAnchor = isTouchLandingUi();
-  const size = Math.max(rect.width, rect.height, 1);
-  const cx = useViewportAnchor
-    ? rect.left + rect.width / 2
-    : rect.left + rect.width / 2 - landingRect.left;
-  const cy = useViewportAnchor
-    ? rect.top + rect.height / 2
-    : rect.top + rect.height / 2 - landingRect.top;
-  const coverWidth = useViewportAnchor ? window.innerWidth : landingRect.width;
-  const coverHeight = useViewportAnchor ? window.innerHeight : landingRect.height;
+  const isExpandedLayout = expandedLayout || document.body.classList.contains('is-landing-expanded');
+  const storedRestSize = parseFloat(link.style.getPropertyValue('--burst-rest-size'));
+  const size = Number.isFinite(storedRestSize) && storedRestSize > 0
+    ? storedRestSize
+    : Math.max(rect.width, rect.height, 1);
+
+  let cx;
+  let cy;
+  let coverWidth;
+  let coverHeight;
+
+  if (isExpandedLayout && !useViewportAnchor) {
+    cx = landingRect.width / 2;
+    cy = landingRect.height / 2;
+    coverWidth = landingRect.width;
+    coverHeight = landingRect.height;
+  } else {
+    cx = useViewportAnchor
+      ? rect.left + rect.width / 2
+      : rect.left + rect.width / 2 - landingRect.left;
+    cy = useViewportAnchor
+      ? rect.top + rect.height / 2
+      : rect.top + rect.height / 2 - landingRect.top;
+    coverWidth = useViewportAnchor ? window.innerWidth : landingRect.width;
+    coverHeight = useViewportAnchor ? window.innerHeight : landingRect.height;
+  }
+
   const maxDist = Math.max(
     Math.hypot(cx, cy),
     Math.hypot(coverWidth - cx, cy),
@@ -427,7 +327,9 @@ function updateLandingBurstAnchor(link) {
 
   link.style.setProperty('--burst-anchor-x', `${Math.round(cx)}px`);
   link.style.setProperty('--burst-anchor-y', `${Math.round(cy)}px`);
-  link.style.setProperty('--burst-rest-size', `${Math.round(rect.width)}px`);
+  if (!Number.isFinite(storedRestSize) || storedRestSize <= 0) {
+    link.style.setProperty('--burst-rest-size', `${Math.round(rect.width)}px`);
+  }
   link.style.setProperty('--burst-hover-scale', String(scale));
   link.style.setProperty('--burst-expanded-size', `${expandedSize}px`);
 }
@@ -435,7 +337,11 @@ function updateLandingBurstAnchor(link) {
 function initLandingBurstAnchor(link) {
   const hero = link.closest('.landing-hero');
   const landing = link.closest('.landing');
-  const update = () => updateLandingBurstAnchor(link);
+  const update = () => {
+    updateLandingBurstAnchor(link, {
+      expandedLayout: document.body.classList.contains('is-landing-expanded'),
+    });
+  };
 
   update();
 
@@ -453,30 +359,54 @@ function initLandingBurstAnchor(link) {
   }
 }
 
+function syncLandingExpandedUi(expanded) {
+  const closeBtn = document.getElementById('landing-starburst-close');
+  if (closeBtn) {
+    closeBtn.hidden = !expanded;
+    closeBtn.setAttribute('aria-hidden', expanded ? 'false' : 'true');
+  }
+  syncLandingStarburstMorph();
+}
+
 function setLandingExpanded(link, expanded) {
+  if (expanded && document.body.classList.contains('is-landing-intro')) {
+    return;
+  }
+
   if (expanded) {
+    const restRect = link.getBoundingClientRect();
+    link.style.setProperty('--burst-rest-size', `${Math.round(restRect.width)}px`);
     updateLandingBurstAnchor(link);
-    prefetchPortfolio();
+
+    const finishExpand = () => {
+      document.body.classList.add('is-landing-expanded');
+      requestAnimationFrame(() => {
+        updateLandingBurstAnchor(link, { expandedLayout: true });
+        syncLandingExpandedUi(true);
+        if (!isTouchLandingUi()) {
+          setLandingLaunchReady(true);
+        }
+      });
+    };
+
     if (isTouchLandingUi()) {
       if (!document.body.classList.contains('is-landing-expanded')) {
-        requestAnimationFrame(() => {
-          updateLandingBurstAnchor(link);
-          document.body.classList.add('is-landing-expanded');
-        });
+        requestAnimationFrame(finishExpand);
       }
       return;
     }
-  } else {
-    setLandingLaunchReady(false);
-    if (isTouchLandingUi()) {
-      document.body.classList.remove('is-landing-expanded');
-      return;
-    }
+
+    finishExpand();
+    return;
   }
-  document.body.classList.toggle('is-landing-expanded', expanded);
-  if (expanded && !isTouchLandingUi()) {
-    setLandingLaunchReady(true);
-  }
+
+  setLandingLaunchReady(false);
+  document.body.classList.remove('is-landing-expanded');
+  link.style.removeProperty('--burst-rest-size');
+  requestAnimationFrame(() => {
+    updateLandingBurstAnchor(link);
+  });
+  syncLandingExpandedUi(false);
 }
 
 function isTouchLandingUi() {
@@ -492,12 +422,7 @@ function setLandingLaunchReady(enabled) {
 
 function collapseLandingFromBackground(link, event) {
   if (!document.body.classList.contains('is-landing-expanded')) return;
-  if (
-    document.body.classList.contains('is-landing-launching')
-    || document.body.classList.contains('is-landing-transitioning')
-  ) {
-    return;
-  }
+  if (document.body.classList.contains('is-landing-launching')) return;
   if (link.contains(event.target)) return;
   setLandingExpanded(link, false);
 }
@@ -511,12 +436,25 @@ function initLandingBackgroundCollapse(link) {
   });
 }
 
+function initLandingStarburstClose(link) {
+  const closeBtn = document.getElementById('landing-starburst-close');
+  if (!closeBtn) return;
+
+  closeBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!document.body.classList.contains('is-landing-expanded')) return;
+    setLandingExpanded(link, false);
+  });
+}
+
 function initLandingHero() {
   const link = document.getElementById('landing-starburst-link');
   if (!link) return;
 
   initLandingBurstAnchor(link);
   initLandingBackgroundCollapse(link);
+  initLandingStarburstClose(link);
 
   if (isTouchLandingUi()) return;
 
@@ -534,12 +472,7 @@ function initLandingTransition() {
   let touchExpandLockUntil = 0;
 
   const proceedToPortfolio = () => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      navigateToPortfolio(href);
-      return;
-    }
-
-    void playLandingExit(href, link);
+    void playLandingExit(href);
   };
 
   if (isTouchLanding) {
@@ -581,13 +514,7 @@ function initLandingTransition() {
 
   link.addEventListener('click', (event) => {
     event.preventDefault();
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      navigateToPortfolio(href);
-      return;
-    }
-
-    void playLandingExit(href, link);
+    proceedToPortfolio();
   });
 }
 
@@ -651,8 +578,6 @@ function initLandingOrbitTextFit() {
   }
 }
 
-initLandingStarburstMorph();
-
 function initMobileBrowserUiInset() {
   if (!window.matchMedia('(max-width: 560px)').matches) return;
 
@@ -672,6 +597,47 @@ function initMobileBrowserUiInset() {
   window.addEventListener('orientationchange', sync);
 }
 
+const LANDING_INTRO_MS = 760;
+
+function initLandingIntro() {
+  const link = document.getElementById('landing-starburst-link');
+  const root = document.documentElement;
+  const pending = document.body.classList.contains('is-landing-intro-pending');
+
+  if (!link || !pending) {
+    root.classList.remove('is-landing-intro-pending');
+    document.body.classList.remove('is-landing-intro-pending', 'is-landing-intro');
+    return;
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    root.classList.remove('is-landing-intro-pending');
+    document.body.classList.remove('is-landing-intro-pending', 'is-landing-intro');
+    return;
+  }
+
+  document.body.classList.add('is-landing-intro');
+
+  const restRect = link.getBoundingClientRect();
+  link.style.setProperty('--burst-rest-size', `${Math.round(restRect.width)}px`);
+  document.body.classList.add('is-landing-expanded');
+  updateLandingBurstAnchor(link, { expandedLayout: true });
+
+  root.classList.remove('is-landing-intro-pending');
+  document.body.classList.remove('is-landing-intro-pending');
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      setLandingExpanded(link, false);
+      window.setTimeout(() => {
+        document.body.classList.remove('is-landing-intro');
+      }, LANDING_INTRO_MS);
+    });
+  });
+}
+
+initLandingIntro();
+initLandingStarburstMorph();
 initMobileBrowserUiInset();
 initLandingHero();
 initLandingTransition();
