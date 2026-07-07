@@ -232,7 +232,7 @@ function alignAboutStoryWithLogo(scope = aboutStoryTitleFitScope) {
     return;
   }
 
-  if (isAboutTransitioning()) {
+  if (isAboutTransitioning() && !document.body.classList.contains('is-about-layout-measuring')) {
     return;
   }
 

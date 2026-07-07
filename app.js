@@ -5,8 +5,6 @@ const projects = [
     tag: '2026',
     icon: 'showreel',
     category: 'Portfolio',
-    description:
-      'A sampling of different projects I\'ve created or had a hand in creating — both art and design.',
     summary:
       'Showreel gathers highlights from product, brand, and creative work into a single reel. Clips span med-tech interfaces, identity systems, and personal art — chosen to show range without flattening context. Each segment is a doorway into a fuller case study elsewhere in the portfolio. The reel is meant as orientation, not replacement, for the projects below.',
     metadata: [
@@ -492,7 +490,10 @@ function formatProjectSummaryLead(summary) {
 function getProjectInfoText(project) {
   if (project.info?.text) return project.info.text;
 
-  return `${project.description} The ${project.name} engagement focused on clarity and reducing cognitive load for expert users. Research and iteration shaped the layout into a calm, dependable interface.`;
+  const lead = project.description ?? project.summary ?? '';
+  if (!lead) return '';
+
+  return `${lead} The ${project.name} engagement focused on clarity and reducing cognitive load for expert users. Research and iteration shaped the layout into a calm, dependable interface.`;
 }
 
 function getProjectInfoImage(project) {
@@ -516,15 +517,12 @@ const sketchbookIcons = {
   open: `<img class="project-item-icon icon-open" src="assets/sketchbook.svg" alt="" width="26" height="26" decoding="async" aria-hidden="true" />`,
 };
 
-const showreelMovieIcon = `<svg class="project-item-icon showreel-item-icon" viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="1.25" aria-hidden="true">
-  <rect x="1" y="3.5" width="14.5" height="11" rx="1.75"/>
-  <path d="M15.5 7.25L22.25 4.25V14.75L15.5 11.75V7.25Z" stroke-linejoin="round"/>
-</svg>`;
+const showreelIconImg = `<img class="project-item-icon showreel-item-icon" src="assets/showreeel-icon.svg" alt="" width="30" height="19" decoding="async" aria-hidden="true" />`;
 
 const showreelIcons = {
-  outline: showreelMovieIcon,
-  closed: showreelMovieIcon,
-  open: showreelMovieIcon,
+  outline: showreelIconImg,
+  closed: showreelIconImg,
+  open: showreelIconImg,
 };
 
 function getProjectIcons(project) {
@@ -681,7 +679,15 @@ function splitProjectSubheadText(text) {
 }
 
 function normalizeProjectSubheadText(text) {
-  return text.trim().replace(/\s+/g, ' ');
+  return (text ?? '').trim().replace(/\s+/g, ' ');
+}
+
+function getProjectSubheadSourceText(el) {
+  if (!el) return '';
+  return (
+    normalizeProjectSubheadText(el.dataset.subheadSource) ||
+    normalizeProjectSubheadText(el.textContent)
+  );
 }
 
 function renderProjectSubhead(el, text) {
@@ -689,10 +695,11 @@ function renderProjectSubhead(el, text) {
 
   const normalized = normalizeProjectSubheadText(text);
   const mode = getProjectSubheadFitMode();
-  el.dataset.subheadSource = text;
+  el.dataset.subheadSource = normalized;
   el.dataset.subheadFitMode = mode;
   el.classList.toggle('project-desc--wrap', mode === 'mobile');
   el.replaceChildren();
+  el.hidden = !normalized;
 
   if (!normalized) return;
 
@@ -709,7 +716,7 @@ function renderProjectSubhead(el, text) {
     return;
   }
 
-  const [line1, line2] = splitProjectSubheadText(text);
+  const [line1, line2] = splitProjectSubheadText(normalized);
   [line1, line2].forEach((lineText) => {
     if (!lineText) return;
 
@@ -726,14 +733,15 @@ function renderProjectSubhead(el, text) {
 }
 
 function ensureProjectSubheadRendered(el, text) {
+  const normalized = normalizeProjectSubheadText(text);
   const mode = getProjectSubheadFitMode();
   const needsRender =
     !el.querySelector('.project-desc-line') ||
-    el.dataset.subheadSource !== text ||
+    el.dataset.subheadSource !== normalized ||
     el.dataset.subheadFitMode !== mode;
 
   if (needsRender) {
-    renderProjectSubhead(el, text);
+    renderProjectSubhead(el, normalized);
   }
 }
 
@@ -765,7 +773,7 @@ function measureProjectSubheadHorizontalOverflow(subhead, fontSizePx, availableW
 function fitProjectIntroSubheadMobile({ force = false } = {}) {
   if (!projectDescEl) return;
 
-  const sourceText = projectDescEl.dataset.subheadSource?.trim() || projectDescEl.textContent.trim();
+  const sourceText = getProjectSubheadSourceText(projectDescEl);
   if (!sourceText) return;
 
   ensureProjectSubheadRendered(projectDescEl, sourceText);
@@ -824,7 +832,7 @@ function fitProjectIntroSubheadMobile({ force = false } = {}) {
 function fitProjectIntroSubhead({ force = false } = {}) {
   if (!projectDescEl) return;
 
-  const sourceText = projectDescEl.dataset.subheadSource?.trim() || projectDescEl.textContent.trim();
+  const sourceText = getProjectSubheadSourceText(projectDescEl);
   if (!sourceText) return;
 
   if (getProjectSubheadFitMode() === 'mobile') {
@@ -1301,10 +1309,11 @@ function shouldShowThemeCards(project) {
 function syncSpecialGalleryChrome(project) {
   const sketchbook = isSketchbookProject(project);
   const logofolio = isLogofolioProject(project);
+  const showreel = isShowreelProject(project);
 
   mainContentEl?.classList.toggle('is-sketchbook-project', sketchbook);
   mainContentEl?.classList.toggle('is-logofolio-project', logofolio);
-  mainContentEl?.classList.remove('is-showreel-project');
+  mainContentEl?.classList.toggle('is-showreel-project', showreel);
   stickyHeaderEl?.classList.toggle('sticky-header--logofolio', logofolio);
 
   if (stickyHeaderHostEl) {
@@ -1314,6 +1323,8 @@ function syncSpecialGalleryChrome(project) {
       setProjectIntroStickyVisible(false, { instant: true });
     } else if (logofolio) {
       syncLogofolioColorModeChrome();
+      requestAnimationFrame(() => syncProjectIntroStickyFromScroll());
+    } else if (showreel) {
       requestAnimationFrame(() => syncProjectIntroStickyFromScroll());
     } else {
       mainContentEl?.classList.remove('is-logofolio-mono', 'is-logofolio-color');
@@ -1398,26 +1409,15 @@ const showreelListPlayIcon = `<svg class="showreel-list-preview__play-icon" view
 </svg>`;
 
 function renderShowreelListItem(project, isActive) {
-  const yearMarkup = isActive
-    ? '<img class="project-item-starburst showreel-list-starburst" src="assets/sunburst.svg" alt="" width="19" height="19" decoding="async" aria-hidden="true" />'
-    : `<span class="text-list project-item-category showreel-list-year">${getProjectListLabel(project)}</span>`;
-
   return `
     <div class="project-item project-item--showreel${isActive ? ' active' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
-      <div class="showreel-list-card">
-        <div class="showreel-list-head">
-          <span class="showreel-list-title">
-            ${showreelMovieIcon}
-            <span class="text-list project-item-name">${project.name}</span>
-          </span>
-          <span class="showreel-list-meta">
-            ${yearMarkup}
-          </span>
-        </div>
-        <div class="showreel-list-preview" aria-hidden="true">
-          ${showreelListPlayIcon}
-        </div>
-      </div>
+      <span class="showreel-list-label">
+        ${showreelIconImg}
+        <span class="text-list project-item-name">${project.name}</span>
+      </span>
+      <span class="showreel-list-preview" aria-hidden="true">
+        ${showreelListPlayIcon}
+      </span>
     </div>
   `;
 }
@@ -1456,17 +1456,12 @@ function renderProjectListItem(project) {
 }
 
 function getNavigableProjects() {
-  return getFilteredProjects().filter((project) => !isShowreelProject(project));
+  return getFilteredProjects();
 }
 
-function activateProjectListItem(projectId, triggerEl = null) {
+function activateProjectListItem(projectId) {
   const project = projects.find((p) => p.id === projectId);
   if (!project) return;
-
-  if (isShowreelProject(project)) {
-    openShowreelLightbox(triggerEl);
-    return;
-  }
 
   selectProject(projectId);
 }
@@ -1887,6 +1882,40 @@ function renderSummary(summary) {
   `;
 }
 
+function renderShowreelVideo(project) {
+  if (!projectSummaryEl) return;
+
+  const videoUrl = project?.videoUrl;
+  const label = escapeHtml(`${project?.name || 'Showreel'} video`);
+
+  if (videoUrl) {
+    projectSummaryEl.innerHTML = `
+      <div class="showreel-video-wrap">
+        <video class="showreel-video" controls playsinline preload="metadata" aria-label="${label}">
+          <source src="${escapeHtml(videoUrl)}" type="video/mp4">
+        </video>
+      </div>
+    `;
+  } else {
+    projectSummaryEl.innerHTML = `
+      <div class="showreel-video-wrap showreel-video-wrap--empty" role="status">
+        <p class="text-caption">Video unavailable.</p>
+      </div>
+    `;
+  }
+
+  if (metadataRowEl) metadataRowEl.innerHTML = '';
+  if (metadataRowCompactEl) metadataRowCompactEl.innerHTML = '';
+  requestAnimationFrame(() => syncStickyHeaderAlignHeight());
+}
+
+function pauseShowreelVideo() {
+  const video = projectSummaryEl?.querySelector('.showreel-video');
+  if (video instanceof HTMLVideoElement) {
+    video.pause();
+  }
+}
+
 function renderMetadata(metadata, summary) {
   renderSummary(summary);
   metadataRowEl.innerHTML = metadata.map(renderMetadataItem).join('');
@@ -1909,8 +1938,14 @@ function updateProjectAccess(project) {
 
   if (unlocked) {
     projectLockErrorEl.classList.add('is-hidden');
-    renderMetadata(project.metadata, project.summary ?? project.description);
-    showProjectGallery();
+    if (isShowreelProject(project)) {
+      renderShowreelVideo(project);
+      projectGallery.classList.add('is-hidden');
+      projectGallery.hidden = true;
+    } else {
+      renderMetadata(project.metadata, project.summary ?? project.description);
+      showProjectGallery();
+    }
     requestAnimationFrame(() => syncProjectIntroStickyFromScroll());
   } else {
     projectGallery.classList.add('is-hidden');
@@ -1942,6 +1977,7 @@ function selectProject(id) {
   closeSketchbookLightbox();
   closeShowreelLightbox();
   closeProjectInfoPanel();
+  pauseShowreelVideo();
   resetProjectIntroScroll();
   selectedId = id;
   syncSpecialGalleryChrome(project);
@@ -3490,11 +3526,17 @@ function renderGallery(project = projects.find((p) => p.id === selectedId)) {
 
   const sketchbookLayout = isSketchbookProject(project);
   const logofolioLayout = isLogofolioProject(project);
+  const showreelLayout = isShowreelProject(project);
   const eagerLoad = isPortfolioEntryFromLanding();
 
   projectGallery.classList.toggle('project-gallery--sketchbook', sketchbookLayout);
   projectGallery.classList.toggle('project-gallery--logofolio', logofolioLayout);
-  projectGallery.classList.remove('project-gallery--showreel');
+  projectGallery.classList.toggle('project-gallery--showreel', showreelLayout);
+
+  if (showreelLayout) {
+    projectGallery.innerHTML = '';
+    return;
+  }
 
   if (logofolioLayout) {
     const entries = getLogofolioEntries(project);
