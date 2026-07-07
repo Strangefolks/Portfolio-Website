@@ -517,12 +517,29 @@ const sketchbookIcons = {
   open: `<img class="project-item-icon icon-open" src="assets/sketchbook.svg" alt="" width="26" height="26" decoding="async" aria-hidden="true" />`,
 };
 
-const showreelIconImg = `<img class="project-item-icon showreel-item-icon" src="assets/showreeel-icon.svg" alt="" width="30" height="19" decoding="async" aria-hidden="true" />`;
+const showreelIconSvg = `<svg class="project-item-icon showreel-item-icon" viewBox="0 0 30 19" fill="none" aria-hidden="true">
+  <g class="showreel-icon-body">
+    <path d="M20.5835 10.6667L27.9827 15.5996C28.0894 15.6705 28.2133 15.7113 28.3413 15.7174C28.4693 15.7235 28.5965 15.6948 28.7095 15.6343C28.8225 15.5738 28.9169 15.4839 28.9828 15.374C29.0486 15.2641 29.0834 15.1383 29.0835 15.0102V3.39922C29.0835 3.27458 29.0507 3.15215 28.9883 3.04427C28.9258 2.93639 28.8361 2.84689 28.728 2.78481C28.6199 2.72272 28.4974 2.69025 28.3728 2.69068C28.2481 2.6911 28.1258 2.7244 28.0182 2.78722L20.5835 7.12505" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17.75 0.75H3.58333C2.01853 0.75 0.75 2.01853 0.75 3.58333V14.9167C0.75 16.4815 2.01853 17.75 3.58333 17.75H17.75C19.3148 17.75 20.5833 16.4815 20.5833 14.9167V3.58333C20.5833 2.01853 19.3148 0.75 17.75 0.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="showreel-icon-reel">
+    <g transform="translate(10.5164 9.2044)">
+      <g class="showreel-icon-reel-rotator">
+        <circle cx="0" cy="-4.0598" r="1.06864" fill="currentColor"/>
+        <circle cx="0" cy="4.0598" r="1.06864" fill="currentColor"/>
+        <circle cx="4.0601" cy="0" r="1.06864" fill="currentColor"/>
+        <circle cx="-4.0596" cy="0" r="1.06864" fill="currentColor"/>
+        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
+    </g>
+  </g>
+</svg>`;
 
 const showreelIcons = {
-  outline: showreelIconImg,
-  closed: showreelIconImg,
-  open: showreelIconImg,
+  outline: showreelIconSvg,
+  closed: showreelIconSvg,
+  open: showreelIconSvg,
 };
 
 function getProjectIcons(project) {
@@ -550,7 +567,7 @@ function unlockProject(projectId) {
   saveUnlockedProjects();
 }
 let activeFilter = 'all';
-let selectedId = 'affera';
+let selectedId = 'showreel';
 
 const projectListEl = document.getElementById('project-list');
 const projectNumberEl = document.getElementById('project-number');
@@ -586,19 +603,11 @@ const PROJECT_INTRO_STICKY_ENTER_OFFSET = 1;
 const STICKY_HEADER_HEIGHT_OFFSET = 27;
 const STICKY_HEADER_MOBILE_HEIGHT_OFFSET = 0;
 const PROJECT_TITLE_FIT_MIN = 12;
-const PROJECT_SUBHEAD_FIT_MIN = 12;
-const PROJECT_SUBHEAD_FIT_MIN_MOBILE = 20;
 const PROJECT_SUBHEAD_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
-const PROJECT_SUBHEAD_FIT_MAX_MOBILE = 38;
 
 let projectTitleLastFitWidth = -1;
 let projectTitleLastFitName = '';
 let projectTitleFitGeneration = 0;
-
-let projectSubheadLastFitWidth = -1;
-let projectSubheadLastFitText = '';
-let projectSubheadLastFitMode = '';
-let projectSubheadFitGeneration = 0;
 
 function getProjectSubheadFitMode() {
   return PROJECT_SUBHEAD_MOBILE_MQ.matches ? 'mobile' : 'desktop';
@@ -647,37 +656,6 @@ function measureProjectTitleWidth(title, fontSizePx) {
   return title.getBoundingClientRect().width;
 }
 
-function splitProjectSubheadText(text) {
-  const normalized = text.trim().replace(/\s+/g, ' ');
-  if (!normalized) return ['', ''];
-
-  const sentenceMatch = normalized.match(/^(.+?[.!?])\s+(.+)$/);
-  if (sentenceMatch) {
-    const [, first, second] = sentenceMatch;
-    if (first.length >= normalized.length * 0.2 && second.length >= normalized.length * 0.15) {
-      return [first.trim(), second.trim()];
-    }
-  }
-
-  const words = normalized.split(' ');
-  if (words.length < 2) return [normalized, ''];
-
-  const target = normalized.length / 2;
-  let bestIndex = 1;
-  let bestDiff = Infinity;
-
-  for (let i = 1; i < words.length; i += 1) {
-    const line1 = words.slice(0, i).join(' ');
-    const diff = Math.abs(line1.length - target);
-    if (diff < bestDiff) {
-      bestDiff = diff;
-      bestIndex = i;
-    }
-  }
-
-  return [words.slice(0, bestIndex).join(' '), words.slice(bestIndex).join(' ')];
-}
-
 function normalizeProjectSubheadText(text) {
   return (text ?? '').trim().replace(/\s+/g, ' ');
 }
@@ -694,202 +672,43 @@ function renderProjectSubhead(el, text) {
   if (!el) return;
 
   const normalized = normalizeProjectSubheadText(text);
-  const mode = getProjectSubheadFitMode();
   el.dataset.subheadSource = normalized;
-  el.dataset.subheadFitMode = mode;
-  el.classList.toggle('project-desc--wrap', mode === 'mobile');
   el.replaceChildren();
   el.hidden = !normalized;
 
   if (!normalized) return;
 
-  if (mode === 'mobile') {
-    const row = document.createElement('span');
-    row.className = 'project-desc-line';
-
-    const inner = document.createElement('span');
-    inner.className = 'project-desc-line__text';
-    inner.textContent = normalized;
-
-    row.appendChild(inner);
-    el.appendChild(row);
-    return;
-  }
-
-  const [line1, line2] = splitProjectSubheadText(normalized);
-  [line1, line2].forEach((lineText) => {
-    if (!lineText) return;
-
-    const row = document.createElement('span');
-    row.className = 'project-desc-line';
-
-    const inner = document.createElement('span');
-    inner.className = 'project-desc-line__text';
-    inner.textContent = lineText;
-
-    row.appendChild(inner);
-    el.appendChild(row);
-  });
+  const inner = document.createElement('span');
+  inner.className = 'project-desc-line__text';
+  inner.textContent = normalized;
+  el.appendChild(inner);
 }
 
 function ensureProjectSubheadRendered(el, text) {
   const normalized = normalizeProjectSubheadText(text);
-  const mode = getProjectSubheadFitMode();
   const needsRender =
-    !el.querySelector('.project-desc-line') ||
-    el.dataset.subheadSource !== normalized ||
-    el.dataset.subheadFitMode !== mode;
+    !el.querySelector('.project-desc-line__text') ||
+    el.dataset.subheadSource !== normalized;
 
   if (needsRender) {
     renderProjectSubhead(el, normalized);
   }
 }
 
-function measureProjectSubheadMaxLineWidth(subhead, fontSizePx) {
-  subhead.style.fontSize = `${fontSizePx}px`;
-  const lines = subhead.querySelectorAll('.project-desc-line__text');
-  let maxWidth = 0;
-
-  lines.forEach((line) => {
-    maxWidth = Math.max(maxWidth, line.getBoundingClientRect().width);
-  });
-
-  return maxWidth;
-}
-
-function measureProjectSubheadHorizontalOverflow(subhead, fontSizePx, availableWidth) {
-  subhead.style.fontSize = `${fontSizePx}px`;
-  subhead.style.width = `${availableWidth}px`;
-  subhead.style.maxWidth = `${availableWidth}px`;
-
-  let maxWidth = Math.ceil(subhead.scrollWidth);
-  subhead.querySelectorAll('.project-desc-line__text').forEach((line) => {
-    maxWidth = Math.max(maxWidth, Math.ceil(line.scrollWidth), Math.ceil(line.getBoundingClientRect().width));
-  });
-
-  return Math.max(0, maxWidth - availableWidth);
-}
-
-function fitProjectIntroSubheadMobile({ force = false } = {}) {
+function resetProjectIntroSubheadSize() {
   if (!projectDescEl) return;
 
   const sourceText = getProjectSubheadSourceText(projectDescEl);
   if (!sourceText) return;
 
   ensureProjectSubheadRendered(projectDescEl, sourceText);
-
-  const generation = ++projectSubheadFitGeneration;
-  const availableWidth = Math.round(getProjectTitleFitWidth());
-  if (availableWidth <= 0) return;
-  if (
-    !force &&
-    availableWidth === projectSubheadLastFitWidth &&
-    sourceText === projectSubheadLastFitText &&
-    getProjectSubheadFitMode() === projectSubheadLastFitMode
-  ) {
-    return;
-  }
-
-  const subhead = projectDescEl;
-  const computedMax = Math.round(parseFloat(getComputedStyle(subhead).fontSize)) || PROJECT_SUBHEAD_FIT_MAX_MOBILE;
-  let min = PROJECT_SUBHEAD_FIT_MIN_MOBILE;
-  let max = Math.max(PROJECT_SUBHEAD_FIT_MIN_MOBILE, Math.min(PROJECT_SUBHEAD_FIT_MAX_MOBILE, computedMax));
-  let best = min;
-
-  while (min <= max) {
-    if (generation !== projectSubheadFitGeneration) return;
-
-    const mid = Math.floor((min + max) / 2);
-    const overflow = measureProjectSubheadHorizontalOverflow(subhead, mid, availableWidth);
-    if (overflow <= 0) {
-      best = mid;
-      min = mid + 1;
-    } else {
-      max = mid - 1;
-    }
-  }
-
-  if (generation !== projectSubheadFitGeneration) return;
-
-  let fittedSize = best;
-  while (
-    fittedSize > PROJECT_SUBHEAD_FIT_MIN_MOBILE &&
-    measureProjectSubheadHorizontalOverflow(subhead, fittedSize, availableWidth) > 0
-  ) {
-    fittedSize -= 1;
-  }
-
-  if (generation !== projectSubheadFitGeneration) return;
-
-  subhead.style.fontSize = `${fittedSize}px`;
-  subhead.style.width = `${availableWidth}px`;
-  subhead.style.maxWidth = `${availableWidth}px`;
-  projectSubheadLastFitWidth = availableWidth;
-  projectSubheadLastFitText = sourceText;
-  projectSubheadLastFitMode = getProjectSubheadFitMode();
+  projectDescEl.style.removeProperty('font-size');
+  projectDescEl.style.removeProperty('width');
+  projectDescEl.style.removeProperty('max-width');
 }
 
-function fitProjectIntroSubhead({ force = false } = {}) {
-  if (!projectDescEl) return;
-
-  const sourceText = getProjectSubheadSourceText(projectDescEl);
-  if (!sourceText) return;
-
-  if (getProjectSubheadFitMode() === 'mobile') {
-    fitProjectIntroSubheadMobile({ force });
-    return;
-  }
-
-  ensureProjectSubheadRendered(projectDescEl, sourceText);
-
-  const generation = ++projectSubheadFitGeneration;
-  const availableWidth = Math.round(getProjectTitleFitWidth());
-  if (availableWidth <= 0) return;
-  if (
-    !force &&
-    availableWidth === projectSubheadLastFitWidth &&
-    sourceText === projectSubheadLastFitText &&
-    getProjectSubheadFitMode() === projectSubheadLastFitMode
-  ) {
-    return;
-  }
-
-  const subhead = projectDescEl;
-  subhead.style.width = '';
-  let min = PROJECT_SUBHEAD_FIT_MIN;
-  let max = Math.max(PROJECT_SUBHEAD_FIT_MIN, availableWidth);
-  let best = min;
-
-  while (min <= max) {
-    if (generation !== projectSubheadFitGeneration) return;
-
-    const mid = Math.floor((min + max) / 2);
-    const width = measureProjectSubheadMaxLineWidth(subhead, mid);
-    if (Math.ceil(width) <= availableWidth) {
-      best = mid;
-      min = mid + 1;
-    } else {
-      max = mid - 1;
-    }
-  }
-
-  if (generation !== projectSubheadFitGeneration) return;
-
-  let fittedSize = best;
-  while (
-    fittedSize > PROJECT_SUBHEAD_FIT_MIN &&
-    Math.ceil(measureProjectSubheadMaxLineWidth(subhead, fittedSize)) > availableWidth
-  ) {
-    fittedSize -= 1;
-  }
-
-  if (generation !== projectSubheadFitGeneration) return;
-
-  subhead.style.fontSize = `${fittedSize}px`;
-  subhead.style.maxWidth = 'none';
-  projectSubheadLastFitWidth = availableWidth;
-  projectSubheadLastFitText = sourceText;
-  projectSubheadLastFitMode = getProjectSubheadFitMode();
+function fitProjectIntroSubhead() {
+  resetProjectIntroSubheadSize();
 }
 
 function fitProjectIntroTitle({ force = false } = {}) {
@@ -943,7 +762,7 @@ let projectTitleFitObservedWidth = -1;
 function scheduleProjectTitleFit({ force = false } = {}) {
   requestAnimationFrame(() => {
     fitProjectIntroTitle({ force });
-    fitProjectIntroSubhead({ force });
+    fitProjectIntroSubhead();
   });
 }
 
@@ -951,14 +770,10 @@ function refitProjectIntroTitle() {
   projectTitleLastFitWidth = -1;
   projectTitleLastFitName = '';
   projectTitleFitGeneration += 1;
-  projectSubheadLastFitWidth = -1;
-  projectSubheadLastFitText = '';
-  projectSubheadLastFitMode = '';
-  projectSubheadFitGeneration += 1;
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       fitProjectIntroTitle({ force: true });
-      fitProjectIntroSubhead({ force: true });
+      fitProjectIntroSubhead();
     });
   });
 }
@@ -1032,7 +847,7 @@ function initProjectTitleFit() {
 
   initProjectTitleRipple();
   fitProjectIntroTitle({ force: true });
-  fitProjectIntroSubhead({ force: true });
+  fitProjectIntroSubhead();
 
   const fitWidthSource = projectIntroEl || mainContentEl;
   if (fitWidthSource && typeof ResizeObserver !== 'undefined') {
@@ -1056,9 +871,6 @@ function initProjectTitleFit() {
   window.addEventListener('resize', () => scheduleProjectTitleFit());
 
   const handleSubheadMobileMqChange = () => {
-    projectSubheadLastFitWidth = -1;
-    projectSubheadLastFitText = '';
-    projectSubheadLastFitMode = '';
     scheduleProjectTitleFit({ force: true });
   };
 
@@ -1070,7 +882,7 @@ function initProjectTitleFit() {
 
   const runForcedFit = () => {
     fitProjectIntroTitle({ force: true });
-    fitProjectIntroSubhead({ force: true });
+    fitProjectIntroSubhead();
   };
   const barlowCondensedLoad = document.fonts?.load?.('800 16px "Barlow Condensed"');
   const barlowLoad = document.fonts?.load?.('500 16px Barlow');
@@ -1421,7 +1233,7 @@ function renderShowreelListItem(project, isActive) {
   return `
     <div class="project-item project-item--showreel${isActive ? ' active' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
       <span class="showreel-list-label">
-        ${showreelIconImg}
+        ${showreelIconSvg}
         <span class="text-list project-item-name">${project.name}</span>
       </span>
       <span class="showreel-list-preview" aria-hidden="true">
@@ -2695,9 +2507,6 @@ function initSidebarCollapse() {
     syncSidebarCollapseUi();
     syncStickyHeaderAlignHeight();
     projectTitleLastFitWidth = -1;
-    projectSubheadLastFitWidth = -1;
-    projectSubheadLastFitText = '';
-    projectSubheadLastFitMode = '';
     scheduleProjectTitleFit({ force: true });
     scheduleProjectListLabelCollisionCheck();
   };
@@ -2871,7 +2680,7 @@ if (document.fonts?.ready) {
 
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_WHITE_ENTRY_KEY = 'portfolio-entry-white';
-const PORTFOLIO_LOAD_ENTRY_MS = 920;
+const PORTFOLIO_LOAD_ENTRY_MS = 1100;
 
 function wait(ms) {
   return new Promise((resolve) => window.setTimeout(resolve, ms));
@@ -3941,7 +3750,7 @@ function initMobileBrowserUiInset() {
 initMobileBrowserUiInset();
 initEmailLink(refreshCursor);
 renderProjectList();
-selectProject('affera');
+selectProject('showreel');
 initProjectIntroScroll();
 initStickyHeaderAlignHeightSync();
 initProjectListLabelCollisionSync();

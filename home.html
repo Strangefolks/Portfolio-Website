@@ -10,8 +10,8 @@
       href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250707home-load-entry" />
-    <link rel="preload" href="app.js?v=20250707home-load-entry" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20250707showreel-icon-fix" />
+    <link rel="preload" href="app.js?v=20250707showreel-icon" as="script" />
     <script>
       document.documentElement.classList.add('is-portfolio-load-entry');
     </script>
@@ -242,10 +242,8 @@
                 <div class="detail-title-row">
                   <div class="project-number" id="project-number">01</div>
                   <div class="title-block">
-                    <h1 class="text-title project-title" id="project-title">Affera</h1>
-                    <h3 class="project-desc" id="project-desc">
-                      Software that creates a 3D map of the electrical activity in the heart. Used to treat atrial fibrillation.
-                    </h3>
+                    <h1 class="text-title project-title" id="project-title">Showreel</h1>
+                    <h3 class="project-desc" id="project-desc" hidden></h3>
                   </div>
                 </div>
                 <div class="detail-actions">
@@ -286,7 +284,7 @@
                 <div class="sticky-header__main">
                   <div class="project-number" id="project-number-sticky" aria-hidden="true">01</div>
                   <div class="sticky-header__info">
-                    <h1 class="text-title project-title" id="project-title-sticky">Affera</h1>
+                    <h1 class="text-title project-title" id="project-title-sticky">Showreel</h1>
                   </div>
                   <div class="sticky-header__actions">
                     <button
@@ -416,61 +414,75 @@
                   </div>
                   <div class="project-info-panel__prose" id="project-info-panel-prose"></div>
                   <div class="project-info-panel__meta-grid">
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Teammates</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Sarah Chen<br />James O'Brien<br />Priya Nair<br />Marcus Webb</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Teammates</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Sarah Chen<br />James O'Brien<br />Priya Nair<br />Marcus Webb</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Time spent</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">18 months</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Time spent</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">18 months</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">My role</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Lead UX/UI designer</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Team size</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">9 cross-functional partners</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">My role</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Lead UX/UI designer</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Research</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">22 interviews, 6 shadow sessions</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Validation</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">4 usability rounds</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Team size</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">9 cross-functional partners</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Deliverables</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Wireframes, UI kit, redlines</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Prototypes</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">40+ interactive flows</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Research</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">22 interviews, 6 shadow sessions</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Tools</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Figma, FigJam, Principle</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Methods</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Workshops, concept testing</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Validation</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">4 usability rounds</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Platform</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Desktop + iPad clinical app</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Status</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Shipped to pilot sites</span>
+                      </div>
                     </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Deliverables</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Wireframes, UI kit, redlines</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Prototypes</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">40+ interactive flows</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Tools</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Figma, FigJam, Principle</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Methods</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Workshops, concept testing</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Platform</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Desktop + iPad clinical app</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Status</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Shipped to pilot sites</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Company</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Medtronic Diabetes</span>
-                    </div>
-                    <div class="project-info-panel__meta-cell">
-                      <span class="text-label project-info-panel__meta-label">Timeline</span>
-                      <span class="text-ui-sm project-info-panel__meta-value">Mar 2023 – Sep 2024</span>
+                    <div class="project-info-panel__meta-row">
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Company</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Medtronic Diabetes</span>
+                      </div>
+                      <div class="project-info-panel__meta-cell">
+                        <span class="text-label project-info-panel__meta-label">Timeline</span>
+                        <span class="text-ui-sm project-info-panel__meta-value">Mar 2023 – Sep 2024</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -698,6 +710,6 @@
     <script src="copyright.js?v=20250630overlay-polish"></script>
     <script src="pull-to-refresh.js?v=20250630info-panel-slide"></script>
     <script src="email-copy.js?v=20250630batch-v1"></script>
-    <script src="app.js?v=20250707home-load-entry"></script>
+    <script src="app.js?v=20250707showreel-icon"></script>
   </body>
 </html>

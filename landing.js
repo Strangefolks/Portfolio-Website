@@ -200,11 +200,9 @@ let syncLandingStarburstMorph = () => {};
 
 function initLandingStarburstMorph() {
   const pathEl = document.querySelector('.landing-starburst-path');
-  const link = document.getElementById('landing-starburst-link');
-  if (!pathEl || !link) return;
+  if (!pathEl) return;
 
-  const basePath = pathEl.getAttribute('d') || '';
-  const segments = parseSvgPath(basePath);
+  const segments = parseSvgPath(pathEl.getAttribute('d') || '');
   if (!segments.length) return;
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -256,24 +254,11 @@ function initLandingStarburstMorph() {
     rafId = requestAnimationFrame(tick);
   };
 
-  const stop = () => {
-    running = false;
-    if (rafId) {
-      cancelAnimationFrame(rafId);
-      rafId = 0;
-    }
-    motionSpeed = 1;
-    warpSpeed = 1;
-    pathEl.setAttribute('d', basePath);
+  syncLandingStarburstMorph = () => {
+    start();
   };
 
-  syncLandingStarburstMorph = () => {
-    if (document.body.classList.contains('is-landing-expanded')) {
-      start();
-      return;
-    }
-    stop();
-  };
+  start();
 
   document.addEventListener('visibilitychange', () => {
     isPaused = document.visibilityState !== 'visible';
@@ -299,20 +284,21 @@ function updateLandingBurstAnchor(link, { expandedLayout = false } = {}) {
   let coverWidth;
   let coverHeight;
 
-  if (isExpandedLayout && !useViewportAnchor) {
+  if (isExpandedLayout) {
     cx = landingRect.width / 2;
     cy = landingRect.height / 2;
     coverWidth = landingRect.width;
     coverHeight = landingRect.height;
+  } else if (useViewportAnchor) {
+    cx = rect.left + rect.width / 2;
+    cy = rect.top + rect.height / 2;
+    coverWidth = window.innerWidth;
+    coverHeight = window.innerHeight;
   } else {
-    cx = useViewportAnchor
-      ? rect.left + rect.width / 2
-      : rect.left + rect.width / 2 - landingRect.left;
-    cy = useViewportAnchor
-      ? rect.top + rect.height / 2
-      : rect.top + rect.height / 2 - landingRect.top;
-    coverWidth = useViewportAnchor ? window.innerWidth : landingRect.width;
-    coverHeight = useViewportAnchor ? window.innerHeight : landingRect.height;
+    cx = rect.left + rect.width / 2 - landingRect.left;
+    cy = rect.top + rect.height / 2 - landingRect.top;
+    coverWidth = landingRect.width;
+    coverHeight = landingRect.height;
   }
 
   const maxDist = Math.max(
@@ -339,7 +325,10 @@ function initLandingBurstAnchor(link) {
   const landing = link.closest('.landing');
   const update = () => {
     updateLandingBurstAnchor(link, {
-      expandedLayout: document.body.classList.contains('is-landing-expanded'),
+      expandedLayout:
+        document.body.classList.contains('is-landing-expanded')
+        || document.body.classList.contains('is-landing-intro')
+        || document.body.classList.contains('is-landing-intro-pending'),
     });
   };
 
@@ -606,31 +595,40 @@ function initLandingIntro() {
 
   if (!link || !pending) {
     root.classList.remove('is-landing-intro-pending');
-    document.body.classList.remove('is-landing-intro-pending', 'is-landing-intro');
+    document.body.classList.remove(
+      'is-landing-intro-pending',
+      'is-landing-intro',
+      'is-landing-intro-grow'
+    );
     return;
   }
 
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     root.classList.remove('is-landing-intro-pending');
-    document.body.classList.remove('is-landing-intro-pending', 'is-landing-intro');
+    document.body.classList.remove(
+      'is-landing-intro-pending',
+      'is-landing-intro',
+      'is-landing-intro-grow'
+    );
     return;
   }
 
-  document.body.classList.add('is-landing-intro');
-
   const restRect = link.getBoundingClientRect();
   link.style.setProperty('--burst-rest-size', `${Math.round(restRect.width)}px`);
-  document.body.classList.add('is-landing-expanded');
   updateLandingBurstAnchor(link, { expandedLayout: true });
 
+  document.body.classList.add('is-landing-intro');
   root.classList.remove('is-landing-intro-pending');
   document.body.classList.remove('is-landing-intro-pending');
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      setLandingExpanded(link, false);
+      document.body.classList.add('is-landing-intro-grow');
       window.setTimeout(() => {
-        document.body.classList.remove('is-landing-intro');
+        document.body.classList.remove('is-landing-intro', 'is-landing-intro-grow');
+        requestAnimationFrame(() => {
+          updateLandingBurstAnchor(link);
+        });
       }, LANDING_INTRO_MS);
     });
   });
