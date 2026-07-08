@@ -9,16 +9,6 @@ function isCopyrightMobileLayout() {
   return COPYRIGHT_MOBILE_LAYOUT_MQ.matches;
 }
 
-function wait(ms) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
-
-function flushLayout(element) {
-  void (element || document.body).offsetHeight;
-}
-
 function isCopyrightOverlayBlocked() {
   return (
     copyrightOverlayBusy
@@ -292,7 +282,6 @@ function initCopyrightOverlay() {
   if (!stage) return;
 
   bindCopyrightFooterButtons();
-  void ensureCopyrightMounted(stage);
 }
 
 if (document.body.classList.contains('copyright-page')) {

@@ -1,5 +1,4 @@
 const PROFILE_SLIDE_DURATION_MS = 560;
-const PROFILE_SLIDE_STAGGER_MS = 110;
 const PROFILE_MOBILE_LAYOUT_MQ = window.matchMedia('(max-width: 560px)');
 
 function isProfileMobileLayout() {
@@ -10,16 +9,6 @@ const PROFILE_NAME_FIT_MIN = 12;
 let profileOverlayBusy = false;
 let profileOverlayScrollTop = 0;
 let profileNameFitResizeBound = false;
-
-function wait(ms) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
-
-function flushLayout(element) {
-  void (element || document.body).offsetHeight;
-}
 
 function refreshProfileBurstArt(scope = document) {
   const burstImg = scope.querySelector('.profile-burst-art');
@@ -195,10 +184,10 @@ function initProfileNameFit(scope = document) {
       runFit();
     }
 
-    const barlowCondensedLoad = document.fonts?.load?.('800 16px "Barlow Condensed"');
-    if (barlowCondensedLoad) {
+    const ibmPlexMonoLoad = document.fonts?.load?.('700 16px "IBM Plex Mono"');
+    if (ibmPlexMonoLoad) {
       try {
-        await barlowCondensedLoad;
+        await ibmPlexMonoLoad;
       } catch {
         // Font loading can fail quietly; refit with whatever is available.
       }
@@ -347,12 +336,11 @@ function bindProfileAvatarTrigger() {
   });
 }
 
-async function initProfileOverlay() {
+function initProfileOverlay() {
   const stage = document.getElementById('profile-stage');
   if (!stage) return;
 
   bindProfileAvatarTrigger();
-  await ensureProfileMounted(stage);
 }
 
 if (document.body.classList.contains('profile-page')) {

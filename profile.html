@@ -7,20 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=Barlow+Condensed:wght@500;600;800&family=IBM+Plex+Mono:wght@300;400;500&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500&family=IBM+Plex+Mono:wght@300;400;500;600;700&family=Saira+Extra+Condensed:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250630top-banner-border" />
-    <script>
-      (function () {
-        var theme = 'light';
-        try {
-          var saved = localStorage.getItem('theme');
-          if (saved === 'dark' || saved === 'light') theme = saved;
-        } catch (e) {}
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
+    <link rel="stylesheet" href="styles.css?v=20250707fluid-v1" />
+    <script src="theme-init.js?v=20250707cleanup-v1"></script>
     <script src="entry-guard.js"></script>
   </head>
   <body class="profile-page is-profile-enter-pending">
@@ -33,7 +24,6 @@
         } catch (e) {}
       })();
     </script>
-    <div class="site-grain" aria-hidden="true"></div>
     <div class="cursor-dot" id="cursor-dot" aria-hidden="true">
       <span class="cursor-dot-label text-label">Copy</span>
     </div>
@@ -364,11 +354,14 @@
 
     <div class="copyright-stage" id="copyright-stage" hidden aria-hidden="true"></div>
 
-    <script src="cursor.js?v=20250630batch-v1"></script>
-    <script src="email-copy.js?v=20250630batch-v1"></script>
+    <script src="shared.js?v=20250707cleanup-v1"></script>
+    <script src="fluid-ripple.js?v=20250707fluid-v1"></script>
+    <script src="cursor.js?v=20250707cleanup-v1"></script>
+    <script src="email-copy.js?v=20250707cleanup-v1"></script>
     <script src="scrollbar.js"></script>
-    <script src="pull-to-refresh.js?v=20250630batch-v1"></script>
-    <script src="profile.js?v=20250630batch-v1"></script>
-    <script src="copyright.js?v=20250630batch-v1"></script>
+    <script src="pull-to-refresh.js?v=20250707cleanup-v1"></script>
+    <script src="profile.js?v=20250707ibm-plex-mono-v1"></script>
+    <script src="copyright.js?v=20250707cleanup-v1"></script>
+    <div class="site-grain" aria-hidden="true"></div>
   </body>
 </html>

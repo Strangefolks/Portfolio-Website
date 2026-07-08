@@ -1,5 +1,4 @@
 const ABOUT_SLIDE_DURATION_MS = 560;
-const ABOUT_SLIDE_STAGGER_MS = 110;
 const ABOUT_MOBILE_LAYOUT_MQ = window.matchMedia('(max-width: 560px)');
 
 function isAboutMobileLayout() {
@@ -37,16 +36,6 @@ async function loadAboutPanel(targetId, url, scope = document) {
     svg.classList.add('about-panel-svg');
     svg.removeAttribute('aria-hidden');
   }
-}
-
-function wait(ms) {
-  return new Promise((resolve) => {
-    window.setTimeout(resolve, ms);
-  });
-}
-
-function flushLayout(element) {
-  void (element || document.body).offsetHeight;
 }
 
 function setAboutEnterPending(host) {
@@ -288,10 +277,10 @@ async function prepareAboutStoryLayout(scope = document) {
       applyLayout();
     }
 
-    const barlowCondensedLoad = document.fonts?.load?.('800 16px "Barlow Condensed"');
-    if (barlowCondensedLoad) {
+    const ibmPlexMonoLoad = document.fonts?.load?.('700 16px "IBM Plex Mono"');
+    if (ibmPlexMonoLoad) {
       try {
-        await barlowCondensedLoad;
+        await ibmPlexMonoLoad;
       } catch {
         // Font loading can fail quietly; refit with whatever is available.
       }
@@ -522,7 +511,7 @@ function initAboutPage() {
   })();
 }
 
-async function initAboutOverlay() {
+function initAboutOverlay() {
   const stage = document.getElementById('about-stage');
   if (!stage) return;
 
@@ -534,7 +523,6 @@ async function initAboutOverlay() {
     });
   }
 
-  await ensureAboutMounted(stage);
 }
 
 if (document.body.classList.contains('about-page')) {

@@ -529,8 +529,8 @@ const showreelIconSvg = `<svg class="project-item-icon showreel-item-icon" viewB
         <circle cx="0" cy="4.0598" r="1.06864" fill="currentColor"/>
         <circle cx="4.0601" cy="0" r="1.06864" fill="currentColor"/>
         <circle cx="-4.0596" cy="0" r="1.06864" fill="currentColor"/>
-        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
   </g>
@@ -591,10 +591,26 @@ const mainContentEl = document.getElementById('main-content');
 const filterButtons = document.querySelectorAll('.filter-pill');
 
 let projectIntroLastScrollTop = 0;
-let projectIntroStickyResizeTimer;
+let mobileChromeLastScrollTop = 0;
+let layoutResizeTimer;
+let layoutResizeSyncBound = false;
+
+function scheduleLayoutResizeSync() {
+  window.clearTimeout(layoutResizeTimer);
+  layoutResizeTimer = window.setTimeout(() => {
+    populateFooterMarquee();
+    syncProjectIntroStickyFromScroll();
+  }, 120);
+}
+
+function bindLayoutResizeSync() {
+  if (layoutResizeSyncBound) return;
+
+  layoutResizeSyncBound = true;
+  window.addEventListener('resize', scheduleLayoutResizeSync);
+}
 let projectIntroStickyVisible = false;
 let mobileChromeHidden = false;
-let mobileChromeLastScrollTop = 0;
 
 const MOBILE_CHROME_SCROLL_THRESHOLD = 8;
 let stickyHeaderAlignResizeObserver;
@@ -868,7 +884,7 @@ function initProjectTitleFit() {
     projectTitleFitObserver.observe(fitWidthSource);
   }
 
-  window.addEventListener('resize', () => scheduleProjectTitleFit());
+  registerViewportSync(() => scheduleProjectTitleFit());
 
   const handleSubheadMobileMqChange = () => {
     scheduleProjectTitleFit({ force: true });
@@ -884,11 +900,11 @@ function initProjectTitleFit() {
     fitProjectIntroTitle({ force: true });
     fitProjectIntroSubhead();
   };
-  const barlowCondensedLoad = document.fonts?.load?.('800 16px "Barlow Condensed"');
+  const ibmPlexMonoLoad = document.fonts?.load?.('700 16px "IBM Plex Mono"');
   const barlowLoad = document.fonts?.load?.('500 16px Barlow');
   const subheadLoad = document.fonts?.load?.('600 16px "Saira Extra Condensed"');
-  if (barlowCondensedLoad) {
-    barlowCondensedLoad.then(runForcedFit).catch(runForcedFit);
+  if (ibmPlexMonoLoad) {
+    ibmPlexMonoLoad.then(runForcedFit).catch(runForcedFit);
   }
   if (barlowLoad) {
     barlowLoad.then(runForcedFit).catch(runForcedFit);
@@ -974,7 +990,7 @@ function initStickyHeaderAlignHeightSync() {
     if (metadataRowCompactEl) stickyHeaderAlignResizeObserver.observe(metadataRowCompactEl);
   }
 
-  window.addEventListener('resize', syncStickyHeaderAlignHeight);
+  registerViewportSync(syncStickyHeaderAlignHeight);
   if (document.fonts?.ready) {
     document.fonts.ready.then(syncStickyHeaderAlignHeight);
   }
@@ -1097,13 +1113,7 @@ function initProjectIntroScroll() {
   projectIntroLastScrollTop = mainContentEl.scrollTop;
   mobileChromeLastScrollTop = mainContentEl.scrollTop;
   mainContentEl.addEventListener('scroll', onMainContentScroll, { passive: true });
-  window.addEventListener('resize', () => {
-    window.clearTimeout(projectIntroStickyResizeTimer);
-    projectIntroStickyResizeTimer = window.setTimeout(() => {
-      syncStickyHeaderAlignHeight();
-      syncProjectIntroStickyFromScroll();
-    }, 120);
-  });
+  bindLayoutResizeSync();
   syncProjectIntroStickyFromScroll();
 }
 
@@ -1447,6 +1457,7 @@ function renderProjectList() {
 
   bindProjectListItems();
   bindProjectInfoTooltips();
+  syncProjectListLoadEntryStagger();
   scheduleProjectListLabelCollisionCheck();
   syncMobileProjectTabLabel();
   refreshCustomScrollbar(projectListEl);
@@ -1646,11 +1657,7 @@ function bindProjectInfoTooltips() {
   };
 
   window.addEventListener('scroll', repositionProjectInfoTooltip, true);
-  window.addEventListener('resize', repositionProjectInfoTooltip);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') hideProjectInfoTooltip();
-  });
+  registerViewportSync(repositionProjectInfoTooltip);
 
   document.addEventListener('mousedown', (e) => {
     if (!projectInfoTooltipEl?.classList.contains('is-visible')) return;
@@ -1838,18 +1845,6 @@ filterButtons.forEach((btn) => {
   btn.addEventListener('click', () => setFilter(btn.dataset.filter));
 });
 
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
-  if (shouldSkipProjectListKeyboardNav(e)) return;
-
-  const direction = e.key === 'ArrowUp' ? -1 : 1;
-  const moved = navigateFilteredProject(direction);
-
-  if (moved || e.target.closest('.project-list, .project-item')) {
-    e.preventDefault();
-  }
-});
-
 projectListEl.addEventListener('mousemove', () => {
   setProjectListKeyboardNav(false);
 });
@@ -2015,7 +2010,7 @@ function initProjectListLabelCollisionSync() {
     if (projectListEl) projectListLabelCollisionObserver.observe(projectListEl);
   }
 
-  window.addEventListener('resize', scheduleProjectListLabelCollisionCheck);
+  registerViewportSync(scheduleProjectListLabelCollisionCheck);
   if (document.fonts?.ready) {
     document.fonts.ready.then(scheduleProjectListLabelCollisionCheck);
   }
@@ -2651,7 +2646,7 @@ sidebarResizer.addEventListener('keydown', (e) => {
   }
 });
 
-window.addEventListener('resize', () => {
+registerViewportSync(() => {
   if (isSidebarCollapsed() || isSidebarOverlayPanel()) return;
 
   const current = getSidebarWidthPx();
@@ -2680,10 +2675,15 @@ if (document.fonts?.ready) {
 
 const PORTFOLIO_ENTRY_KEY = 'portfolio-entry-from-landing';
 const PORTFOLIO_WHITE_ENTRY_KEY = 'portfolio-entry-white';
-const PORTFOLIO_LOAD_ENTRY_MS = 1100;
+const PORTFOLIO_LOAD_ENTRY_MS = 1200;
 
-function wait(ms) {
-  return new Promise((resolve) => window.setTimeout(resolve, ms));
+function syncProjectListLoadEntryStagger() {
+  const root = document.documentElement;
+  if (!root.classList.contains('is-portfolio-load-entry') || !projectListEl) return;
+
+  projectListEl.querySelectorAll('.project-item').forEach((item, index) => {
+    item.style.setProperty('--load-entry-item-index', String(index));
+  });
 }
 
 function finishPortfolioLoadEntry(root) {
@@ -2714,6 +2714,7 @@ async function initPortfolioLoadEntry() {
   root.classList.remove('is-portfolio-load-entry-animate');
   root.classList.remove('is-portfolio-entry-animate');
   root.dataset.portfolioEntryAnimateAt = String(Date.now());
+  syncProjectListLoadEntryStagger();
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -2767,16 +2768,8 @@ function populateFooterMarquee() {
   populateMarqueeTrack(footerMarqueeTrack, footerShell, 'footer-marquee-segment');
 }
 
-let footerMarqueeResizeTimer;
-window.addEventListener('resize', () => {
-  window.clearTimeout(footerMarqueeResizeTimer);
-  footerMarqueeResizeTimer = window.setTimeout(() => {
-    populateFooterMarquee();
-    syncStickyHeaderAlignHeight();
-  }, 120);
-});
-
 populateFooterMarquee();
+bindLayoutResizeSync();
 
 const projectInfoBtnEl = document.getElementById('project-info-btn');
 const projectInfoBtnStickyEl = document.getElementById('project-info-btn-sticky');
@@ -2937,19 +2930,12 @@ function initProjectInfoPanel() {
   mainContentEl?.addEventListener('click', handleInfoButtonClick);
   projectInfoPanelCloseEl?.addEventListener('click', closeProjectInfoPanel);
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && isProjectInfoPanelOpen()) {
-      closeProjectInfoPanel();
-    }
-  });
-
   const schedulePanelBoundsSync = () => {
     if (!projectInfoPanelOpen) return;
     requestAnimationFrame(syncProjectInfoPanelBounds);
   };
 
-  window.addEventListener('resize', schedulePanelBoundsSync);
-  window.visualViewport?.addEventListener('resize', schedulePanelBoundsSync);
+  registerViewportSync(schedulePanelBoundsSync);
 
   if (typeof ResizeObserver !== 'undefined' && mainContentEl) {
     const panelBoundsObserver = new ResizeObserver(schedulePanelBoundsSync);
@@ -3249,30 +3235,6 @@ function copyGalleryLink(text) {
   return Promise.resolve(copyTextFallback(text));
 }
 
-function copyTextFallback(text) {
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.setAttribute('readonly', '');
-  textarea.style.position = 'fixed';
-  textarea.style.left = '-9999px';
-  textarea.style.top = '0';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  textarea.setSelectionRange(0, text.length);
-
-  let copied = false;
-  try {
-    copied = document.execCommand('copy');
-  } catch {
-    copied = false;
-  }
-
-  document.body.removeChild(textarea);
-  return copied;
-}
-
 function bindGalleryCopyLinks(root = projectGallery) {
   if (!root) return;
 
@@ -3531,21 +3493,6 @@ function initSketchbookLightbox() {
       closeSketchbookLightbox();
     }
   });
-
-  document.addEventListener('keydown', (event) => {
-    if (!isSketchbookLightboxOpen()) return;
-
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      closeSketchbookLightbox();
-    } else if (event.key === 'ArrowLeft') {
-      event.preventDefault();
-      navigateSketchbookLightbox(-1);
-    } else if (event.key === 'ArrowRight') {
-      event.preventDefault();
-      navigateSketchbookLightbox(1);
-    }
-  });
 }
 
 const showreelLightboxEl = document.getElementById('showreel-lightbox');
@@ -3664,15 +3611,6 @@ function initShowreelLightbox() {
       closeShowreelLightbox();
     }
   });
-
-  document.addEventListener('keydown', (event) => {
-    if (!isShowreelLightboxOpen()) return;
-
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      closeShowreelLightbox();
-    }
-  });
 }
 
 function setLogofolioColorMode(mode) {
@@ -3725,6 +3663,60 @@ projectLockPasswordEl?.addEventListener('keydown', (e) => {
   }
 });
 
+function initGlobalKeyboardHandlers() {
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      if (isShowreelLightboxOpen()) {
+        event.preventDefault();
+        closeShowreelLightbox();
+        return;
+      }
+
+      if (isSketchbookLightboxOpen()) {
+        event.preventDefault();
+        closeSketchbookLightbox();
+        return;
+      }
+
+      if (isProjectInfoPanelOpen()) {
+        closeProjectInfoPanel();
+        return;
+      }
+
+      if (projectInfoTooltipEl?.classList.contains('is-visible')) {
+        hideProjectInfoTooltip();
+      }
+
+      return;
+    }
+
+    if (isSketchbookLightboxOpen()) {
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        navigateSketchbookLightbox(-1);
+        return;
+      }
+
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        navigateSketchbookLightbox(1);
+      }
+
+      return;
+    }
+
+    if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
+    if (shouldSkipProjectListKeyboardNav(event)) return;
+
+    const direction = event.key === 'ArrowUp' ? -1 : 1;
+    const moved = navigateFilteredProject(direction);
+
+    if (moved || event.target.closest('.project-list, .project-item')) {
+      event.preventDefault();
+    }
+  });
+}
+
 initTheme();
 const refreshCursor = initCustomCursor();
 
@@ -3741,10 +3733,7 @@ function initMobileBrowserUiInset() {
   };
 
   sync();
-  window.visualViewport?.addEventListener('resize', sync);
-  window.visualViewport?.addEventListener('scroll', sync);
-  window.addEventListener('resize', sync);
-  window.addEventListener('orientationchange', sync);
+  registerViewportSync(sync);
 }
 
 initMobileBrowserUiInset();
@@ -3758,4 +3747,5 @@ initProjectTitleFit();
 initCustomScrollbars();
 initSketchbookLightbox();
 initShowreelLightbox();
+initGlobalKeyboardHandlers();
 void initPortfolioLoadEntry();

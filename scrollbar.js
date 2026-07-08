@@ -8,8 +8,27 @@ const CUSTOM_SCROLLBAR_SELECTORS = [
 ];
 
 const customScrollbarStates = new WeakMap();
+const activeCustomScrollbars = new Set();
+let customScrollbarResizeRafId = 0;
+let customScrollbarResizeBound = false;
 
 const CUSTOM_SCROLLBAR_THUMB_LENGTH = 20;
+
+function scheduleAllCustomScrollbarSync() {
+  if (customScrollbarResizeRafId) return;
+
+  customScrollbarResizeRafId = requestAnimationFrame(() => {
+    customScrollbarResizeRafId = 0;
+    activeCustomScrollbars.forEach((scrollable) => syncCustomScrollbar(scrollable));
+  });
+}
+
+function bindCustomScrollbarResizeSync() {
+  if (customScrollbarResizeBound) return;
+
+  customScrollbarResizeBound = true;
+  window.addEventListener('resize', scheduleAllCustomScrollbarSync);
+}
 
 function getCustomScrollbarMetrics(scrollable) {
   const { scrollTop, scrollHeight, clientHeight } = scrollable;
@@ -69,7 +88,8 @@ function bindCustomScrollbar(scrollable) {
   };
 
   scrollable.addEventListener('scroll', scheduleSync, { passive: true });
-  window.addEventListener('resize', scheduleSync);
+  activeCustomScrollbars.add(scrollable);
+  bindCustomScrollbarResizeSync();
 
   if (typeof ResizeObserver !== 'undefined') {
     const resizeObserver = new ResizeObserver(scheduleSync);

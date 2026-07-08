@@ -10,8 +10,8 @@
         <circle cx="0" cy="4.0598" r="1.06864" fill="currentColor"/>
         <circle cx="4.0601" cy="0" r="1.06864" fill="currentColor"/>
         <circle cx="-4.0596" cy="0" r="1.06864" fill="currentColor"/>
-        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
   </g>

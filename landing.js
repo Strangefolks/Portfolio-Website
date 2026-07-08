@@ -1,14 +1,3 @@
-function initTheme() {
-  let theme = 'light';
-  try {
-    const saved = localStorage.getItem('theme');
-    if (saved === 'dark' || saved === 'light') theme = saved;
-  } catch (_) {}
-  document.documentElement.setAttribute('data-theme', theme);
-}
-
-initTheme();
-
 const LANDING_META_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
 
 function alignLandingMetaColumnsWithEmail() {
@@ -215,8 +204,10 @@ function initLandingStarburstMorph() {
   let lastTick = 0;
   let motionSpeed = 1;
   let warpSpeed = 1;
-  const MOTION_SPEED_EXPANDED = 3;
-  const WARP_SPEED_EXPANDED = 18;
+  const MOTION_SPEED_IDLE = 4;
+  const WARP_SPEED_IDLE = 5;
+  const MOTION_SPEED_EXPANDED = 7;
+  const WARP_SPEED_EXPANDED = 26;
   const SPEED_RAMP_RATE = 6;
 
   const tick = (now) => {
@@ -227,8 +218,8 @@ function initLandingStarburstMorph() {
       lastTick = now;
 
       const isExpanded = document.body.classList.contains('is-landing-expanded');
-      const targetMotion = isExpanded ? MOTION_SPEED_EXPANDED : 1;
-      const targetWarp = isExpanded ? WARP_SPEED_EXPANDED : 1;
+      const targetMotion = isExpanded ? MOTION_SPEED_EXPANDED : MOTION_SPEED_IDLE;
+      const targetWarp = isExpanded ? WARP_SPEED_EXPANDED : WARP_SPEED_IDLE;
       const blend = dt > 0 ? 1 - Math.exp(-SPEED_RAMP_RATE * dt) : 0;
 
       motionSpeed += (targetMotion - motionSpeed) * blend;
@@ -325,10 +316,7 @@ function initLandingBurstAnchor(link) {
   const landing = link.closest('.landing');
   const update = () => {
     updateLandingBurstAnchor(link, {
-      expandedLayout:
-        document.body.classList.contains('is-landing-expanded')
-        || document.body.classList.contains('is-landing-intro')
-        || document.body.classList.contains('is-landing-intro-pending'),
+      expandedLayout: document.body.classList.contains('is-landing-expanded'),
     });
   };
 
@@ -613,10 +601,6 @@ function initLandingIntro() {
     return;
   }
 
-  const restRect = link.getBoundingClientRect();
-  link.style.setProperty('--burst-rest-size', `${Math.round(restRect.width)}px`);
-  updateLandingBurstAnchor(link, { expandedLayout: true });
-
   document.body.classList.add('is-landing-intro');
   root.classList.remove('is-landing-intro-pending');
   document.body.classList.remove('is-landing-intro-pending');
@@ -625,9 +609,17 @@ function initLandingIntro() {
     requestAnimationFrame(() => {
       document.body.classList.add('is-landing-intro-grow');
       window.setTimeout(() => {
+        const linkEl = document.getElementById('landing-starburst-link');
+        if (linkEl) {
+          linkEl.style.transition = 'none';
+          linkEl.style.transform = 'none';
+        }
         document.body.classList.remove('is-landing-intro', 'is-landing-intro-grow');
         requestAnimationFrame(() => {
-          updateLandingBurstAnchor(link);
+          if (linkEl) {
+            linkEl.style.removeProperty('transition');
+            linkEl.style.removeProperty('transform');
+          }
         });
       }, LANDING_INTRO_MS);
     });
