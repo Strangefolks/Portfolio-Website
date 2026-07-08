@@ -613,6 +613,7 @@ let projectIntroStickyVisible = false;
 let mobileChromeHidden = false;
 
 const MOBILE_CHROME_SCROLL_THRESHOLD = 8;
+const PROJECT_LIST_TAP_MOVE_THRESHOLD = 10;
 let stickyHeaderAlignResizeObserver;
 
 const PROJECT_INTRO_STICKY_ENTER_OFFSET = 1;
@@ -900,14 +901,10 @@ function initProjectTitleFit() {
     fitProjectIntroTitle({ force: true });
     fitProjectIntroSubhead();
   };
-  const ibmPlexMonoLoad = document.fonts?.load?.('700 16px "IBM Plex Mono"');
-  const barlowLoad = document.fonts?.load?.('500 16px Barlow');
-  const subheadLoad = document.fonts?.load?.('600 16px "Saira Extra Condensed"');
-  if (ibmPlexMonoLoad) {
-    ibmPlexMonoLoad.then(runForcedFit).catch(runForcedFit);
-  }
-  if (barlowLoad) {
-    barlowLoad.then(runForcedFit).catch(runForcedFit);
+  const titleLoad = document.fonts?.load?.('700 16px Barlow');
+  const subheadLoad = document.fonts?.load?.('500 16px Barlow');
+  if (titleLoad) {
+    titleLoad.then(runForcedFit).catch(runForcedFit);
   }
   if (subheadLoad) {
     subheadLoad.then(runForcedFit).catch(runForcedFit);
@@ -1297,26 +1294,89 @@ function activateProjectListItem(projectId) {
   selectProject(projectId);
 }
 
+let projectListTouchBound = false;
+let projectListTouchStartX = 0;
+let projectListTouchStartY = 0;
+let projectListTouchMoved = false;
+let projectListTouchScrollTop = 0;
+
+function getProjectListScrollContainer() {
+  return projectListEl?.closest('.project-list-viewport') || projectListEl;
+}
+
+function bindProjectListTouchSelection() {
+  if (!projectListEl || projectListTouchBound || !isTouchProjectListUi()) return;
+
+  projectListTouchBound = true;
+
+  projectListEl.addEventListener(
+    'touchstart',
+    (event) => {
+      const touch = event.changedTouches[0];
+      if (!touch) return;
+
+      projectListTouchStartX = touch.clientX;
+      projectListTouchStartY = touch.clientY;
+      projectListTouchMoved = false;
+
+      const scrollEl = getProjectListScrollContainer();
+      projectListTouchScrollTop = scrollEl?.scrollTop ?? 0;
+    },
+    { passive: true }
+  );
+
+  projectListEl.addEventListener(
+    'touchmove',
+    (event) => {
+      const touch = event.touches[0];
+      if (!touch) return;
+
+      if (
+        Math.abs(touch.clientX - projectListTouchStartX) > PROJECT_LIST_TAP_MOVE_THRESHOLD
+        || Math.abs(touch.clientY - projectListTouchStartY) > PROJECT_LIST_TAP_MOVE_THRESHOLD
+      ) {
+        projectListTouchMoved = true;
+      }
+    },
+    { passive: true }
+  );
+
+  projectListEl.addEventListener(
+    'touchend',
+    (event) => {
+      const item = event.target.closest('.project-item');
+      if (!item) return;
+      if (event.target.closest('.project-item-info')) return;
+
+      const scrollEl = getProjectListScrollContainer();
+      const scrolled = scrollEl && scrollEl.scrollTop !== projectListTouchScrollTop;
+
+      if (projectListTouchMoved || scrolled) return;
+
+      event.preventDefault();
+      activateProjectListItem(item.dataset.id, item);
+    },
+    { passive: false }
+  );
+}
+
 function bindProjectListItems() {
+  bindProjectListTouchSelection();
+
   const touchUi = isTouchProjectListUi();
 
   projectListEl.querySelectorAll('.project-item').forEach((item) => {
     if (touchUi) {
-      item.addEventListener(
-        'touchend',
-        (e) => {
-          if (e.target.closest('.project-item-info')) return;
-          e.preventDefault();
-          activateProjectListItem(item.dataset.id, item);
-        },
-        { passive: false }
-      );
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+      });
+    } else {
+      item.addEventListener('click', (e) => {
+        if (e.target.closest('.project-item-info')) return;
+        activateProjectListItem(item.dataset.id, item);
+      });
     }
 
-    item.addEventListener('click', (e) => {
-      if (e.target.closest('.project-item-info')) return;
-      activateProjectListItem(item.dataset.id, item);
-    });
     item.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();

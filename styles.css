@@ -31,8 +31,8 @@
   --font-sans: 'Barlow', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
   --font-project-title: 'IBM Plex Mono', monospace;
-  --font-project-detail-title: 'IBM Plex Mono', monospace;
-  --font-project-subhead: 'Saira Extra Condensed', sans-serif;
+  --font-project-detail-title: 'Barlow', system-ui, sans-serif;
+  --font-project-subhead: var(--font-sans);
   --font-family-sans: var(--font-sans);
   --font-family-display: var(--font-project-title);
   --text-size-overline: 10px;
@@ -522,8 +522,8 @@ h6,
 /* Project subhead — tall condensed display (project details only) */
 .project-intro .project-desc {
   font-family: var(--font-project-subhead);
-  font-size: calc(var(--text-size-project-subhead) * 2);
-  font-weight: 600;
+  font-size: calc(var(--text-size-project-subhead) * 1.5);
+  font-weight: var(--text-weight-medium);
   line-height: var(--text-leading-subhead);
   letter-spacing: var(--text-tracking-project-subhead);
   text-transform: uppercase;
@@ -2871,7 +2871,7 @@ body.is-about-open .project-nav-hint {
 .sticky-header .project-title {
   --detail-title-size: var(--sticky-title-size);
   font-family: var(--font-project-detail-title);
-  font-weight: 700;
+  font-weight: var(--text-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   flex: 0 1 auto;
@@ -3087,7 +3087,7 @@ body.is-about-open .project-nav-hint {
 
 .project-intro .project-title {
   font-family: var(--font-project-detail-title);
-  font-weight: 700;
+  font-weight: var(--text-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   display: block;
@@ -7245,7 +7245,7 @@ body.is-about-layout-measuring .about-layer {
 .about-panel-right h1.about-story-title.project-title {
   margin: 0;
   font-family: var(--font-project-detail-title) !important;
-  font-weight: 700 !important;
+  font-weight: var(--text-weight-bold) !important;
   font-size: unset;
   text-transform: uppercase !important;
   letter-spacing: 0.03em !important;
@@ -7773,7 +7773,7 @@ body.profile-page > .page-wrapper > .app.app--profile {
 .profile-content .profile-name {
   margin: 0;
   font-family: var(--font-project-detail-title);
-  font-weight: 700;
+  font-weight: var(--text-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   display: flex;
@@ -9872,7 +9872,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     line-clamp: unset !important;
     overflow: visible !important;
     font-family: var(--font-project-detail-title) !important;
-    font-weight: 700 !important;
+    font-weight: var(--text-weight-bold) !important;
     text-transform: uppercase !important;
     letter-spacing: 0.03em !important;
     line-height: 0.82 !important;
@@ -9897,6 +9897,11 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     margin: 6px 0 0 !important;
     white-space: normal !important;
     overflow-wrap: break-word !important;
+  }
+
+  [data-theme='light'] .about-panel-right .project-desc.about-story-subhead,
+  [data-theme='light'] .about-panel-right .about-story-subhead {
+    color: var(--text-primary) !important;
   }
 
   .about-story-title-block {
@@ -10186,6 +10191,15 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     border-color: var(--red-close-btn-bg);
     color: #ffffff;
     box-shadow: var(--red-close-btn-outer-border);
+    outline: none;
+  }
+
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):hover,
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):focus,
+  .mobile-project-nav-btn:not(.sketchbook-lightbox__nav-btn):focus-visible {
+    background: var(--brand-blue);
+    color: #ffffff;
+    box-shadow: 0 4px 16px rgba(0, 94, 255, 0.28);
     outline: none;
   }
 
@@ -10686,6 +10700,22 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     display: none !important;
   }
 
+  /* About: pin close to viewport top-right while layout scrolls. */
+  .about-layer--black {
+    transform: none !important;
+    will-change: auto !important;
+  }
+
+  .about-layer--black > .about-close.header-shade-close {
+    display: flex !important;
+    position: fixed !important;
+    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+    left: auto !important;
+    bottom: auto !important;
+    z-index: 140 !important;
+  }
+
   /* Profile blue-layer close: top-right of blue panel. */
   .profile-layer--blue > .profile-close.header-shade-close {
     display: flex !important;
@@ -11055,8 +11085,8 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 }
 
 .copyright-symbol {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
   font-size: clamp(96px, 18vw, 240px);
   line-height: 0.82;
   letter-spacing: -0.04em;
@@ -11087,8 +11117,8 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 }
 
 .copyright-panel-name {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 700;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 800;
   font-size: clamp(22px, 2.4vw, 32px);
   line-height: 1;
   letter-spacing: 0.06em;

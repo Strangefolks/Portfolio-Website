@@ -277,10 +277,10 @@ async function prepareAboutStoryLayout(scope = document) {
       applyLayout();
     }
 
-    const ibmPlexMonoLoad = document.fonts?.load?.('700 16px "IBM Plex Mono"');
-    if (ibmPlexMonoLoad) {
+    const titleLoad = document.fonts?.load?.('700 16px Barlow');
+    if (titleLoad) {
       try {
-        await ibmPlexMonoLoad;
+        await titleLoad;
       } catch {
         // Font loading can fail quietly; refit with whatever is available.
       }
