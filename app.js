@@ -901,7 +901,7 @@ function initProjectTitleFit() {
     fitProjectIntroTitle({ force: true });
     fitProjectIntroSubhead();
   };
-  const titleLoad = document.fonts?.load?.('700 16px Barlow');
+  const titleLoad = document.fonts?.load?.('700 16px BoldineRegular');
   const subheadLoad = document.fonts?.load?.('500 16px Barlow');
   if (titleLoad) {
     titleLoad.then(runForcedFit).catch(runForcedFit);
@@ -956,23 +956,10 @@ function getStickyHeaderFixedHeight() {
 function syncStickyHeaderAlignHeight() {
   if (!sidebarEl) return;
 
-  if (isSidebarMobileDropdown()) {
-    /* Collapsed mobile project view: use fixed single-row chrome (sidebar header is hidden) */
-    if (isSidebarCollapsed()) {
-      document.documentElement.style.setProperty('--sticky-header-align-height', getStickyHeaderFixedHeight());
-      return;
-    }
-
-    if (sidebarHeader) {
-      const height = measureSidebarHeaderSourceHeight();
-      if (height != null) {
-        applyStickyHeaderAlignHeight(height);
-      }
-    }
-    return;
-  }
-
-  /* Desktop/tablet: fixed height from CSS — do not mirror sidebar filter height */
+  /*
+   * Phone/tablet overlays cover the project details underlay. Keep sticky-header
+   * height frozen so open/close cannot resize the body behind the drawer.
+   */
   document.documentElement.style.setProperty('--sticky-header-align-height', getStickyHeaderFixedHeight());
 }
 
@@ -1974,7 +1961,7 @@ const SIDEBAR_COLLAPSED_KEY = 'sidebar-collapsed';
 const SIDEBAR_COLLAPSE_MQ = window.matchMedia('(min-width: 901px)');
 const SIDEBAR_OVERLAY_MQ = window.matchMedia('(max-width: 900px)');
 const SIDEBAR_MOBILE_MQ = window.matchMedia('(max-width: 560px)');
-const SIDEBAR_MOBILE_PANEL_MS = 400;
+const SIDEBAR_MOBILE_PANEL_MS = 360;
 const PROJECT_LABEL_COLLISION_THRESHOLD = 2;
 
 let previousSidebarWidth = null;
@@ -2247,8 +2234,14 @@ function syncSidebarCollapseUi() {
   syncMobileProjectTabLabel();
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 function waitForMobilePanelTransition() {
-  return waitForElementPropertyTransition(sidebarEl, 'transform', SIDEBAR_MOBILE_PANEL_MS + 80);
+  if (prefersReducedMotion()) return Promise.resolve();
+  /* Panel 360ms; content catch-up finishes ~420ms — give transform end a little buffer */
+  return waitForElementPropertyTransition(sidebarEl, 'transform', SIDEBAR_MOBILE_PANEL_MS + 100);
 }
 
 function waitForMobilePanelCloseTransitions() {
@@ -2295,102 +2288,144 @@ function clearMobilePanelAnimationState() {
   );
 }
 
-async function expandSidebarMobileAnimated() {
-  if (!isSidebarMobileDropdown() || !isSidebarCollapsed() || sidebarMobilePanelAnimating) return;
-
-  sidebarMobilePanelAnimating = true;
-  setMobileChromeHidden(false);
-  document.body.classList.add('sidebar-mobile-panel-opening');
-  document.body.classList.remove('sidebar-collapsed');
-  syncMobileProjectTabLabel();
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      document.body.classList.add('sidebar-mobile-panel-opening-active');
-    });
-  });
-
-  await waitForMobilePanelTransition();
-
-  endMobilePanelPhase('sidebar-mobile-panel-opening');
-  document.body.classList.add('sidebar-mobile-panel-expanded');
-  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'false');
-  sidebarMobilePanelAnimating = false;
-  syncSidebarCollapseUi();
-  syncStickyHeaderAlignHeight();
-  projectTitleLastFitWidth = -1;
-  scheduleProjectTitleFit();
-  scheduleProjectListLabelCollisionCheck();
+function captureMainScrollTop() {
+  return mainContentEl?.scrollTop ?? 0;
 }
 
-async function collapseSidebarMobileAnimated() {
-  if (!isSidebarMobileDropdown() || isSidebarCollapsed() || sidebarMobilePanelAnimating) return;
+function restoreMainScrollTop(scrollTop) {
+  if (!mainContentEl || !Number.isFinite(scrollTop)) return;
+  mainContentEl.scrollTop = scrollTop;
+  projectIntroLastScrollTop = scrollTop;
+  mobileChromeLastScrollTop = scrollTop;
+}
 
-  sidebarMobilePanelAnimating = true;
-  setMobileChromeHidden(false);
-  document.body.classList.remove('sidebar-mobile-panel-expanded');
-  document.body.classList.add('sidebar-mobile-panel-closing');
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      document.body.classList.add('sidebar-mobile-panel-closing-active');
+/** Keep underlay scroll frozen across overlay class/layout work (incl. post-rAF). */
+function preserveMainScrollDuring(work) {
+  const scrollTop = captureMainScrollTop();
+  const restore = () => restoreMainScrollTop(scrollTop);
+  const result = work(restore);
+
+  if (result && typeof result.then === 'function') {
+    return result.finally(() => {
+      restore();
+      requestAnimationFrame(restore);
     });
+  }
+
+  restore();
+  requestAnimationFrame(restore);
+  return result;
+}
+
+async function expandSidebarOverlayAnimated() {
+  if (!isSidebarOverlayPanel() || !isSidebarCollapsed() || sidebarMobilePanelAnimating) return;
+
+  return preserveMainScrollDuring(async () => {
+    sidebarMobilePanelAnimating = true;
+    setMobileChromeHidden(false);
+    document.body.classList.add('sidebar-mobile-panel-opening');
+    document.body.classList.remove('sidebar-collapsed');
+    syncMobileProjectTabLabel();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.body.classList.add('sidebar-mobile-panel-opening-active');
+      });
+    });
+
+    await waitForMobilePanelTransition();
+
+    endMobilePanelPhase('sidebar-mobile-panel-opening');
+    document.body.classList.add('sidebar-mobile-panel-expanded');
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'false');
+    sidebarMobilePanelAnimating = false;
+    syncSidebarCollapseUi();
+    syncStickyHeaderAlignHeight();
+    scheduleProjectListLabelCollisionCheck();
   });
+}
 
-  await waitForMobilePanelCloseTransitions();
+async function collapseSidebarOverlayAnimated() {
+  if (!isSidebarOverlayPanel() || isSidebarCollapsed() || sidebarMobilePanelAnimating) return;
 
-  endMobilePanelPhase('sidebar-mobile-panel-closing');
-  document.body.classList.add('sidebar-collapsed');
-  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
-  sidebarMobilePanelAnimating = false;
-  syncSidebarCollapseUi();
-  syncStickyHeaderAlignHeight();
-  projectTitleLastFitWidth = -1;
-  scheduleProjectTitleFit();
-  scheduleProjectListLabelCollisionCheck();
+  return preserveMainScrollDuring(async () => {
+    sidebarMobilePanelAnimating = true;
+    setMobileChromeHidden(false);
+    document.body.classList.remove('sidebar-mobile-panel-expanded');
+    document.body.classList.add('sidebar-mobile-panel-closing');
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        document.body.classList.add('sidebar-mobile-panel-closing-active');
+      });
+    });
+
+    await waitForMobilePanelCloseTransitions();
+
+    endMobilePanelPhase('sidebar-mobile-panel-closing');
+    document.body.classList.add('sidebar-collapsed');
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
+    sidebarMobilePanelAnimating = false;
+    syncSidebarCollapseUi();
+    syncStickyHeaderAlignHeight();
+    scheduleProjectListLabelCollisionCheck();
+  });
+}
+
+/** @deprecated alias — phone + tablet overlays share the LTR drawer animation */
+function expandSidebarMobileAnimated() {
+  return expandSidebarOverlayAnimated();
+}
+
+/** @deprecated alias — phone + tablet overlays share the LTR drawer animation */
+function collapseSidebarMobileAnimated() {
+  return collapseSidebarOverlayAnimated();
 }
 
 function toggleSidebarMobileDropdown() {
-  if (!isSidebarMobileDropdown() || sidebarMobilePanelAnimating) return;
+  if (!isSidebarOverlayPanel() || sidebarMobilePanelAnimating) return;
 
   if (isSidebarCollapsed()) {
-    expandSidebarMobileAnimated();
+    expandSidebarOverlayAnimated();
   } else {
-    collapseSidebarMobileAnimated();
+    collapseSidebarOverlayAnimated();
   }
 }
 
 function collapseSidebarOverlayInstant() {
   if (isSidebarCollapsed()) return;
 
-  clearMobilePanelAnimationState();
-  document.body.classList.remove('sidebar-mobile-panel-expanded');
-  document.body.classList.add('sidebar-collapsed');
-  setSidebarPanelToggleX(false);
-  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
-  syncSidebarCollapseUi();
-  syncStickyHeaderAlignHeight();
-  projectTitleLastFitWidth = -1;
-  scheduleProjectTitleFit({ force: true });
-  scheduleProjectListLabelCollisionCheck();
+  preserveMainScrollDuring(() => {
+    clearMobilePanelAnimationState();
+    document.body.classList.remove('sidebar-mobile-panel-expanded');
+    document.body.classList.add('sidebar-collapsed');
+    setSidebarPanelToggleX(false);
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'true');
+    syncSidebarCollapseUi();
+    syncStickyHeaderAlignHeight();
+    scheduleProjectListLabelCollisionCheck();
+  });
 }
 
 function expandSidebarOverlayInstant() {
   if (!isSidebarCollapsed()) return;
 
-  document.body.classList.remove('sidebar-collapsed');
-  setSidebarPanelToggleX(false);
-  localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'false');
-  syncSidebarCollapseUi();
-  syncStickyHeaderAlignHeight();
-  projectTitleLastFitWidth = -1;
-  scheduleProjectTitleFit();
-  scheduleProjectListLabelCollisionCheck();
+  preserveMainScrollDuring(() => {
+    document.body.classList.remove('sidebar-collapsed');
+    document.body.classList.add('sidebar-mobile-panel-expanded');
+    setSidebarPanelToggleX(false);
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, 'false');
+    syncSidebarCollapseUi();
+    syncStickyHeaderAlignHeight();
+    scheduleProjectListLabelCollisionCheck();
+  });
 }
 
 function toggleSidebarOverlayPanel() {
+  if (sidebarMobilePanelAnimating) return;
+
   if (isSidebarCollapsed()) {
-    expandSidebarOverlayInstant();
+    expandSidebarOverlayAnimated();
   } else {
-    collapseSidebarOverlayInstant();
+    collapseSidebarOverlayAnimated();
   }
 }
 
@@ -2398,13 +2433,8 @@ function collapseSidebar() {
   if (!isSidebarCollapseEnabled() || isSidebarCollapsed()) return;
   if (document.body.classList.contains('sidebar-desktop-closing')) return;
 
-  if (isSidebarMobileDropdown()) {
-    collapseSidebarMobileAnimated();
-    return;
-  }
-
-  if (isSidebarOverlayPanelOnly()) {
-    collapseSidebarOverlayInstant();
+  if (isSidebarOverlayPanel()) {
+    collapseSidebarOverlayAnimated();
     return;
   }
 
@@ -2445,13 +2475,8 @@ function expandSidebar() {
   if (!isSidebarCollapsed()) return;
   if (document.body.classList.contains('sidebar-desktop-opening')) return;
 
-  if (isSidebarMobileDropdown()) {
-    expandSidebarMobileAnimated();
-    return;
-  }
-
-  if (isSidebarOverlayPanelOnly()) {
-    expandSidebarOverlayInstant();
+  if (isSidebarOverlayPanel()) {
+    expandSidebarOverlayAnimated();
     return;
   }
 
@@ -2513,17 +2538,12 @@ function initSidebarCollapse() {
 
   syncSidebarCollapseUi();
 
-  if (isSidebarMobileDropdown() && !isSidebarCollapsed()) {
+  if (isSidebarOverlayPanel() && !isSidebarCollapsed()) {
     document.body.classList.add('sidebar-mobile-panel-expanded');
   }
 
   sidebarCollapseBtn?.addEventListener('click', (event) => {
     event.stopPropagation();
-
-    if (isSidebarMobileDropdown()) {
-      toggleSidebarMobileDropdown();
-      return;
-    }
 
     if (isSidebarOverlayPanel()) {
       toggleSidebarOverlayPanel();

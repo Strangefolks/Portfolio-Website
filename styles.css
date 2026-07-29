@@ -4,6 +4,16 @@
   padding: 0;
 }
 
+@font-face {
+  font-family: "BoldineRegular";
+  src:
+    url("assets/MyWebfontsKit/webFonts/BoldineRegular/font.woff2") format("woff2"),
+    url("assets/MyWebfontsKit/webFonts/BoldineRegular/font.woff") format("woff");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --bg-page: #000000;
   --bg-app: var(--bg-main);
@@ -30,8 +40,9 @@
   --app-shadow: 0 32px 100px rgba(0, 0, 0, 0.12);
   --font-sans: 'Barlow', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', monospace;
+  --font-display: 'BoldineRegular', sans-serif;
   --font-project-title: 'IBM Plex Mono', monospace;
-  --font-project-detail-title: 'Barlow', system-ui, sans-serif;
+  --font-project-detail-title: var(--font-display);
   --font-project-subhead: var(--font-sans);
   --font-family-sans: var(--font-sans);
   --font-family-display: var(--font-project-title);
@@ -91,7 +102,7 @@
   --project-item-highlight-gap: 3px;
   --red-close-btn-size: 28px;
   --red-close-btn-bg: #ff0000;
-  --red-close-btn-hover-bg: color-mix(in srgb, #ffffff 16%, #ff0000);
+  --red-close-btn-hover-bg: color-mix(in srgb, #000000 16%, #ff0000);
   --red-close-btn-hover-border: color-mix(in srgb, #000000 10%, #ff0000);
   --red-close-btn-active-bg: #cc0000;
   --red-close-btn-outer-border: 0 0 0 0.5px #000000;
@@ -2851,7 +2862,7 @@ body.is-about-open .project-nav-hint {
   margin: 0;
   --project-number-size: var(--sticky-project-number-size);
   box-shadow: inset 0 0 0 var(--detail-border-width) var(--sticky-header-line);
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.1em;
@@ -2984,7 +2995,7 @@ body.is-about-open .project-nav-hint {
 }
 
 .project-intro .project-number {
-  font-family: var(--font-sans);
+  font-family: var(--font-display);
   font-weight: 800;
   color: #000000;
   letter-spacing: 0.1em;
@@ -5962,26 +5973,23 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     pointer-events: none;
   }
 
+  /*
+   * Shared overlay elevation only — do NOT use position:fixed here.
+   * Tablet (561–900) keeps the drawer absolute inside .app so open/close cannot
+   * paint over the black page frame. Phone (≤560) sets viewport-fixed separately.
+   */
   body:not(.sidebar-collapsed) .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: auto;
-    width: 100%;
-    min-width: 0;
-    height: 100dvh;
-    max-height: 100dvh;
     opacity: 1;
     pointer-events: auto;
     box-shadow: none;
     z-index: 105;
   }
 
-  body:not(.sidebar-collapsed):not(.landing-page):not(.about-page):not(.profile-page) .header-shell {
-    transform: translateY(-100%);
-    pointer-events: none;
-  }
+  /*
+   * Overlay drawer covers header/footer inside .app — do not translate the header
+   * away. Hiding it made the underlay reappear oversized on close (header slide-back
+   * + layout refit), which read as a scale-down on the background body.
+   */
 
   .sidebar-resizer {
     display: none;
@@ -6080,6 +6088,30 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
 
 /* Tablet / narrow: overlay projects panel — main keeps full width when panel opens */
 @media (max-width: 900px) and (min-width: 561px) {
+  :root {
+    --sidebar-mobile-panel-duration: 0.36s;
+    --sidebar-mobile-panel-ease: var(--ease-soft);
+    --sidebar-panel-content-duration: 0.22s;
+    --sidebar-panel-content-ease: var(--ease-soft);
+    --sidebar-panel-content-delay: 0.16s;
+    --sidebar-panel-content-delay-list: 0.2s;
+    --sidebar-panel-content-shift: 12px;
+  }
+
+  /*
+   * Clip LTR drawer to the framed white shell. Viewport-fixed escapes overflow and
+   * paints over the black page padding — absolute + overflow:hidden prevents that.
+   * Avoid clip-path/transform here: they would trap the fixed footer’s containing block.
+   */
+  .app,
+  .app-chrome {
+    overflow: hidden;
+  }
+
+  .app-chrome {
+    border-radius: var(--app-inner-radius);
+  }
+
   .body {
     flex-direction: column;
   }
@@ -6090,7 +6122,10 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     width: 0;
     min-width: 0;
     height: 0;
-    overflow: visible;
+    overflow: hidden;
+    pointer-events: none;
+    visibility: hidden;
+    transform: translateX(-100%);
   }
 
   .main {
@@ -6100,38 +6135,144 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     transition: none;
   }
 
+  /*
+   * Freeze underlay layout while the overlay is open. Expanding padding (and the
+   * ensuing title refit) made close reveal a larger body that then snapped smaller.
+   */
   body.sidebar-collapsed .main,
   body:not(.sidebar-collapsed) .main,
   body.sidebar-overlay-panel .main {
     flex: 1 1 100%;
     width: 100%;
     max-width: 100%;
-  }
-
-  body.sidebar-collapsed .main {
     --main-inline-padding: calc(
       var(--sidebar-reopen-tab-width) + var(--sidebar-collapsed-content-gap)
     );
-  }
-
-  body:not(.sidebar-collapsed) .main,
-  body.sidebar-overlay-panel:not(.sidebar-collapsed) .main {
-    --main-inline-padding: var(--main-inline-padding-expanded);
   }
 
   body.sidebar-collapsed .body > .sidebar-reopen-tab {
     z-index: 6;
   }
 
-  body.sidebar-collapsed .sticky-header {
+  body.sidebar-collapsed .sticky-header,
+  body:not(.sidebar-collapsed) .sticky-header {
     padding-inline: var(--main-inline-padding);
   }
 
-  body:not(.sidebar-collapsed) .sidebar {
-    z-index: 105;
+  /*
+   * Contained overlay: LTR drawer is absolute inside .app-chrome (never fixed).
+   * While open, .body is position:static so the panel’s containing block is
+   * .app-chrome (covers header + body + footer chrome). Phone stays full-bleed.
+   */
+  body.sidebar-mobile-panel-opening .body,
+  body.sidebar-mobile-panel-expanded .body,
+  body.sidebar-mobile-panel-closing .body,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .body {
+    position: static;
+    overflow: visible;
   }
 
-  /* Pin footer to visible viewport — in-flow flex footer was clipped on iPad Safari */
+  body.sidebar-mobile-panel-opening .sidebar,
+  body.sidebar-mobile-panel-expanded .sidebar,
+  body.sidebar-mobile-panel-closing .sidebar,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar {
+    position: absolute;
+    inset: 0;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    max-height: none;
+    border-radius: var(--app-inner-radius);
+    overflow: hidden;
+    z-index: 105;
+    visibility: visible;
+    pointer-events: auto;
+    background: var(--bg-projects-panel);
+    will-change: transform;
+    transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
+  }
+
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar {
+    transform: translateX(-100%);
+    transition: none;
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar,
+  body.sidebar-mobile-panel-expanded .sidebar,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar {
+    transform: translateX(0);
+    transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
+  }
+
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar {
+    transform: translateX(0);
+  }
+
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar {
+    transform: translateX(-100%);
+    transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
+  }
+
+  /* Content catches up after the drawer panel — soft delayed ease-in */
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--sidebar-panel-content-shift)));
+    transition: none;
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .filters {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: var(--sidebar-panel-content-delay);
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: var(--sidebar-panel-content-delay-list);
+  }
+
+  /* Resting open: hold final content pose; keep soft transition so late catch-up can finish */
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-mobile-panel-content .project-list-viewport,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing)
+    .sidebar-mobile-panel-content
+    .filters,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing)
+    .sidebar-mobile-panel-content
+    .project-list-viewport {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: 0s;
+  }
+
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--sidebar-panel-content-shift)));
+    transition:
+      opacity calc(var(--sidebar-panel-content-duration) * 0.75) var(--ease-smooth),
+      transform calc(var(--sidebar-panel-content-duration) * 0.75) var(--ease-smooth);
+    transition-delay: 0s;
+  }
+
+  /*
+   * Pin footer to viewport (iPad Safari). Once fixed, it leaves .app flow/paint, so the
+   * .app border no longer wraps it — paint L/R/B chrome here to keep one continuous frame.
+   * overflow:hidden keeps bottom radius once fixed out of .app.
+   */
   body:not(.landing-page):not(.about-page):not(.profile-page) .footer-shell {
     position: fixed;
     left: var(--window-padding);
@@ -6140,8 +6281,18 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     width: auto;
     z-index: 102;
     border-radius: 0 0 var(--window-radius) var(--window-radius);
+    overflow: hidden;
+    border-left: var(--site-chrome-border-width) solid var(--bg-sidebar);
+    border-right: var(--site-chrome-border-width) solid var(--bg-sidebar);
+    border-bottom: var(--site-chrome-border-width) solid var(--bg-sidebar);
     /* safe-area is in bottom above — base .footer-shell padding-bottom would double it */
     padding-bottom: 0;
+  }
+
+  [data-theme='dark'] body:not(.landing-page):not(.about-page):not(.profile-page) .footer-shell {
+    border-left-color: var(--site-chrome-border);
+    border-right-color: var(--site-chrome-border);
+    border-bottom-color: var(--site-chrome-border);
   }
 
   body:not(.landing-page):not(.about-page):not(.profile-page) .footer {
@@ -6155,14 +6306,46 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
   }
 }
 
+@media (max-width: 900px) and (min-width: 561px) and (prefers-reduced-motion: reduce) {
+  body.sidebar-mobile-panel-opening .sidebar,
+  body.sidebar-mobile-panel-expanded .sidebar,
+  body.sidebar-mobile-panel-closing .sidebar,
+  body:not(.sidebar-collapsed) .sidebar,
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .project-list-viewport {
+    transition: none !important;
+    transition-delay: 0s !important;
+    transform: none;
+    opacity: 1;
+    will-change: auto;
+  }
+
+  body.sidebar-collapsed .sidebar {
+    transform: none;
+  }
+}
+
 @media (max-width: 560px) {
   :root {
     --window-padding: 20px;
     --mobile-chrome-padding: 20px;
     --window-radius: 0;
     --content-radius: 0;
-    --sidebar-mobile-panel-duration: var(--sidebar-desktop-duration);
+    --sidebar-mobile-panel-duration: 0.36s;
     --sidebar-mobile-panel-ease: var(--ease-soft);
+    --sidebar-panel-content-duration: 0.22s;
+    --sidebar-panel-content-ease: var(--ease-soft);
+    --sidebar-panel-content-delay: 0.16s;
+    --sidebar-panel-content-delay-list: 0.2s;
+    --sidebar-panel-content-shift: 12px;
     --sidebar-mobile-toggle-size: 40px;
     --sticky-header-padding-block: 0;
     --sticky-header-host-stuck-top: 0px;
@@ -6242,16 +6425,9 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
   }
 
   .header {
-    padding-inline: var(--mobile-chrome-padding);
-  }
-
-  body.sidebar-collapsed .header {
+    /* Keep underlay header frozen while the full-screen projects overlay is open */
     padding-left: 0;
-  }
-
-  body:not(.sidebar-collapsed) .header-shell {
-    transform: none;
-    pointer-events: auto;
+    padding-right: var(--mobile-chrome-padding);
   }
 
   .header .logo-part--wordmark {
@@ -6518,8 +6694,9 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
 
   .about-layer--blue,
   .profile-layer--blue {
-    min-height: 100svh;
-    height: auto;
+    min-height: 90vh;
+    height: 90vh;
+    max-height: 90vh;
     border-radius: 0;
     box-shadow: none;
   }
@@ -6544,11 +6721,6 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
   .profile-panel-right.custom-scrollbar-viewport {
     overflow: visible;
     max-height: none;
-  }
-
-  .about-layer--black > .about-close.header-shade-close,
-  .profile-layer--black > .profile-close.header-shade-close {
-    z-index: 140;
   }
 
   .body {
@@ -6594,6 +6766,7 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     display: flex;
     flex-direction: column;
     background: var(--bg-projects-panel);
+    /* Phone overlay: park off-screen left, slide in LTR (matches desktop drawer) */
     transform: translateX(-100%);
     transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
     will-change: transform;
@@ -6620,24 +6793,110 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     z-index: 110;
   }
 
-  body.sidebar-mobile-panel-opening .sidebar {
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar {
     transform: translateX(-100%);
+    transition: none;
   }
 
   body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar,
   body.sidebar-mobile-panel-expanded .sidebar,
   body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing) .sidebar {
     transform: translateX(0);
+    transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
   }
 
-  body.sidebar-mobile-panel-closing .sidebar {
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar {
     transform: translateX(0);
   }
 
   body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar {
     transform: translateX(-100%);
+    transition: transform var(--sidebar-mobile-panel-duration) var(--sidebar-mobile-panel-ease);
   }
 
+  /* Content catches up after the drawer panel — soft delayed ease-in */
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening:not(.sidebar-mobile-panel-opening-active) .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--sidebar-panel-content-shift)));
+    transition: none;
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .filters {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: var(--sidebar-panel-content-delay);
+  }
+
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: var(--sidebar-panel-content-delay-list);
+  }
+
+  /* Resting open: hold final content pose; keep soft transition so late catch-up can finish */
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing:not(.sidebar-mobile-panel-closing-active) .sidebar-mobile-panel-content .project-list-viewport,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing)
+    .sidebar-mobile-panel-content
+    .filters,
+  body:not(.sidebar-collapsed):not(.sidebar-mobile-panel-opening):not(.sidebar-mobile-panel-closing)
+    .sidebar-mobile-panel-content
+    .project-list-viewport {
+    opacity: 1;
+    transform: translateX(0);
+    transition:
+      opacity var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease),
+      transform var(--sidebar-panel-content-duration) var(--sidebar-panel-content-ease);
+    transition-delay: 0s;
+  }
+
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--sidebar-panel-content-shift)));
+    transition:
+      opacity calc(var(--sidebar-panel-content-duration) * 0.75) var(--ease-smooth),
+      transform calc(var(--sidebar-panel-content-duration) * 0.75) var(--ease-smooth);
+    transition-delay: 0s;
+  }
+}
+
+@media (max-width: 560px) and (prefers-reduced-motion: reduce) {
+  .sidebar,
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening.sidebar-mobile-panel-opening-active .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-expanded .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .project-list-viewport {
+    transition: none !important;
+    transition-delay: 0s !important;
+    will-change: auto;
+  }
+
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-opening .sidebar-mobile-panel-content .project-list-viewport,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .filters,
+  body.sidebar-mobile-panel-closing.sidebar-mobile-panel-closing-active .sidebar-mobile-panel-content .project-list-viewport {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
   .sidebar-mobile-panel-content {
     display: flex;
     flex-direction: column;
@@ -7057,8 +7316,9 @@ body.about-page > .page-wrapper > .app.app--about {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  will-change: transform;
-  transform: translateX(0);
+  /* Avoid translateX(0)/will-change trapping position:fixed close to the layer */
+  will-change: auto;
+  transform: none;
   --about-slide-offset: -105%;
 }
 
@@ -7085,18 +7345,21 @@ body.about-page > .page-wrapper > .app.app--about {
 .is-about-enter-pending .about-layer {
   transform: translateX(var(--about-slide-offset));
   transition: none;
+  will-change: transform;
 }
 
 /* Enter from left: blue leads, black follows (reverse of exit) */
 .is-about-entering .about-layer--blue {
   transform: translateX(0);
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
+  will-change: transform;
   z-index: 3;
 }
 
 .is-about-entering .about-layer--black {
   transform: translateX(0);
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
+  will-change: transform;
   z-index: 1;
 }
 
@@ -7104,12 +7367,14 @@ body.about-page > .page-wrapper > .app.app--about {
 .is-about-exiting .about-layer--blue {
   transform: translateX(var(--about-slide-offset-exit));
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
+  will-change: transform;
   z-index: 3;
 }
 
 .is-about-exiting .about-layer--black {
   transform: translateX(var(--about-slide-offset));
   transition: transform var(--about-slide-duration) var(--about-slide-ease);
+  will-change: transform;
   z-index: 1;
 }
 
@@ -7236,8 +7501,9 @@ body.is-about-story-layout-pending .about-panel-right .project-text {
 }
 
 body.is-about-layout-measuring .about-layer {
-  transform: translateX(0) !important;
+  transform: none !important;
   transition: none !important;
+  will-change: auto !important;
 }
 
 .about-panel-right h1.about-story-title,
@@ -7384,13 +7650,46 @@ body.is-about-layout-measuring .about-layer {
   margin-bottom: 8px;
 }
 
-.about-layer--black > .about-close.header-shade-close,
-.profile-layer--black > .profile-close.header-shade-close {
+/*
+ * Close lives inside the sliding panels (not a parallel full-width chrome).
+ * Desktop: content (black) panel — top-right of the story card.
+ * Stacked ≤900px: hero (blue) panel — top-right above the blue block, no bottom-row snap.
+ * translateX % is relative to the transformed element; hosting inside the panel
+ * keeps the X locked to that panel’s enter/exit motion.
+ */
+.about-layer--black > .about-close--content.header-shade-close,
+.profile-layer--black > .profile-close--content.header-shade-close,
+.about-layer--blue > .about-close--hero.header-shade-close,
+.profile-layer--blue > .profile-close--hero.header-shade-close {
   position: absolute;
   top: calc(12px + env(safe-area-inset-top, 0px));
   right: calc(12px + env(safe-area-inset-right, 0px));
   left: auto;
   bottom: auto;
+  z-index: 140;
+  pointer-events: auto;
+}
+
+.about-layer--black > .about-close--content.header-shade-close,
+.profile-layer--black > .profile-close--content.header-shade-close {
+  display: flex;
+}
+
+.about-layer--blue > .about-close--hero.header-shade-close,
+.profile-layer--blue > .profile-close--hero.header-shade-close {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .about-layer--black > .about-close--content.header-shade-close,
+  .profile-layer--black > .profile-close--content.header-shade-close {
+    display: none;
+  }
+
+  .about-layer--blue > .about-close--hero.header-shade-close,
+  .profile-layer--blue > .profile-close--hero.header-shade-close {
+    display: flex;
+  }
 }
 
 .about-close.header-shade-close {
@@ -7421,33 +7720,79 @@ body.is-about-layout-measuring .about-layer {
 }
 
 @media (max-width: 900px) and (min-width: 561px) {
+  /* Stacked 1-col: animate and rest in the same orientation (no post-enter snap) */
+  body.about-page > .page-wrapper > .app.app--about,
+  body.profile-page > .page-wrapper > .app.app--profile {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .about-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .about-layer {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
     width: 100%;
-    height: 50%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    --about-slide-offset: -115%;
   }
 
   .about-layer--blue {
-    top: 0;
-    left: 0;
+    order: -1;
+    flex-shrink: 0;
     width: 100%;
-    height: calc(50% + 2px);
+    height: 90vh;
+    min-height: 90vh;
+    max-height: 90vh;
+    overflow: hidden;
     border-radius: 0;
+    box-shadow: none;
+    --about-slide-offset: -115%;
+    --about-slide-offset-exit: -115%;
   }
 
   .about-layer--black {
-    top: 50%;
-    left: 0;
+    order: 1;
+    flex-shrink: 0;
+    top: auto;
+    left: auto;
+    width: 100%;
     --about-slide-offset: -115%;
     border-radius: 0;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: none;
   }
 
   [data-theme='light'] .about-layer--black {
     box-shadow: none;
   }
 
+  .about-layer--black > .custom-scrollbar-wrap {
+    flex: none;
+    min-height: 0;
+  }
+
   .about-panel-left {
     min-height: 0;
+  }
+
+  .about-panel-right,
+  .about-panel-right.custom-scrollbar-viewport {
+    overflow: visible;
+    max-height: none;
   }
 
   .about-panel-right .project-text {
@@ -7536,8 +7881,9 @@ body.profile-page > .page-wrapper > .app.app--profile {
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  will-change: transform;
-  transform: translateX(0);
+  /* Avoid translateX(0)/will-change trapping position:fixed close to the layer */
+  will-change: auto;
+  transform: none;
   --profile-slide-offset: 105%;
 }
 
@@ -7573,18 +7919,21 @@ body.profile-page > .page-wrapper > .app.app--profile {
 .is-profile-enter-pending .profile-layer {
   transform: translateX(var(--profile-slide-offset));
   transition: none;
+  will-change: transform;
 }
 
 /* Enter from right: blue panel leads, black follows (reverse of exit) */
 .is-profile-entering .profile-layer--blue {
   transform: translateX(0);
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
+  will-change: transform;
   z-index: 3;
 }
 
 .is-profile-entering .profile-layer--black {
   transform: translateX(0);
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
+  will-change: transform;
   z-index: 1;
 }
 
@@ -7592,12 +7941,14 @@ body.profile-page > .page-wrapper > .app.app--profile {
 .is-profile-exiting .profile-layer--blue {
   transform: translateX(var(--profile-slide-offset-exit));
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
+  will-change: transform;
   z-index: 3;
 }
 
 .is-profile-exiting .profile-layer--black {
   transform: translateX(var(--profile-slide-offset));
   transition: transform var(--profile-slide-duration) var(--profile-slide-ease);
+  will-change: transform;
   z-index: 1;
 }
 
@@ -8149,34 +8500,70 @@ button.profile-avatar-trigger {
     inset: 0;
   }
 
+  /* Stacked 1-col: animate and rest in the same orientation (no post-enter snap) */
+  .profile-layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .profile-layer {
+    position: relative;
+    top: auto;
+    bottom: auto;
+    left: auto;
+    right: auto;
     width: 100%;
-    height: 50%;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+    --profile-slide-offset: 115%;
   }
 
   .profile-layer--blue {
-    top: 0;
-    left: 0;
+    order: -1;
+    flex-shrink: 0;
+    top: auto;
+    left: auto;
     width: 100%;
-    height: calc(50% + 2px);
+    height: 90vh;
+    min-height: 90vh;
+    max-height: 90vh;
+    overflow: hidden;
     border-radius: 0;
+    box-shadow: none;
+    --profile-slide-offset: 115%;
+    --profile-slide-offset-exit: 115%;
   }
 
   .profile-layer--black {
-    top: 50%;
-    left: 0;
+    order: 1;
+    flex-shrink: 0;
+    top: auto;
+    left: auto;
+    width: 100%;
     --profile-slide-offset: 115%;
     border-radius: 0;
-    box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: none;
   }
 
   [data-theme='light'] .profile-layer--black {
     box-shadow: none;
   }
 
-  .profile-layer--blue,
-  .profile-layer--black {
-    border-radius: 0;
+  .profile-layer--black > .custom-scrollbar-wrap {
+    flex: none;
+    min-height: 0;
+  }
+
+  .profile-panel-right,
+  .profile-panel-right.custom-scrollbar-viewport {
+    overflow: visible;
+    max-height: none;
   }
 
   .profile-portrait-stack {
@@ -9697,8 +10084,9 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
 
   .about-layer--blue,
   .profile-layer--blue {
-    min-height: 100svh !important;
-    height: auto !important;
+    min-height: 90vh !important;
+    height: 90vh !important;
+    max-height: 90vh !important;
     box-shadow: none !important;
     border-radius: 0 !important;
   }
@@ -9723,11 +10111,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   .profile-panel-right.custom-scrollbar-viewport {
     overflow: visible !important;
     max-height: none !important;
-  }
-
-  .about-layer--black > .about-close.header-shade-close,
-  .profile-layer--black > .profile-close.header-shade-close {
-    z-index: 140 !important;
   }
 
   body.about-page .page-wrapper,
@@ -10369,125 +10752,8 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   }
 }
 
-/* About/profile slide animations — restore horizontal geometry when responsive layout overrides stack panels (tablet only; mobile stays stacked) */
-@media (max-width: 900px) and (min-width: 561px) {
-  body.is-about-enter-pending .about-layout,
-  body.is-about-entering .about-layout,
-  body.is-about-exiting .about-layout,
-  body.is-profile-enter-pending .profile-layout,
-  body.is-profile-entering .profile-layout,
-  body.is-profile-exiting .profile-layout,
-  body.about-page.is-about-enter-pending .about-layout,
-  body.about-page.is-about-entering .about-layout,
-  body.about-page.is-about-exiting .about-layout,
-  body.profile-page.is-profile-enter-pending .profile-layout,
-  body.profile-page.is-profile-entering .profile-layout,
-  body.profile-page.is-profile-exiting .profile-layout {
-    display: block !important;
-    flex-direction: unset !important;
-  }
-
-  body.is-about-enter-pending .about-layer,
-  body.is-about-entering .about-layer,
-  body.is-about-exiting .about-layer,
-  body.is-profile-enter-pending .profile-layer,
-  body.is-profile-entering .profile-layer,
-  body.is-profile-exiting .profile-layer,
-  body.about-page.is-about-enter-pending .about-layer,
-  body.about-page.is-about-entering .about-layer,
-  body.about-page.is-about-exiting .about-layer,
-  body.profile-page.is-profile-enter-pending .profile-layer,
-  body.profile-page.is-profile-entering .profile-layer,
-  body.profile-page.is-profile-exiting .profile-layer {
-    position: absolute !important;
-    top: 0 !important;
-    bottom: 0 !important;
-    left: auto !important;
-    right: auto !important;
-    width: 50% !important;
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: hidden !important;
-    opacity: 1 !important;
-    order: unset !important;
-    flex-shrink: unset !important;
-    transform: translateX(var(--about-slide-offset, var(--profile-slide-offset, 0)));
-  }
-
-  body.is-about-enter-pending .about-layer--blue,
-  body.is-about-entering .about-layer--blue,
-  body.is-about-exiting .about-layer--blue,
-  body.about-page.is-about-enter-pending .about-layer--blue,
-  body.about-page.is-about-entering .about-layer--blue,
-  body.about-page.is-about-exiting .about-layer--blue {
-    left: 0 !important;
-    width: calc(50% + 2px) !important;
-    --about-slide-offset: -210%;
-  }
-
-  body.is-about-enter-pending .about-layer--black,
-  body.is-about-entering .about-layer--black,
-  body.is-about-exiting .about-layer--black,
-  body.about-page.is-about-enter-pending .about-layer--black,
-  body.about-page.is-about-entering .about-layer--black,
-  body.about-page.is-about-exiting .about-layer--black {
-    left: 50% !important;
-    top: 0 !important;
-    width: 50% !important;
-    --about-slide-offset: -215%;
-  }
-
-  body.is-profile-enter-pending .profile-layer--blue,
-  body.is-profile-entering .profile-layer--blue,
-  body.is-profile-exiting .profile-layer--blue,
-  body.profile-page.is-profile-enter-pending .profile-layer--blue,
-  body.profile-page.is-profile-entering .profile-layer--blue,
-  body.profile-page.is-profile-exiting .profile-layer--blue {
-    left: 0 !important;
-    width: calc(50% + 2px) !important;
-    --profile-slide-offset: 210%;
-  }
-
-  body.is-profile-enter-pending .profile-layer--black,
-  body.is-profile-entering .profile-layer--black,
-  body.is-profile-exiting .profile-layer--black,
-  body.profile-page.is-profile-enter-pending .profile-layer--black,
-  body.profile-page.is-profile-entering .profile-layer--black,
-  body.profile-page.is-profile-exiting .profile-layer--black {
-    left: 50% !important;
-    top: 0 !important;
-    width: 50% !important;
-    --profile-slide-offset: 215%;
-  }
-
-  body.is-about-entering .about-layer,
-  body.is-profile-entering .profile-layer,
-  body.about-page.is-about-entering .about-layer,
-  body.profile-page.is-profile-entering .profile-layer {
-    transform: translateX(0) !important;
-  }
-
-  body.is-about-exiting .about-layer--blue,
-  body.about-page.is-about-exiting .about-layer--blue {
-    transform: translateX(var(--about-slide-offset-exit, -210%)) !important;
-  }
-
-  body.is-profile-exiting .profile-layer--blue,
-  body.profile-page.is-profile-exiting .profile-layer--blue {
-    transform: translateX(var(--profile-slide-offset-exit, 210%)) !important;
-  }
-
-  body.is-about-enter-pending .about-layer,
-  body.is-profile-enter-pending .profile-layer,
-  body.about-page.is-about-enter-pending .about-layer,
-  body.profile-page.is-profile-enter-pending .profile-layer {
-    transition: none !important;
-  }
-
-}
-
-/* Mobile about/profile — keep vertical stack during enter/exit (no horizontal layout snap) */
-@media (max-width: 560px) {
+/* Stacked about/profile (≤900px) — keep 1-col / 2-row geometry during enter/exit (no 2-col snap) */
+@media (max-width: 900px) {
   body.is-about-enter-pending .about-layout,
   body.is-about-entering .about-layout,
   body.is-about-exiting .about-layout,
@@ -10525,7 +10791,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     height: auto !important;
     min-height: 0 !important;
     overflow: visible !important;
-    order: unset !important;
     flex-shrink: unset !important;
   }
 
@@ -10541,8 +10806,12 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   body.profile-page.is-profile-enter-pending .profile-layer--blue,
   body.profile-page.is-profile-entering .profile-layer--blue,
   body.profile-page.is-profile-exiting .profile-layer--blue {
-    min-height: 100svh !important;
+    height: 90vh !important;
+    min-height: 90vh !important;
+    max-height: 90vh !important;
+    overflow: hidden !important;
     order: -1 !important;
+    flex-shrink: 0 !important;
     box-shadow: none !important;
   }
 
@@ -10559,6 +10828,7 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   body.profile-page.is-profile-entering .profile-layer--black,
   body.profile-page.is-profile-exiting .profile-layer--black {
     order: 1 !important;
+    flex-shrink: 0 !important;
     box-shadow: none !important;
   }
 }
@@ -10688,46 +10958,19 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   }
 }
 
-/* Mobile about/profile — fixed close at viewport top-right (black panel is below blue stack) */
-@media (max-width: 560px) {
-  /* Profile: black-layer close hidden on mobile stack (blue layer hosts close). */
-  .profile-layer--black > .profile-close.header-shade-close {
-    display: none !important;
-  }
+/* About/profile — layer-hosted red X (inherits panel slide; inset from frame) */
+.about-layer > .about-close.header-shade-close,
+.profile-layer > .profile-close.header-shade-close {
+  position: absolute !important;
+  top: calc(12px + env(safe-area-inset-top, 0px)) !important;
+  right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 140 !important;
+}
 
-  /* About the Logo: single close on black (right) panel only. */
-  .about-layer--blue > .about-close.header-shade-close {
-    display: none !important;
-  }
-
-  /* About: pin close to viewport top-right while layout scrolls. */
-  .about-layer--black {
-    transform: none !important;
-    will-change: auto !important;
-  }
-
-  .about-layer--black > .about-close.header-shade-close {
-    display: flex !important;
-    position: fixed !important;
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
-    left: auto !important;
-    bottom: auto !important;
-    z-index: 140 !important;
-  }
-
-  /* Profile blue-layer close: top-right of blue panel. */
-  .profile-layer--blue > .profile-close.header-shade-close {
-    display: flex !important;
-    position: absolute !important;
-    top: calc(12px + env(safe-area-inset-top, 0px)) !important;
-    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
-    left: auto !important;
-    bottom: auto !important;
-    z-index: 140 !important;
-  }
-
-  /* Full-page scroll: layout scrolls stacked blue + black; black panel grows with content. */
+/* Stacked: full-page scroll for blue + black content */
+@media (max-width: 900px) {
   .about-panel-right,
   .profile-panel-right,
   .about-panel-right.custom-scrollbar-viewport,
@@ -10748,13 +10991,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
 
   .about-layer--black > .custom-scrollbar-wrap > .custom-scrollbar-rail,
   .profile-layer--black > .custom-scrollbar-wrap > .custom-scrollbar-rail {
-    display: none !important;
-  }
-}
-
-@media (min-width: 561px) {
-  .about-layer--blue > .about-close.header-shade-close,
-  .profile-layer--blue > .profile-close.header-shade-close {
     display: none !important;
   }
 }
@@ -11085,7 +11321,7 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 }
 
 .copyright-symbol {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(96px, 18vw, 240px);
   line-height: 0.82;
@@ -11117,7 +11353,7 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 }
 
 .copyright-panel-name {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(22px, 2.4vw, 32px);
   line-height: 1;
@@ -11241,15 +11477,6 @@ body.copyright-page.is-copyright-enter-pending .footer-shell {
   body.copyright-page .page-wrapper {
     height: 100dvh;
     min-height: 100dvh;
-  }
-
-  .copyright-stage .app--copyright,
-  .app--copyright {
-    border-radius: 0;
-  }
-
-  .copyright-layout {
-    border-radius: 0;
   }
 
   .copyright-stage-inner {

@@ -184,7 +184,7 @@ function initProfileNameFit(scope = document) {
       runFit();
     }
 
-    const titleLoad = document.fonts?.load?.('700 16px Barlow');
+    const titleLoad = document.fonts?.load?.('700 16px BoldineRegular');
     if (titleLoad) {
       try {
         await titleLoad;
@@ -197,7 +197,8 @@ function initProfileNameFit(scope = document) {
 }
 
 function bindProfileClose(layout, host, onClose) {
-  const closeButtons = layout.querySelectorAll('.profile-close');
+  const app = layout.closest('.app--profile') || layout;
+  const closeButtons = app.querySelectorAll('.profile-close');
   if (!closeButtons.length) return;
 
   closeButtons.forEach((closeButton) => {

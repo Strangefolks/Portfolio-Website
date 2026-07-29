@@ -277,7 +277,7 @@ async function prepareAboutStoryLayout(scope = document) {
       applyLayout();
     }
 
-    const titleLoad = document.fonts?.load?.('700 16px Barlow');
+    const titleLoad = document.fonts?.load?.('700 16px BoldineRegular');
     if (titleLoad) {
       try {
         await titleLoad;
@@ -382,7 +382,8 @@ function initAboutStoryLayoutObservers(scope = document) {
 }
 
 function bindAboutClose(layout, host, onClose) {
-  const closeButtons = layout.querySelectorAll('.about-close');
+  const app = layout.closest('.app--about') || layout;
+  const closeButtons = app.querySelectorAll('.about-close');
   if (!closeButtons.length) return;
 
   closeButtons.forEach((closeButton) => {
