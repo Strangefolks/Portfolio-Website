@@ -10,13 +10,43 @@ let profileOverlayBusy = false;
 let profileOverlayScrollTop = 0;
 let profileNameFitResizeBound = false;
 
-function refreshProfileBurstArt(scope = document) {
-  const burstImg = scope.querySelector('.profile-burst-art');
-  if (!burstImg) return;
+/** Strip cached frost filters / soft blends so the amoeba stays solid #000. */
+function sanitizeProfileAmoeba(root = document) {
+  root.querySelectorAll('.profile-amoeba-svg defs, .profile-amoeba-svg filter').forEach((node) => {
+    node.remove();
+  });
 
-  const baseSrc =
-    burstImg.getAttribute('src')?.split('?')[0] ?? 'assets/about%20page%20large%20burst.svg';
-  burstImg.src = `${baseSrc}?v=${Date.now()}`;
+  root.querySelectorAll('.profile-amoeba, .profile-amoeba-svg').forEach((el) => {
+    el.style.setProperty('filter', 'none', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('mix-blend-mode', 'normal', 'important');
+  });
+
+  const pathEl = root.querySelector('.profile-amoeba-path');
+  if (!pathEl) return;
+
+  pathEl.removeAttribute('filter');
+  pathEl.setAttribute('fill', '#000000');
+  pathEl.setAttribute('fill-opacity', '1');
+  pathEl.style.setProperty('fill', '#000000', 'important');
+  pathEl.style.setProperty('fill-opacity', '1', 'important');
+  pathEl.style.setProperty('filter', 'none', 'important');
+  pathEl.style.setProperty('opacity', '1', 'important');
+  pathEl.style.setProperty('mix-blend-mode', 'normal', 'important');
+}
+
+function initProfileAmoebaMorph(root = document) {
+  sanitizeProfileAmoeba(root);
+
+  const pathEl = root.querySelector('.profile-amoeba-path');
+  if (!pathEl || pathEl.dataset.morphBound === 'true') return;
+  if (typeof initStarburstMorph !== 'function') return;
+
+  pathEl.dataset.morphBound = 'true';
+  // Same expanded morph engine as copyright (MOTION_SPEED_EXPANDED / WARP_SPEED_EXPANDED).
+  initStarburstMorph(pathEl, {
+    getSpeeds: () => ({ motion: 7, warp: 26 }),
+  });
 }
 
 function setProfileEnterPending(host) {
@@ -221,7 +251,7 @@ function bindProfileClose(layout, host, onClose) {
 }
 
 async function mountProfileLayout(stage) {
-  const response = await fetch('profile.html');
+  const response = await fetch('profile.html?v=20260729profile-amoeba-v1', { cache: 'no-store' });
   if (!response.ok) return null;
 
   const html = await response.text();
@@ -235,6 +265,8 @@ async function mountProfileLayout(stage) {
   const layout = stage.querySelector('.profile-layout');
   if (!layout) return null;
 
+  sanitizeProfileAmoeba(layout);
+  initProfileAmoebaMorph(layout);
   setProfileEnterPending(document.body);
   return layout;
 }
@@ -292,7 +324,8 @@ async function openProfileOverlay() {
 
     lockProfileOverlayScroll();
     initCustomScrollbars(stage);
-    refreshProfileBurstArt(stage);
+    sanitizeProfileAmoeba(stage);
+    initProfileAmoebaMorph(stage);
     initProfileNameFit(stage);
     initProfileEmailLinks(stage);
     await playProfileEnter(document.body);
@@ -318,7 +351,8 @@ function initProfilePage() {
 
   void (async () => {
     initCustomScrollbars();
-    refreshProfileBurstArt(document);
+    sanitizeProfileAmoeba(document);
+    initProfileAmoebaMorph(document);
     initProfileNameFit(document);
     initProfileEmailLinks(document);
     await playProfileEnter(document.body);

@@ -129,11 +129,15 @@ function initCustomCursor() {
 
     const isAboutContext =
       document.body.classList.contains('about-page') ||
-      document.body.classList.contains('is-about-open');
+      document.body.classList.contains('is-about-open') ||
+      document.body.classList.contains('profile-page') ||
+      document.body.classList.contains('is-profile-open');
 
     if (isAboutContext) {
       isOverAboutLogo = Boolean(target?.closest('.about-logo-mark'));
-      isOverAboutBlue = Boolean(target?.closest('.about-layer--blue'));
+      isOverAboutBlue = Boolean(
+        target?.closest('.about-layer--blue, .profile-layer--blue, .profile-amoeba-bg')
+      );
     } else {
       isOverAboutLogo = false;
       isOverAboutBlue = false;

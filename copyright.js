@@ -1,9 +1,50 @@
 const COPYRIGHT_SLIDE_DURATION_MS = 560;
 const COPYRIGHT_MOBILE_LAYOUT_MQ = window.matchMedia('(max-width: 560px)');
+const COPYRIGHT_MARKUP_URL = 'copyright.html?v=20260729copyright-brand-blue-v1';
 
 let copyrightOverlayBusy = false;
 let copyrightOverlayScrollTop = 0;
 let copyrightFooterBound = false;
+
+function setCopyrightTexturesHidden(hidden) {
+  document.querySelectorAll('.site-grain, .fluid-ripple-canvas').forEach((el) => {
+    if (hidden) {
+      el.setAttribute('data-copyright-hidden', 'true');
+      el.hidden = true;
+      el.style.setProperty('display', 'none', 'important');
+      return;
+    }
+
+    el.removeAttribute('data-copyright-hidden');
+    el.hidden = false;
+    el.style.removeProperty('display');
+  });
+}
+
+/** Strip cached frost filters / soft blends so the amoeba stays solid #000. */
+function sanitizeCopyrightAmoeba(root = document) {
+  root.querySelectorAll('.copyright-amoeba-svg defs, .copyright-amoeba-svg filter').forEach((node) => {
+    node.remove();
+  });
+
+  root.querySelectorAll('.copyright-amoeba, .copyright-amoeba-svg').forEach((el) => {
+    el.style.setProperty('filter', 'none', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('mix-blend-mode', 'normal', 'important');
+  });
+
+  const pathEl = root.querySelector('.copyright-amoeba-path');
+  if (!pathEl) return;
+
+  pathEl.removeAttribute('filter');
+  pathEl.setAttribute('fill', '#000000');
+  pathEl.setAttribute('fill-opacity', '1');
+  pathEl.style.setProperty('fill', '#000000', 'important');
+  pathEl.style.setProperty('fill-opacity', '1', 'important');
+  pathEl.style.setProperty('filter', 'none', 'important');
+  pathEl.style.setProperty('opacity', '1', 'important');
+  pathEl.style.setProperty('mix-blend-mode', 'normal', 'important');
+}
 
 function isCopyrightMobileLayout() {
   return COPYRIGHT_MOBILE_LAYOUT_MQ.matches;
@@ -129,10 +170,12 @@ function lockCopyrightOverlayScroll() {
   const main = getCopyrightScrollContainer();
   if (main) copyrightOverlayScrollTop = main.scrollTop;
   document.body.classList.add('is-copyright-open');
+  setCopyrightTexturesHidden(true);
 }
 
 function unlockCopyrightOverlayScroll() {
   document.body.classList.remove('is-copyright-open');
+  setCopyrightTexturesHidden(false);
   const main = getCopyrightScrollContainer();
   if (!main) return;
 
@@ -165,18 +208,22 @@ function bindCopyrightClose(layout, host, onClose) {
 }
 
 function initCopyrightAmoebaMorph(root = document) {
+  sanitizeCopyrightAmoeba(root);
+
   const pathEl = root.querySelector('.copyright-amoeba-path');
   if (!pathEl || pathEl.dataset.morphBound === 'true') return;
   if (typeof initStarburstMorph !== 'function') return;
 
   pathEl.dataset.morphBound = 'true';
+  // Loop landing expanded morph (MOTION_SPEED_EXPANDED / WARP_SPEED_EXPANDED).
+  // Stays large via CSS; path warp provides organic in/out — not idle calm-spin.
   initStarburstMorph(pathEl, {
-    getSpeeds: () => ({ motion: 8, warp: 10 }),
+    getSpeeds: () => ({ motion: 7, warp: 26 }),
   });
 }
 
 async function mountCopyrightLayout(stage) {
-  const response = await fetch('copyright.html');
+  const response = await fetch(COPYRIGHT_MARKUP_URL, { cache: 'no-store' });
   if (!response.ok) return null;
 
   const html = await response.text();
@@ -190,6 +237,7 @@ async function mountCopyrightLayout(stage) {
   const layout = stage.querySelector('.copyright-layout');
   if (!layout) return null;
 
+  sanitizeCopyrightAmoeba(layout);
   initCopyrightAmoebaMorph(layout);
   setCopyrightEnterPending(document.body);
   setCopyrightLayoutEnterPending(layout);
@@ -231,6 +279,8 @@ async function openCopyrightOverlay() {
     const layout = await ensureCopyrightMounted(stage);
     if (!layout) return;
 
+    sanitizeCopyrightAmoeba(layout);
+    setCopyrightTexturesHidden(true);
     setCopyrightEnterPending(document.body);
     setCopyrightLayoutEnterPending(layout);
     clearInlineCopyrightTransforms(layout);
@@ -271,6 +321,8 @@ function initCopyrightPage() {
   const layout = document.querySelector('.copyright-layout');
   if (!layout) return;
 
+  setCopyrightTexturesHidden(true);
+  sanitizeCopyrightAmoeba(layout);
   initCopyrightAmoebaMorph(layout);
 
   bindCopyrightClose(layout, document.body, () => {

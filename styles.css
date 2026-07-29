@@ -191,8 +191,10 @@
   --tooltip-radius-card: var(--content-radius);
   --tooltip-card-width: 260px;
   --tooltip-shadow: var(--app-shadow);
-  --tooltip-z-index: 100002;
+  --tooltip-z-index: 100012;
   --grain-z-index: 100001;
+  /* Above grain + open profile/copyright stages (grain + 2); keep pointer above UI */
+  --cursor-z-index: 100010;
   --fluid-ripple-z-index: 99998;
   --fluid-ripple-opacity: 0.72;
   --fluid-ripple-blend-mode: soft-light;
@@ -333,12 +335,6 @@ body {
   [data-theme='dark'] .fluid-ripple-canvas {
     clip-path: inset(var(--window-padding) round var(--window-radius));
   }
-
-  /* Full-bleed copyright surface: grain covers the viewport, not the framed shell */
-  [data-theme='dark'] body.copyright-page .site-grain {
-    inset: 0;
-    border-radius: 0;
-  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -471,6 +467,23 @@ body.is-landing-transitioning .fluid-ripple-canvas,
 body.is-landing-launching .fluid-ripple-canvas {
   opacity: 0;
   transition: opacity 0.18s ease;
+}
+
+/* Copyright / profile left: kill grain + soft-light ripple over the solid black amoeba */
+body.copyright-page .site-grain,
+body.is-copyright-open .site-grain,
+body.copyright-page .fluid-ripple-canvas,
+body.is-copyright-open .fluid-ripple-canvas,
+body.profile-page .site-grain,
+body.is-profile-open .site-grain,
+body.profile-page .fluid-ripple-canvas,
+body.is-profile-open .fluid-ripple-canvas,
+.site-grain[data-copyright-hidden='true'],
+.fluid-ripple-canvas[data-copyright-hidden='true'] {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
 }
 
 /* ── Type System ── */
@@ -675,18 +688,37 @@ h6,
 @media (hover: hover) and (pointer: fine) {
   html,
   body {
+    cursor: none !important;
     cursor: var(--cursor-hidden) !important;
   }
 
   html *,
   html *::before,
   html *::after {
+    cursor: none !important;
     cursor: var(--cursor-hidden) !important;
   }
 
   input,
   textarea {
+    cursor: none !important;
     cursor: var(--cursor-hidden) !important;
+  }
+
+  /* About Me / overlays: keep system cursor fully suppressed while custom dot is active */
+  body.profile-page,
+  body.profile-page *,
+  body.is-profile-open,
+  body.is-profile-open *,
+  body.about-page,
+  body.about-page *,
+  body.is-about-open,
+  body.is-about-open *,
+  body.copyright-page,
+  body.copyright-page *,
+  body.is-copyright-open,
+  body.is-copyright-open * {
+    cursor: none !important;
   }
 }
 
@@ -708,7 +740,7 @@ h6,
   border-radius: 50%;
   background: var(--brand-blue);
   pointer-events: none;
-  z-index: 99999;
+  z-index: var(--cursor-z-index);
   transform: translate3d(0, 0, 0) translate(-50%, -50%);
   will-change: transform;
   overflow: hidden;
@@ -7580,11 +7612,7 @@ body.about-page > .page-wrapper > .app.app--about {
 }
 
 .about-lockup--right .meta-dot {
-  background: #ffffff;
-}
-
-[data-theme='light'] .about-lockup--right .meta-dot {
-  background: #000000;
+  background: var(--text-primary);
 }
 
 .about-lockup--right .meta-value {
@@ -7965,6 +7993,8 @@ body.profile-page .page-wrapper {
 }
 
 body.is-profile-open .profile-stage {
+  /* Sit above site-grain so soft-light mottling cannot veil the amoeba */
+  z-index: calc(var(--grain-z-index) + 2);
   pointer-events: auto;
   visibility: visible;
   background: transparent;
@@ -8036,7 +8066,7 @@ body.profile-page > .page-wrapper > .app.app--profile {
   width: calc(50% + 2px);
   --profile-slide-offset: 210%;
   --profile-slide-offset-exit: 210%;
-  background: #000000;
+  background: var(--brand-blue);
   border-radius: 0;
   box-shadow: 8px 0 28px rgba(0, 0, 0, 0.28);
   overflow: hidden;
@@ -8127,12 +8157,92 @@ body.profile-page > .page-wrapper > .app.app--profile {
 }
 
 .profile-lockup--right .meta-dot {
-  background: #ffffff;
+  background: var(--text-primary);
 }
 
 .profile-lockup--right .meta-value {
   max-width: none;
   white-space: nowrap;
+}
+
+.profile-amoeba-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--brand-blue);
+  pointer-events: none;
+}
+
+.profile-amoeba {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Bottom-left bias behind the portrait in the left panel */
+  transform: translate(-38%, 44%);
+  pointer-events: none;
+  user-select: none;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.profile-amoeba-svg {
+  display: block;
+  /* +20% from prior max(139vw, 139vh) */
+  width: max(167vw, 167vh);
+  height: max(167vw, 167vh);
+  flex-shrink: 0;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+  color: #000000;
+  transform-origin: center center;
+  will-change: transform;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .profile-amoeba-svg {
+    animation: profile-amoeba-pulse 5.6s ease-in-out infinite;
+  }
+}
+
+@keyframes profile-amoeba-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+.profile-amoeba-path {
+  fill: #000000 !important;
+  fill-opacity: 1 !important;
+  stroke: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profile-amoeba,
+  .profile-amoeba-svg,
+  .profile-amoeba-path {
+    filter: none !important;
+  }
+
+  .profile-amoeba-svg {
+    animation: none;
+  }
 }
 
 .profile-panel-left {
@@ -8141,7 +8251,7 @@ body.profile-page > .page-wrapper > .app.app--profile {
   flex-direction: column;
   min-height: 0;
   background: transparent;
-  overflow: visible;
+  overflow: hidden;
   position: relative;
   z-index: 1;
 }
@@ -8160,45 +8270,8 @@ body.profile-page > .page-wrapper > .app.app--profile {
   overflow: visible;
 }
 
-.profile-burst-bg {
-  position: absolute;
-  inset: 0;
-  overflow: visible;
-  pointer-events: none;
-  z-index: 0;
-}
-
-.profile-burst-art {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 400%;
-  min-width: 1680px;
-  max-width: none;
-  height: auto;
-  transform: translate(-50%, calc(-50% - 30px));
-  transform-origin: center center;
-  animation: profile-burst-spin 96s linear infinite;
-}
-
-@keyframes profile-burst-spin {
-  from {
-    transform: translate(-50%, calc(-50% - 30px)) rotate(0deg);
-  }
-
-  to {
-    transform: translate(-50%, calc(-50% - 30px)) rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .profile-burst-art {
-    animation: none;
-  }
-}
-
 .profile-portrait-card {
-  width: min(81.4%, 396px);
+  width: min(97.7%, 475px);
   aspect-ratio: 4 / 5;
   border-radius: calc(var(--content-radius) + 4px);
   overflow: hidden;
@@ -8716,7 +8789,7 @@ button.profile-avatar-trigger {
   }
 
   .profile-portrait-card {
-    width: min(90.2%, 352px);
+    width: min(108.2%, 422px);
     transform: translateY(-30px);
   }
 }
@@ -11137,15 +11210,24 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
   }
 }
 
-/* Mobile profile — keep large sunburst visible behind portrait */
+/* Mobile profile — amoeba fills the left/hero panel behind portrait */
 @media (max-width: 560px) {
-  .profile-burst-bg {
+  .profile-amoeba-bg {
     position: absolute !important;
     inset: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     z-index: 0 !important;
-    contain: none !important;
     pointer-events: none;
+  }
+
+  .profile-amoeba {
+    /* Bottom-left bias behind the portrait in the stacked hero panel */
+    transform: translate(-38%, 44%);
+  }
+
+  .profile-amoeba-svg {
+    width: max(148vw, 148vh);
+    height: max(148vw, 148vh);
   }
 
   .profile-portrait-stack {
@@ -11157,29 +11239,6 @@ html.is-portfolio-entry:not(.is-portfolio-burst-entry):not(.is-portfolio-white-e
     position: relative !important;
     z-index: 2 !important;
   }
-
-  .profile-burst-art {
-    width: 520%;
-    min-width: 2000px;
-    transform: translate(-58%, calc(-44% + 16px));
-    animation: profile-burst-spin-mobile 96s linear infinite;
-  }
-}
-
-@keyframes profile-burst-spin-mobile {
-  from {
-    transform: translate(-58%, calc(-44% + 16px)) rotate(0deg);
-  }
-
-  to {
-    transform: translate(-58%, calc(-44% + 16px)) rotate(360deg);
-  }
-}
-
-@media (max-width: 560px) and (prefers-reduced-motion: reduce) {
-  .profile-burst-art {
-    animation: none;
-  }
 }
 
 /* ── Copyright page / overlay ── */
@@ -11189,7 +11248,7 @@ body.is-copyright-open {
 }
 
 body.copyright-page {
-  background: var(--copyright-page-bg, color-mix(in srgb, var(--brand-blue) 28%, #000000));
+  background: var(--copyright-page-bg, var(--brand-blue));
 }
 
 body.is-copyright-open .main {
@@ -11207,6 +11266,8 @@ body.copyright-page .page-wrapper {
 }
 
 body.is-copyright-open .copyright-stage {
+  /* Sit above site-grain (z=100001) so soft-light mottling cannot veil the amoeba */
+  z-index: calc(var(--grain-z-index) + 2);
   pointer-events: auto;
   visibility: visible;
 }
@@ -11229,7 +11290,7 @@ body.is-copyright-open .copyright-stage {
   overflow: hidden;
   padding: 0;
   box-sizing: border-box;
-  background: var(--copyright-page-bg, color-mix(in srgb, var(--brand-blue) 28%, #000000));
+  background: var(--copyright-page-bg, var(--brand-blue));
   color: #ffffff;
 }
 
@@ -11240,8 +11301,8 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 .copyright-layout {
   --copyright-slide-duration: 0.56s;
   --copyright-slide-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --copyright-page-bg: color-mix(in srgb, var(--brand-blue) 28%, #000000);
-  --copyright-amoeba-fill: color-mix(in srgb, var(--brand-blue) 18%, #000000);
+  --copyright-page-bg: var(--brand-blue);
+  --copyright-amoeba-fill: #000000;
   position: relative;
   height: 100%;
   min-height: 0;
@@ -11313,7 +11374,7 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
   inset: 0;
   z-index: 0;
   overflow: hidden;
-  background: var(--copyright-page-bg, color-mix(in srgb, var(--brand-blue) 28%, #000000));
+  background: var(--copyright-page-bg, var(--brand-blue));
   pointer-events: none;
 }
 
@@ -11323,25 +11384,58 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Pull the mass into the bottom-left (parent transform keeps SVG pulse intact) */
+  transform: translate(-30%, 36%);
   pointer-events: none;
   user-select: none;
-  /* Soft frosted edge; noise lives in the SVG filter on the path */
-  filter: blur(14px);
-  opacity: 1;
+  /* Solid opaque black — no blur / blend / frost remnants */
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .copyright-amoeba-svg {
   display: block;
-  width: max(190vw, 190vh);
-  height: max(190vw, 190vh);
+  width: max(209vw, 209vh);
+  height: max(209vw, 209vh);
   flex-shrink: 0;
   overflow: visible;
   shape-rendering: geometricPrecision;
-  color: var(--copyright-amoeba-fill);
+  color: #000000;
+  transform-origin: center center;
+  will-change: transform;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .copyright-amoeba-svg {
+    /* Gentle breathe — mirrors landing blow-up feel without chaotic shake */
+    animation: copyright-amoeba-pulse 5.6s ease-in-out infinite;
+  }
+}
+
+@keyframes copyright-amoeba-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.045);
+  }
 }
 
 .copyright-amoeba-path {
-  fill: var(--copyright-amoeba-fill);
+  fill: #000000 !important;
+  fill-opacity: 1 !important;
+  stroke: none !important;
+  filter: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
 }
 
 .copyright-close.header-shade-close {
@@ -11378,11 +11472,12 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 .copyright-stage-inner {
   position: relative;
   z-index: 2;
-  width: min(1120px, calc(100% - 48px));
+  width: min(960px, calc(100% - 48px));
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 200px) auto minmax(0, 200px);
   align-items: center;
-  gap: clamp(20px, 4vw, 56px);
+  justify-content: center;
+  gap: clamp(16px, 3vw, 40px);
   padding: clamp(48px, 8vh, 96px) 0;
   box-sizing: border-box;
   color: #ffffff;
@@ -11398,7 +11493,7 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 .copyright-symbol {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(96px, 18vw, 240px);
+  font-size: clamp(288px, 54vw, 720px);
   line-height: 0.82;
   letter-spacing: var(--font-display-tracking);
   color: #ffffff;
@@ -11409,6 +11504,8 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
+  max-width: 200px;
   min-width: 0;
   color: #ffffff;
 }
@@ -11439,7 +11536,7 @@ body.copyright-page > .page-wrapper > .app.app--copyright {
 
 .copyright-panel-desc {
   color: #ffffff;
-  max-width: 28ch;
+  max-width: 18ch;
 }
 
 .copyright-panel--developer .copyright-panel-desc {
@@ -11579,19 +11676,30 @@ body.copyright-page.is-copyright-enter-pending .footer-shell {
 
   .copyright-stage-inner {
     width: calc(100% - 32px);
-    gap: 28px;
+    gap: 24px;
+    grid-template-columns: minmax(0, 160px) auto minmax(0, 160px);
+  }
+
+  .copyright-panel {
+    max-width: 160px;
   }
 }
 
 @media (max-width: 720px) {
   .copyright-stage-inner {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 200px);
     grid-template-rows: auto auto auto;
+    justify-items: start;
     text-align: left;
   }
 
   .copyright-symbol-wrap {
     order: -1;
+    justify-self: center;
+  }
+
+  .copyright-panel {
+    max-width: 200px;
   }
 
   .copyright-panel--developer {
@@ -11606,13 +11714,19 @@ body.copyright-page.is-copyright-enter-pending .footer-shell {
   }
 
   .copyright-symbol {
-    font-size: clamp(72px, 28vw, 140px);
+    font-size: clamp(216px, 84vw, 420px);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .copyright-amoeba {
-    filter: blur(14px);
+  .copyright-amoeba,
+  .copyright-amoeba-svg,
+  .copyright-amoeba-path {
+    filter: none !important;
+  }
+
+  .copyright-amoeba-svg {
+    animation: none;
   }
 
   body.is-copyright-entering .copyright-layout,
