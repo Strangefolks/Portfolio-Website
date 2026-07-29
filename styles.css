@@ -2665,9 +2665,9 @@ body.is-about-open .project-nav-hint {
   top: 8px;
   right: 8px;
   z-index: 1;
-  font-family: var(--font-sans);
+  font-family: var(--font-mono);
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 300;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
   line-height: 1;
@@ -2906,8 +2906,9 @@ body.is-about-open .project-nav-hint {
 }
 
 .sticky-header {
-  --sticky-title-size: 36px;
   --sticky-project-number-size: 48px;
+  /* Boldine capHeight 0.7em → glyph height near number square; -3px trims a few points */
+  --sticky-title-size: calc(var(--sticky-project-number-size) / 0.7 - 3px);
   --sticky-header-line: var(--detail-line);
   position: absolute;
   top: 0;
@@ -2955,8 +2956,8 @@ body.is-about-open .project-nav-hint {
   margin: 0;
   --project-number-size: var(--sticky-project-number-size);
   box-shadow: inset 0 0 0 var(--detail-border-width) var(--sticky-header-line);
-  font-family: var(--font-sans);
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-weight: 300;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
   text-align: center;
@@ -2979,10 +2980,11 @@ body.is-about-open .project-nav-hint {
   font-family: var(--font-project-detail-title);
   font-weight: var(--text-weight-bold);
   text-transform: uppercase;
-  letter-spacing: var(--font-display-tracking);
+  letter-spacing: 0.02em;
   flex: 0 1 auto;
   min-width: 0;
   height: var(--sticky-project-number-size);
+  max-height: var(--sticky-project-number-size);
   display: block;
   -webkit-box-orient: unset;
   -webkit-line-clamp: unset;
@@ -2990,9 +2992,12 @@ body.is-about-open .project-nav-hint {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: var(--sticky-project-number-size);
+  line-height: 0.7;
   padding: 0;
   box-sizing: border-box;
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+  transform: translateY(0.5px);
 }
 
 .sticky-header__actions {
@@ -3094,8 +3099,8 @@ body.is-about-open .project-nav-hint {
 }
 
 .project-intro .project-number {
-  font-family: var(--font-sans);
-  font-weight: 500;
+  font-family: var(--font-mono);
+  font-weight: 300;
   color: #000000;
   letter-spacing: 0.1em;
   border-color: var(--detail-line);
@@ -3130,7 +3135,7 @@ body.is-about-open .project-nav-hint {
   grid-column: 1;
   grid-row: 1;
   align-self: start;
-  font-family: var(--font-family-display);
+  font-family: var(--font-mono);
   --project-number-size: var(--detail-number-size);
   box-sizing: border-box;
   width: var(--project-number-size);
@@ -3145,7 +3150,7 @@ body.is-about-open .project-nav-hint {
   box-shadow: inset 0 0 0 var(--detail-border-width, 0.5px) var(--detail-line);
   background-clip: padding-box;
   font-size: calc(var(--project-number-size) * 0.48 - 1pt);
-  font-weight: var(--text-weight-regular);
+  font-weight: 300;
   color: color-mix(in srgb, var(--project-item-text-muted) 85%, transparent);
   letter-spacing: var(--text-tracking-tight);
   background-color: var(--project-number-bg);
@@ -4669,7 +4674,7 @@ body.is-about-open .project-nav-hint {
   margin: 0;
   font-family: var(--font-mono);
   font-size: var(--text-size-caption);
-  font-weight: 400;
+  font-weight: 300;
   letter-spacing: 0.08em;
   color: #ffffff;
   pointer-events: none;
@@ -6194,10 +6199,6 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
     max-width: 100%;
   }
 
-  .sticky-header {
-    --sticky-title-size: 32px;
-  }
-
   .metadata-area--full {
     flex-direction: column;
     gap: var(--detail-stack-gap);
@@ -6704,7 +6705,6 @@ body:not(.is-bottom-banner-hidden) .footer-marquee-track {
   }
 
   .sticky-header {
-    --sticky-title-size: 26px;
     --sticky-header-line: var(--border);
     height: var(--sticky-header-fixed-height);
     min-height: var(--sticky-header-fixed-height);
