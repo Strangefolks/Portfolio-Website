@@ -517,10 +517,14 @@ const sketchbookIcons = {
   open: `<img class="project-item-icon icon-open" src="assets/sketchbook.svg" alt="" width="26" height="26" decoding="async" aria-hidden="true" />`,
 };
 
-const showreelIconSvg = `<svg class="project-item-icon showreel-item-icon" viewBox="0 0 30 19" fill="none" aria-hidden="true">
+/* Static list mark: camera/play outline only (assets/showreeel-icon.svg). */
+const showreelIconImg = `<img class="project-item-icon showreel-item-icon" src="assets/showreeel-icon.svg" alt="" width="30" height="19" decoding="async" aria-hidden="true" />`;
+
+/* Animated detail mark: body + spinning reel (assets/showreeel-with-dots-icon.svg). */
+const showreelDetailIconSvg = `<svg class="showreel-detail-mark__icon" viewBox="0 0 30 19" fill="none" aria-hidden="true">
   <g class="showreel-icon-body">
-    <path d="M20.5835 10.6667L27.9827 15.5996C28.0894 15.6705 28.2133 15.7113 28.3413 15.7174C28.4693 15.7235 28.5965 15.6948 28.7095 15.6343C28.8225 15.5738 28.9169 15.4839 28.9828 15.374C29.0486 15.2641 29.0834 15.1383 29.0835 15.0102V3.39922C29.0835 3.27458 29.0507 3.15215 28.9883 3.04427C28.9258 2.93639 28.8361 2.84689 28.728 2.78481C28.6199 2.72272 28.4974 2.69025 28.3728 2.69068C28.2481 2.6911 28.1258 2.7244 28.0182 2.78722L20.5835 7.12505" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M17.75 0.75H3.58333C2.01853 0.75 0.75 2.01853 0.75 3.58333V14.9167C0.75 16.4815 2.01853 17.75 3.58333 17.75H17.75C19.3148 17.75 20.5833 16.4815 20.5833 14.9167V3.58333C20.5833 2.01853 19.3148 0.75 17.75 0.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20.5835 10.6667L27.9827 15.5996C28.0894 15.6705 28.2133 15.7113 28.3413 15.7174C28.4693 15.7235 28.5965 15.6948 28.7095 15.6343C28.8225 15.5738 28.9169 15.4839 28.9828 15.374C29.0486 15.2641 29.0834 15.1383 29.0835 15.0102V3.39922C29.0835 3.27458 29.0507 3.15215 28.9883 3.04427C28.9258 2.93639 28.8361 2.84689 28.728 2.78481C28.6199 2.72272 28.4974 2.69025 28.3728 2.69068C28.2481 2.6911 28.1258 2.7244 28.0182 2.78722L20.5835 7.12505" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17.75 0.75H3.58333C2.01853 0.75 0.75 2.01853 0.75 3.58333V14.9167C0.75 16.4815 2.01853 17.75 3.58333 17.75H17.75C19.3148 17.75 20.5833 16.4815 20.5833 14.9167V3.58333C20.5833 2.01853 19.3148 0.75 17.75 0.75Z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g class="showreel-icon-reel">
     <g transform="translate(10.5164 9.2044)">
@@ -529,17 +533,17 @@ const showreelIconSvg = `<svg class="project-item-icon showreel-item-icon" viewB
         <circle cx="0" cy="4.0598" r="1.06864" fill="currentColor"/>
         <circle cx="4.0601" cy="0" r="1.06864" fill="currentColor"/>
         <circle cx="-4.0596" cy="0" r="1.06864" fill="currentColor"/>
-        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="1.7199" stroke="currentColor" stroke-width="0.35" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="0" cy="0" r="6.59131" stroke="currentColor" stroke-width="0.35" stroke-linecap="round" stroke-linejoin="round"/>
       </g>
     </g>
   </g>
 </svg>`;
 
 const showreelIcons = {
-  outline: showreelIconSvg,
-  closed: showreelIconSvg,
-  open: showreelIconSvg,
+  outline: showreelIconImg,
+  closed: showreelIconImg,
+  open: showreelIconImg,
 };
 
 function getProjectIcons(project) {
@@ -902,7 +906,7 @@ function initProjectTitleFit() {
     fitProjectIntroSubhead();
   };
   const titleLoad = document.fonts?.load?.('700 16px BoldineRegular');
-  const subheadLoad = document.fonts?.load?.('500 16px Barlow');
+  const subheadLoad = document.fonts?.load?.('400 16px IBM Plex Mono');
   if (titleLoad) {
     titleLoad.then(runForcedFit).catch(runForcedFit);
   }
@@ -1121,10 +1125,19 @@ function shouldShowThemeCards(project) {
   return !isSketchbookProject(project) && !isLogofolioProject(project) && !isShowreelProject(project);
 }
 
+function ensureShowreelDetailMark() {
+  const markEl = document.getElementById('showreel-detail-mark');
+  if (!markEl || markEl.dataset.ready === 'true') return;
+  markEl.innerHTML = showreelDetailIconSvg;
+  markEl.dataset.ready = 'true';
+}
+
 function syncSpecialGalleryChrome(project) {
   const sketchbook = isSketchbookProject(project);
   const logofolio = isLogofolioProject(project);
   const showreel = isShowreelProject(project);
+
+  if (showreel) ensureShowreelDetailMark();
 
   mainContentEl?.classList.toggle('is-sketchbook-project', sketchbook);
   mainContentEl?.classList.toggle('is-logofolio-project', logofolio);
@@ -1227,7 +1240,7 @@ function renderShowreelListItem(project, isActive) {
   return `
     <div class="project-item project-item--showreel${isActive ? ' active' : ''}" data-id="${project.id}" role="button" tabindex="${isTouchProjectListUi() ? '-1' : '0'}">
       <span class="showreel-list-label">
-        ${showreelIconSvg}
+        ${showreelIconImg}
         <span class="text-list project-item-name">${project.name}</span>
       </span>
       <span class="showreel-list-preview" aria-hidden="true">
@@ -1599,7 +1612,9 @@ function ensureProjectInfoTooltip() {
   projectInfoTooltipEl.id = 'project-info-tooltip';
   projectInfoTooltipEl.className = 'tooltip tooltip--card project-info-tooltip';
   projectInfoTooltipEl.innerHTML = `
-    <div class="project-info-tooltip-image"></div>
+    <div class="project-info-tooltip-image">
+      <span class="project-info-tooltip-number" aria-hidden="true"></span>
+    </div>
     <div class="project-info-tooltip-copy">
       <span class="text-summary summary-label"></span>
       <p class="text-summary summary-body"></p>
@@ -1640,7 +1655,11 @@ function positionProjectInfoTooltip(anchorEl) {
 function showProjectInfoTooltip(anchorEl, project) {
   const tooltip = ensureProjectInfoTooltip();
   const imageWrap = tooltip.querySelector('.project-info-tooltip-image');
-  imageWrap.innerHTML = renderHeroPanelContent(getProjectInfoImage(project), project, 0);
+  const displayNumber = getProjectDisplayNumber(project.id);
+  imageWrap.innerHTML = `
+    <span class="project-info-tooltip-number" aria-hidden="true">${displayNumber}</span>
+    ${renderHeroPanelContent(getProjectInfoImage(project), project, 0)}
+  `;
   tooltip.querySelector('.summary-label').textContent = 'Summary:';
   tooltip.querySelector('.summary-body').innerHTML = formatProjectSummaryLead(
     getProjectInfoText(project)
@@ -1659,24 +1678,33 @@ function hideProjectInfoTooltip() {
 }
 
 function bindProjectInfoTooltips() {
-  projectListEl.querySelectorAll('.project-item-info').forEach((infoEl) => {
-    const project = projects.find((p) => p.id === infoEl.dataset.projectId);
-    if (!project) return;
+  // Desktop/pointer only — show the info card for the whole row hover, not just the icon.
+  if (!isTouchProjectListUi()) {
+    projectListEl.querySelectorAll('.project-item').forEach((itemEl) => {
+      const project = projects.find((p) => p.id === itemEl.dataset.id);
+      if (!project) return;
 
-    infoEl.addEventListener('mouseenter', () => {
-      showProjectInfoTooltip(infoEl, project);
+      const anchorEl = itemEl.querySelector('.project-item-info') || itemEl;
+
+      itemEl.addEventListener('mouseenter', () => {
+        showProjectInfoTooltip(anchorEl, project);
+      });
+
+      itemEl.addEventListener('mouseleave', (e) => {
+        const tooltip = ensureProjectInfoTooltip();
+        if (e.relatedTarget === tooltip || tooltip.contains(e.relatedTarget)) return;
+        // Moving between rows — next row's mouseenter will update the card.
+        if (e.relatedTarget?.closest?.('.project-item')) return;
+        hideProjectInfoTooltip();
+      });
     });
 
-    infoEl.addEventListener('mouseleave', (e) => {
-      const tooltip = ensureProjectInfoTooltip();
-      if (e.relatedTarget === tooltip || tooltip.contains(e.relatedTarget)) return;
-      hideProjectInfoTooltip();
+    projectListEl.querySelectorAll('.project-item-info').forEach((infoEl) => {
+      infoEl.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
     });
-
-    infoEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-    });
-  });
+  }
 
   if (projectInfoTooltipsBound) return;
   projectInfoTooltipsBound = true;
@@ -1690,7 +1718,7 @@ function bindProjectInfoTooltips() {
   });
 
   tooltip.addEventListener('mouseleave', (e) => {
-    if (e.relatedTarget?.closest('.project-item-info')) return;
+    if (e.relatedTarget?.closest('.project-item')) return;
     hideProjectInfoTooltip();
   });
 
@@ -1709,7 +1737,6 @@ function bindProjectInfoTooltips() {
   document.addEventListener('mousedown', (e) => {
     if (!projectInfoTooltipEl?.classList.contains('is-visible')) return;
     if (projectInfoTooltipEl.contains(e.target)) return;
-    if (e.target.closest('.project-item-info')) return;
     hideProjectInfoTooltip();
   });
 }
@@ -1909,11 +1936,12 @@ function applyTheme(theme) {
 
   const commitTheme = () => {
     root.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
-  themeToggle.setAttribute('aria-label', label);
-  if (themeToggleTooltip) themeToggleTooltip.textContent = label;
-  renderProjectList();
+    localStorage.setItem('theme', theme);
+    const label = theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    themeToggle.setAttribute('aria-label', label);
+    themeToggle.setAttribute('aria-checked', theme === 'dark' ? 'true' : 'false');
+    if (themeToggleTooltip) themeToggleTooltip.textContent = label;
+    renderProjectList();
   };
 
   if (prefersReducedMotion) {

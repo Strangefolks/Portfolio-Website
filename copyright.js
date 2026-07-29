@@ -164,6 +164,17 @@ function bindCopyrightClose(layout, host, onClose) {
   });
 }
 
+function initCopyrightAmoebaMorph(root = document) {
+  const pathEl = root.querySelector('.copyright-amoeba-path');
+  if (!pathEl || pathEl.dataset.morphBound === 'true') return;
+  if (typeof initStarburstMorph !== 'function') return;
+
+  pathEl.dataset.morphBound = 'true';
+  initStarburstMorph(pathEl, {
+    getSpeeds: () => ({ motion: 8, warp: 10 }),
+  });
+}
+
 async function mountCopyrightLayout(stage) {
   const response = await fetch('copyright.html');
   if (!response.ok) return null;
@@ -179,6 +190,7 @@ async function mountCopyrightLayout(stage) {
   const layout = stage.querySelector('.copyright-layout');
   if (!layout) return null;
 
+  initCopyrightAmoebaMorph(layout);
   setCopyrightEnterPending(document.body);
   setCopyrightLayoutEnterPending(layout);
   return layout;
@@ -258,6 +270,8 @@ function bindCopyrightFooterButtons() {
 function initCopyrightPage() {
   const layout = document.querySelector('.copyright-layout');
   if (!layout) return;
+
+  initCopyrightAmoebaMorph(layout);
 
   bindCopyrightClose(layout, document.body, () => {
     if (document.referrer && !document.referrer.includes('copyright.html')) {

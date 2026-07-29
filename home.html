@@ -7,11 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20250728boldine-v1" />
-    <link rel="preload" href="app.js?v=20250728boldine-v1" as="script" />
+    <link rel="stylesheet" href="styles.css?v=20260728filter-pill-inset-v1" />
+    <link rel="preload" href="app.js?v=20260728showreel-detail-stroke-v1" as="script" />
     <script>
       document.documentElement.classList.add('is-portfolio-load-entry');
     </script>
@@ -174,19 +174,15 @@
             <div class="sidebar-mobile-panel-content" id="sidebar-mobile-panel-content">
             <div class="filters" role="tablist">
               <button class="filter-pill text-list active" data-filter="all" role="tab" aria-selected="true">
-                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
                 All
               </button>
               <button class="filter-pill text-list" data-filter="product" role="tab" aria-selected="false">
-                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
                 Product
               </button>
               <button class="filter-pill text-list" data-filter="brand" role="tab" aria-selected="false">
-                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
                 Brand
               </button>
               <button class="filter-pill text-list" data-filter="art" role="tab" aria-selected="false">
-                <img class="filter-pill-icon" src="assets/sunburst.svg" alt="" width="16" height="16" decoding="async" aria-hidden="true" />
                 Art
               </button>
             </div>
@@ -237,6 +233,7 @@
                   </div>
                 </div>
                 <div class="detail-actions">
+                  <span class="showreel-detail-mark" id="showreel-detail-mark" aria-hidden="true"></span>
                   <button
                     type="button"
                     class="project-info-btn"
@@ -519,14 +516,19 @@
                 type="button"
                 class="theme-toggle"
                 id="theme-toggle"
+                role="switch"
+                aria-checked="false"
                 aria-describedby="theme-toggle-tooltip"
                 aria-label="Switch to dark mode"
               >
-                <span class="theme-icon-stack theme-icon-stack--sun" aria-hidden="true">
-                  <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
-                </span>
-                <span class="theme-icon-stack theme-icon-stack--moon" aria-hidden="true">
-                  <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
+                <span class="theme-toggle-track" aria-hidden="true">
+                  <span class="theme-icon-stack theme-icon-stack--sun">
+                    <img src="assets/sunburst.svg" alt="" class="theme-icon-img theme-icon-img--default" width="29" height="28" decoding="async" />
+                  </span>
+                  <span class="theme-icon-stack theme-icon-stack--moon">
+                    <img src="assets/darkmode.svg" alt="" class="theme-icon-img theme-icon-img--default" width="22" height="24" decoding="async" />
+                  </span>
+                  <span class="theme-toggle-thumb"></span>
                 </span>
               </button>
               </div>
@@ -684,17 +686,22 @@
       </div>
     </div>
 
-    <script src="shared.js?v=20250707cleanup-v1"></script>
+    <script src="shared.js?v=20250728copyright-amoeba-v1"></script>
     <script src="fluid-ripple.js?v=20250707fluid-v1"></script>
     <script src="cursor.js?v=20250707cleanup-v1"></script>
     <script src="marquee.js"></script>
     <script src="scrollbar.js"></script>
     <script src="about.js?v=20250728boldine-v1"></script>
     <script src="profile.js?v=20250728boldine-v1"></script>
-    <script src="copyright.js?v=20250707cleanup-v1"></script>
+    <script src="copyright.js?v=20250728copyright-amoeba-dark-v2"></script>
     <script src="pull-to-refresh.js?v=20250707cleanup-v1"></script>
     <script src="email-copy.js?v=20250707cleanup-v1"></script>
-    <script src="app.js?v=20250728boldine-v1"></script>
-    <div class="site-grain" aria-hidden="true"></div>
+    <script src="app.js?v=20260728showreel-detail-stroke-v1"></script>
+    <div class="site-grain" aria-hidden="true">
+      <span class="site-grain__frame"></span>
+      <span class="site-grain__frame"></span>
+      <span class="site-grain__frame"></span>
+      <span class="site-grain__frame"></span>
+    </div>
   </body>
 </html>
